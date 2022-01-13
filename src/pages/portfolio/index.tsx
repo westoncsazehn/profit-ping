@@ -1,6 +1,7 @@
 // 3rd party libraries
-import React, { useContext, useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import React, { useContext, useEffect, useState } from 'react';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 // local
 import {
   COIN_DB,
@@ -8,28 +9,25 @@ import {
   FBUser,
   getCryptoHistory,
   getCryptoList,
-  UserContext,
-} from "../../api";
-import { CryptoProgressCard } from "../shared/CryptoProgressCard";
-import { format } from "date-fns";
+  UserContext
+} from '../../api';
+import { CryptoProgressCard } from '../shared/CryptoProgressCard';
+import { format } from 'date-fns';
 
 export const Portfolio = () => {
   const user = useContext<FBUser>(UserContext);
   const [coins, setCoins] = useState<any>();
   const { email } = user;
-  console.log("portfolio user: ", user);
+  console.log('portfolio user: ', user);
 
   useEffect(() => {
     const coinDbRef = collection(db, COIN_DB);
-    const coinsQuery = query(coinDbRef, where("user", "==", email));
+    const coinsQuery = query(coinDbRef, where('user', '==', email));
 
     // TODO: Split out into redux
     // TODO: Get list of user coins, then use ids to get CryptoList
     Promise.all([getCryptoList(), getDocs(coinsQuery)]).then((data) => {
       const [list, cryptos] = data;
-      console.clear();
-      console.log("list", list);
-      console.log("cryptos", cryptos);
       const resultCoins: any = [];
       cryptos.forEach((coin) => {
         const listItem = list.data
@@ -39,7 +37,7 @@ export const Portfolio = () => {
         const initialDate = coinData?.initialDate.toDate();
         const formattedCryptoHistoryDate: string = format(
           initialDate,
-          "dd-MM-yyyy"
+          'dd-MM-yyyy'
         );
         if (listItem && Object.keys(listItem).length > 0) {
           getCryptoHistory(
@@ -62,10 +60,9 @@ export const Portfolio = () => {
               multiplier: (currenPriceUSD / historyPriceUSD).toFixed(2),
               targetMultiplier: 2,
               historyPrice,
-              currenPriceUSD,
+              currenPriceUSD
             };
             resultCoins.push(crypto);
-            console.log("crypto", crypto);
           });
         }
       });
@@ -73,7 +70,21 @@ export const Portfolio = () => {
     });
   }, []);
 
-  console.log("coins", coins);
+  // TODO: move into redux pattern
+  // calculate multiplier for each coin in portfolio
+  // useEffect(() => {
+  //   const functions = getFunctions();
+  //   const initCryptoMultiplierCheck = httpsCallable(
+  //     functions,
+  //     'initCryptoMultiplierCheck'
+  //   );
+  //   console.log('init initCryptoMultiplierCheck');
+  //   initCryptoMultiplierCheck().then((result) => {
+  //     console.log('result', result);
+  //   });
+  // }, []);
+  //
+  // console.log('coins', coins);
 
   return (
     <>

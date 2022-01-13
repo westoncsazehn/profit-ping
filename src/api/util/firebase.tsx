@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import { createContext } from "react";
 import { FBUser } from "../types";
 
@@ -27,6 +28,10 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
 export const db = getFirestore(app);
+// LOCAL FIRESTORE : TESTING
+connectFirestoreEmulator(db, "localhost", 8080);
+const functions = getFunctions(app);
+connectFunctionsEmulator(functions, "localhost", 5001);
 // @ts-ignore
 export const UserContext = createContext<FBUser>();
 

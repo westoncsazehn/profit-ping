@@ -1,18 +1,18 @@
 // 3rd party libraries
-import { AxiosResponse } from "axios";
-import { Formik } from "formik";
-import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import * as yup from "yup";
-import { addDays, format } from "date-fns";
+import { AxiosResponse } from 'axios';
+import { Formik } from 'formik';
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import * as yup from 'yup';
+import { addDays, format } from 'date-fns';
 import {
   addDoc,
   collection,
   getDocs,
   query,
   Timestamp,
-  where,
-} from "firebase/firestore";
+  where
+} from 'firebase/firestore';
 // local
 import {
   db,
@@ -23,22 +23,22 @@ import {
   getCryptoList,
   CoinMetrics,
   getCryptoHistory,
-  CoinProgress,
-} from "../../api";
-import { CryptoSelectBox } from "./components/CryptoSelectBox";
+  CoinProgress
+} from '../../api';
+import { CryptoSelectBox } from './components/CryptoSelectBox';
 
-const DATE_FORMAT: string = "yyyy-MM-dd";
+const DATE_FORMAT: string = 'yyyy-MM-dd';
 
 const AddCoinSchema = yup.object().shape({
-  coin: yup.string().required("Required"),
-  initialDate: yup.date().required("Required"),
-  initialInvestment: yup.number().min(1).required("Required"),
-  targetMultiplier: yup.number().min(1).required("Required"),
+  coin: yup.string().required('Required'),
+  initialDate: yup.date().required('Required'),
+  initialInvestment: yup.number().min(1).required('Required'),
+  targetMultiplier: yup.number().min(1).required('Required')
 });
 
 export const CoinPage = () => {
   const { email } = useContext<FBUser>(UserContext);
-  const { id: paramCoin = "" } = useParams();
+  const { id: paramCoin = '' } = useParams();
   const [coins, setCoins] = useState<Coin[]>();
   const [crypto, setCrypto] = useState<CoinProgress>();
 
@@ -57,8 +57,8 @@ export const CoinPage = () => {
       const coinDbRef = collection(db, COIN_DB);
       const coinsQuery = query(
         coinDbRef,
-        where("user", "==", email),
-        where("coin", "==", paramCoin)
+        where('user', '==', email),
+        where('coin', '==', paramCoin)
       );
       let userCoinMetrics: any[] = [];
       // validate user has paramCoin
@@ -69,18 +69,18 @@ export const CoinPage = () => {
         const initialDate: Date = userCoinMetrics[0]?.initialDate.toDate();
         const formattedCryptoHistoryDate: string = format(
           initialDate,
-          "dd-MM-yyyy"
+          'dd-MM-yyyy'
         );
         Promise.all([
           getCryptoList(coin),
-          getCryptoHistory(coin, formattedCryptoHistoryDate),
+          getCryptoHistory(coin, formattedCryptoHistoryDate)
         ]).then((cryptoData: any) => {
           const [current, history] = cryptoData;
           const { name, id, symbol, image, current_price } = current?.data[0];
           const {
             market_data: {
-              current_price: { usd: historyPrice },
-            },
+              current_price: { usd: historyPrice }
+            }
           } = history?.data;
           const currenPriceUSD = current_price * initialInvestment;
           const historyPriceUSD = historyPrice * initialInvestment;
@@ -97,7 +97,7 @@ export const CoinPage = () => {
             ),
             targetMultiplier,
             historyPrice,
-            currenPriceUSD,
+            currenPriceUSD
           });
         });
       });
@@ -108,12 +108,14 @@ export const CoinPage = () => {
     initialDate,
     initialInvestment,
     coin,
+    targetMultiplier
   }: CoinMetrics) => {
     await addDoc(collection(db, COIN_DB), {
       user: email,
       coin,
       initialDate: Timestamp.fromDate(new Date(initialDate)),
       initialInvestment,
+      targetMultiplier
     });
   };
 
@@ -136,7 +138,7 @@ export const CoinPage = () => {
               coin: coins[0].id,
               initialDate,
               initialInvestment: 0,
-              targetMultiplier: 0,
+              targetMultiplier: 0
             }}
             validationSchema={AddCoinSchema}
             onSubmit={(values, { setSubmitting }) => {
@@ -144,8 +146,7 @@ export const CoinPage = () => {
                 addCoin(values);
                 setSubmitting(false);
               }, 400);
-            }}
-          >
+            }}>
             {({
               values,
               errors,
@@ -154,7 +155,7 @@ export const CoinPage = () => {
               handleSubmit,
               isSubmitting,
               isValid,
-              initialTouched,
+              initialTouched
             }) => (
               <form onSubmit={handleSubmit}>
                 <CryptoSelectBox
@@ -206,8 +207,7 @@ export const CoinPage = () => {
                 <br />
                 <button
                   type="submit"
-                  disabled={isSubmitting || !isValid || !initialTouched}
-                >
+                  disabled={isSubmitting || !isValid || !initialTouched}>
                   Add Coin
                 </button>
               </form>
