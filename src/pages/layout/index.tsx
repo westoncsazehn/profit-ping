@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { signOut } from "firebase/auth";
-import { Portfolio } from "../portfolio";
-import { auth, FBUser, UserContext } from "../../api";
-import { CoinPage } from "../coin";
+import React, { useContext } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth, UserContext } from '../../api';
+import { CoinPage } from '../coin';
+import { FBUser } from '../../store';
+import { PortfolioPageRx } from '../portfolio';
 
 export const Layout = () => {
   const user = useContext<FBUser>(UserContext);
@@ -18,7 +19,7 @@ export const Layout = () => {
       </header>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Portfolio />} />
+          <Route path="/" element={<PortfolioPageRx />} />
           <Route path="/coin" element={<CoinPage />} />
           <Route path="/coin/:id" element={<CoinPage />} />
         </Routes>

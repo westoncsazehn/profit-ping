@@ -1,19 +1,21 @@
-import React, { useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { Layout, SignIn } from "./pages";
-import { auth, FBUser, UserContext } from "./api";
+import React from 'react';
+import { connect } from 'react-redux';
+import { Layout } from './pages';
+import { AppState, FBUser, signInUser } from './store';
 
-export const App = () => {
-  const [user, setUser] = useState<FBUser>();
-  onAuthStateChanged(auth, (user) => (user ? setUser(user) : false));
-
-  if (user) {
-    return (
-      <UserContext.Provider value={user}>
-        <Layout />
-      </UserContext.Provider>
-    );
+// TODO: figure correct type for dispatch param here
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    signInUser: () => dispatch(signInUser())
+  };
+};
+const mapStateToProps = ({ user }: AppState) => user;
+export const App = ({ user, signInUser }: FBUser & any) => {
+  if (user?.email) {
+    return <Layout />;
   } else {
-    return <SignIn />;
+    return <button onClick={signInUser}> Sign In</button>;
   }
 };
+
+export const AppPageRx = connect(mapStateToProps, mapDispatchToProps)(App);

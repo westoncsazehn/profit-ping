@@ -1,6 +1,4 @@
-import { User } from "firebase/auth";
 
-export type FBUser = User;
 export type CoinProgress = Partial<Coin & CoinMetrics>;
 export type Coin = {
   id: string;

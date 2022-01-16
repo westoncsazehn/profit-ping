@@ -18,7 +18,6 @@ import {
   db,
   Coin,
   COIN_DB,
-  FBUser,
   UserContext,
   getCryptoList,
   CoinMetrics,
@@ -26,6 +25,7 @@ import {
   CoinProgress
 } from '../../api';
 import { CryptoSelectBox } from './components/CryptoSelectBox';
+import { FBUser } from '../../store';
 
 const DATE_FORMAT: string = 'yyyy-MM-dd';
 

@@ -1,9 +1,9 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
-import { createContext } from "react";
-import { FBUser } from "../types";
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
+import { createContext } from 'react';
+import { getMessaging } from 'firebase/messaging';
 
 const {
   REACT_APP_FIREBASE_API_KEY,
@@ -12,7 +12,7 @@ const {
   REACT_APP_PROJECT_ID,
   REACT_APP_STORAGE_BUCKET,
   REACT_APP_MESSAGING_SENDER_ID,
-  REACT_APP_APP_ID,
+  REACT_APP_APP_ID
 } = process.env;
 export const firebaseConfig = {
   apiKey: REACT_APP_FIREBASE_API_KEY,
@@ -21,19 +21,21 @@ export const firebaseConfig = {
   projectId: REACT_APP_PROJECT_ID,
   storageBucket: REACT_APP_STORAGE_BUCKET,
   messagingSenderId: REACT_APP_MESSAGING_SENDER_ID,
-  appId: REACT_APP_APP_ID,
+  appId: REACT_APP_APP_ID
 };
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
 export const db = getFirestore(app);
+export const messaging = getMessaging(app);
 // LOCAL FIRESTORE : TESTING
-connectFirestoreEmulator(db, "localhost", 8080);
+connectFirestoreEmulator(db, 'localhost', 8080);
 const functions = getFunctions(app);
-connectFunctionsEmulator(functions, "localhost", 5001);
+connectFunctionsEmulator(functions, 'localhost', 5001);
 // @ts-ignore
 export const UserContext = createContext<FBUser>();
 
 // databases
-export const COIN_DB: string = "coin";
+export const COIN_DB: string = 'coin';
+export const DEVICE_TOKEN_DB: string = 'deviceToken';
