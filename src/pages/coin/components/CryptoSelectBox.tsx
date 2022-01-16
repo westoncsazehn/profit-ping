@@ -2,10 +2,10 @@
 import React from "react";
 import { Field } from "formik";
 // local
-import { Coin } from "../../../api";
+import { GeckoCoin } from "../../../api";
 
 export const CryptoSelectBox = (props: {
-  coins: Coin[];
+  coins: GeckoCoin[];
   onChange: (e: any) => void;
   value?: string;
 }) => {

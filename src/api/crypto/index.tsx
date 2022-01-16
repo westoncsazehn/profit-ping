@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Coin } from "../types";
+import { GeckoCoin } from "../types";
 
 const gecko = axios.create({
   baseURL: "https://api.coingecko.com/api/v3/",
@@ -8,8 +8,8 @@ const gecko = axios.create({
 });
 
 export const getCryptoList = (
-  coin?: string
-): Promise<AxiosResponse<Coin[]>> => {
+  coins?: string
+): Promise<AxiosResponse<GeckoCoin[]>> => {
   const params: URLSearchParams = new URLSearchParams({
     vs_currency: "usd",
     order: "market_cap_desc",
@@ -17,8 +17,8 @@ export const getCryptoList = (
     page: "1",
     sparkline: "false",
   });
-  if (coin) {
-    params.append("ids", coin);
+  if (coins) {
+    params.append("ids", coins);
   }
   return gecko.get(`coins/markets?${params.toString()}`);
 };

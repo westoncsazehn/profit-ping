@@ -14,8 +14,6 @@ export const CryptoProgressCard = (data: { coin: CoinProgress }) => {
       gain = 0,
       multiplier = 0,
       targetMultiplier = 0,
-      historyPrice = 0,
-      currenPriceUSD = 0,
     },
   } = data;
   return (

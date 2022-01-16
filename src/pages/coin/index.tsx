@@ -16,11 +16,11 @@ import {
 // local
 import {
   db,
-  Coin,
+  GeckoCoin,
   COIN_DB,
   UserContext,
   getCryptoList,
-  CoinMetrics,
+  FirestoreCoin,
   getCryptoHistory,
   CoinProgress
 } from '../../api';
@@ -39,13 +39,13 @@ const AddCoinSchema = yup.object().shape({
 export const CoinPage = () => {
   const { email } = useContext<FBUser>(UserContext);
   const { id: paramCoin = '' } = useParams();
-  const [coins, setCoins] = useState<Coin[]>();
+  const [coins, setCoins] = useState<GeckoCoin[]>();
   const [crypto, setCrypto] = useState<CoinProgress>();
 
   // no coin param
   useEffect(() => {
     if (!paramCoin) {
-      getCryptoList().then((list: AxiosResponse<Coin[]>) =>
+      getCryptoList().then((list: AxiosResponse<GeckoCoin[]>) =>
         setCoins(list.data)
       );
     }
@@ -82,8 +82,8 @@ export const CoinPage = () => {
               current_price: { usd: historyPrice }
             }
           } = history?.data;
-          const currenPriceUSD = current_price * initialInvestment;
-          const historyPriceUSD = historyPrice * initialInvestment;
+          const currentPriceInUSD = current_price * initialInvestment;
+          const historyPriceInUSD = historyPrice * initialInvestment;
           setCrypto({
             name,
             id,
@@ -91,13 +91,13 @@ export const CoinPage = () => {
             image,
             initialDate,
             initialInvestment,
-            gain: currenPriceUSD - historyPriceUSD,
+            gain: currentPriceInUSD - historyPriceInUSD,
             multiplier: parseFloat(
-              (currenPriceUSD / historyPriceUSD).toFixed(2)
+              (currentPriceInUSD / historyPriceInUSD).toFixed(2)
             ),
             targetMultiplier,
-            historyPrice,
-            currenPriceUSD
+            historyPriceInUSD,
+            currentPriceInUSD
           });
         });
       });
@@ -109,7 +109,7 @@ export const CoinPage = () => {
     initialInvestment,
     coin,
     targetMultiplier
-  }: CoinMetrics) => {
+  }: FirestoreCoin) => {
     await addDoc(collection(db, COIN_DB), {
       user: email,
       coin,

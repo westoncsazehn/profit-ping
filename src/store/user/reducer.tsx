@@ -17,7 +17,7 @@ export const userReducer = (
   switch (action.type) {
     case userActionTypes.SET_USER:
     case userActionTypes.SIGN_IN_USER_SUCCESS:
-      return { ...state, user: { ...action.payload } };
+      return { ...state, ...action.payload };
     case userActionTypes.SIGN_IN_USER_FAILED:
     default:
       return state;

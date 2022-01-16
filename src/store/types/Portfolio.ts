@@ -1,6 +1,6 @@
-import { FBUser } from './User';
+import { CoinProgress } from "../../api";
 
 export type Portfolio = {
-  coins: any[];
+  coins: CoinProgress[];
   userDeviceToken: string;
 };
