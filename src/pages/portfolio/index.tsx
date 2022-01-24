@@ -1,11 +1,11 @@
 // 3rd party libraries
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { connect } from 'react-redux';
+import Container from '@mui/material/Container';
 // local
-import { messaging } from '../../api';
-import { CryptoProgressCard } from '../shared';
+import { messaging, UserContext } from '../../api';
 import {
   addDeviceToken,
   getDeviceToken,
@@ -14,35 +14,39 @@ import {
   Portfolio
 } from '../../store';
 import { AppState } from '../../store';
+import { PortfolioTable } from './components';
 
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getUserDeviceToken: (payload: string) => dispatch(getDeviceToken(payload)),
     addDeviceToken: () => dispatch(addDeviceToken()),
-    getUsersCryptoList: () => dispatch(getUsersCryptoList())
+    getUsersCryptoList: (email: string) => dispatch(getUsersCryptoList(email))
   };
 };
 const mapStateToProps = (state: AppState) => state;
 const PortfolioPage = ({
-  user,
   portfolio,
   getUserDeviceToken,
   addDeviceToken,
   getUsersCryptoList
 }: {
-  user: FBUser;
   portfolio: Portfolio;
   getUserDeviceToken: any;
   addDeviceToken: any;
   getUsersCryptoList: any;
 }) => {
+  const user = useContext<FBUser>(UserContext);
   const { coins = [], userDeviceToken = '' } = portfolio;
-  console.log('coins', coins);
   const [deviceToken] = useState<string>(userDeviceToken);
   const [hasGetDeviceTokenRan, setHasGetDeviceTokenRan] =
     useState<boolean>(false);
   const { email } = user;
+
+  // get list of user's crypto with metadata
+  useEffect(() => {
+    if (email) getUsersCryptoList(email);
+  }, []);
 
   // get user's device token
   useEffect(() => {
@@ -62,23 +66,14 @@ const PortfolioPage = ({
   // subscribe to messaging notifications
   useEffect(() => {
     onMessage(messaging, (payload) => {
-      console.clear();
-      console.log('Message received: ', payload);
+      // TODO: implement alert to display message
     });
   }, []);
 
-  // get list of user's crypto with metadata
-  useEffect(() => {
-    getUsersCryptoList();
-  }, []);
-
   return (
-    <>
-      <h1>Portfolio page test</h1>
-      {/*{coins?.map((coin: any) => (*/}
-      {/*  <CryptoProgressCard key={JSON.stringify(coin)} coin={coin} />*/}
-      {/*))}*/}
-    </>
+    <Container>
+      <PortfolioTable coins={coins} />
+    </Container>
   );
 };
 export const PortfolioPageRx = connect(

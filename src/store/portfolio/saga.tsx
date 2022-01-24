@@ -13,10 +13,11 @@ import {
   getCryptoHistory,
   getCryptoList,
   messaging,
-  CoinProgress
+  PortfolioTableCoins
 } from '../../api';
 import { getUserEmail } from '../user';
 import { getFormattedUserCoinsList } from './modifiers';
+import { FBUser } from '../types';
 
 const deviceTokenCollection = collection(db, DEVICE_TOKEN_DB);
 
@@ -33,10 +34,13 @@ function* getDeviceTokenSaga({ payload: email }: { payload: string }): any {
       userDeviceToken = deviceToken;
     });
     yield put({ type: 'GET_DEVICE_TOKEN_SUCCESS', payload: userDeviceToken });
+    // TODO: add alert for error
+    // @ts-ignore
   } catch (e: any) {
     yield put({ type: 'GET_DEVICE_TOKEN_FAILED', message: e.message });
   }
 }
+
 function* addDeviceTokenSaga(): any {
   try {
     const email: string = yield select(getUserEmail);
@@ -53,8 +57,9 @@ function* addDeviceTokenSaga(): any {
       type: portfolioActionTypes.ADD_GET_DEVICE_TOKEN_SUCCESS,
       payload: newDeviceToken
     });
+    // TODO: add alert for error
+    // @ts-ignore
   } catch (e: any) {
-    console.log('e', e);
     yield put({
       type: portfolioActionTypes.ADD_GET_DEVICE_TOKEN_FAILED,
       payload: e.toString()
@@ -62,25 +67,31 @@ function* addDeviceTokenSaga(): any {
   }
 }
 
-function* getUsersCryptoListSaga(): any {
+const defaultResponse = {
+  type: portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS,
+  payload: []
+};
+
+function* getUsersCryptoListSaga({
+  payload: email
+}: {
+  type: string;
+  payload: string;
+}): any {
   try {
-    console.log(process.env);
-    const email: string = yield select(getUserEmail);
+    if (!email) yield put(defaultResponse);
     const coinDbRef = collection(db, COIN_DB);
     const coinsQuery = query(coinDbRef, where('user', '==', email));
     // get list from `coin` collection of user's coins from firebase/firestore
     const userCryptoListResults = yield call(getDocs, coinsQuery);
     if (!userCryptoListResults.docs?.length) {
-      yield put({
-        type: portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS,
-        payload: []
-      });
+      yield put(defaultResponse);
     }
     const userCryptoList: FirestoreCoin[] = [];
     // set current crypto data to an array we can actually use
-    userCryptoListResults.forEach((doc: any) =>
-      userCryptoList.push(doc.data())
-    );
+    userCryptoListResults.forEach((doc: any) => {
+      return userCryptoList.push(doc.data());
+    });
     // create list of crypto id's
     const userCryptoIDs: string = userCryptoList
       .slice()
@@ -99,8 +110,8 @@ function* getUsersCryptoListSaga(): any {
         )
       )
     );
-    // get CoinProgress formatted data from all lists: user, gecko: current & history
-    const userCoinPortfolio: CoinProgress[] = getFormattedUserCoinsList(
+    // get PortfolioTableCoins formatted data from all lists: user, gecko: current & history
+    const userCoinPortfolio: PortfolioTableCoins[] = getFormattedUserCoinsList(
       userCryptoList,
       geckoCoinList,
       geckoCoinHistoryList
@@ -109,6 +120,8 @@ function* getUsersCryptoListSaga(): any {
       type: portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS,
       payload: userCoinPortfolio
     });
+    // TODO: add alert for error
+    // @ts-ignore
   } catch (e: any) {
     yield put({
       type: portfolioActionTypes.GET_USERS_CRYPTO_FAILED,
@@ -123,8 +136,8 @@ function* portfolioSagas() {
     takeEvery(portfolioActionTypes.GET_DEVICE_TOKEN, getDeviceTokenSaga),
     // @ts-ignore
     takeEvery(portfolioActionTypes.ADD_GET_DEVICE_TOKEN, addDeviceTokenSaga),
-    // @ts-ignore
     takeEvery(
+      // @ts-ignore
       portfolioActionTypes.GET_USERS_CRYPTO_LIST,
       getUsersCryptoListSaga
     )

@@ -1,9 +1,12 @@
+import React from 'react';
 import {
-  CoinProgress,
   GeckoCoin,
   GeckoCoinHistoryItem,
-  FirestoreCoin
+  FirestoreCoin,
+  PortfolioTableCoins
 } from '../../api';
+import { Avatar } from '@mui/material';
+import { format } from 'date-fns';
 
 const getHistoryPrice = (
   id: string,
@@ -29,12 +32,13 @@ const getCurrentGeckoCrypto = (
   }
   return currentItem;
 };
+const toUSD = (value: string | number): string => `$${Number(value)}`;
 export const getFormattedUserCoinsList = (
   userCoinList: FirestoreCoin[],
   geckoCurrentList: GeckoCoin[],
   geckoHistoryList: GeckoCoinHistoryItem[]
-): CoinProgress[] => {
-  const userCoinPortfolio: CoinProgress[] = [];
+): PortfolioTableCoins[] => {
+  const userCoinPortfolio: PortfolioTableCoins[] = [];
   userCoinList.forEach((coin: FirestoreCoin) => {
     const { initialDate, initialInvestment, targetMultiplier } = coin;
     const historyPrice = getHistoryPrice(coin?.coin, geckoHistoryList);
@@ -44,19 +48,30 @@ export const getFormattedUserCoinsList = (
     const historyPriceInUSD: number = Number(
       (historyPrice * initialInvestment).toFixed(2)
     );
-    userCoinPortfolio.push({
-      name,
-      id,
-      symbol,
-      image,
+    const initialDateString: string = format(
       // @ts-ignore
-      initialDate: initialDate.toDate(),
-      initialInvestment,
-      targetMultiplier: Number(targetMultiplier),
-      historyPriceInUSD,
-      currentPriceInUSD,
-      gain: Number((currentPriceInUSD - historyPriceInUSD).toFixed(2)),
-      multiplier: Number((currentPriceInUSD / historyPriceInUSD).toFixed(2))
+      initialDate.toDate(),
+      'MM-dd-yyyy'
+    );
+    const target: string = `${toUSD(currentPriceInUSD)} / ${toUSD(
+      (targetMultiplier * historyPriceInUSD).toFixed(2)
+    )}`;
+    const multiplier: string = `${(
+      currentPriceInUSD / historyPriceInUSD
+    ).toFixed(2)}x / ${targetMultiplier}x`;
+    const gain: string = `${toUSD(
+      (currentPriceInUSD - historyPriceInUSD).toFixed(2)
+    )}`;
+    userCoinPortfolio.push({
+      id,
+      name,
+      image,
+      initial: historyPriceInUSD.toFixed(2),
+      initialDate: initialDateString,
+      target,
+      multiplier,
+      gain,
+      symbol: symbol.toUpperCase()
     });
   });
   return userCoinPortfolio;

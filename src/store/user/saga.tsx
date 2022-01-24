@@ -1,3 +1,4 @@
+import React from 'react';
 import { all, call, put, takeEvery } from 'redux-saga/effects';
 import { userActionTypes } from './actions';
 import { signInWithPopup } from 'firebase/auth';
@@ -5,9 +6,10 @@ import { auth, provider } from '../../api';
 
 function* signInUserSaga(): any {
   try {
-    console.log('sign in triggered');
     const { user } = yield call(signInWithPopup, auth, provider);
     yield put({ type: userActionTypes.SIGN_IN_USER_SUCCESS, payload: user });
+    // TODO: implement an alert
+    // @ts-ignore
   } catch (e: any) {
     yield put({
       type: userActionTypes.SIGN_IN_USER_FAILED,

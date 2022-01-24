@@ -1,6 +1,6 @@
-import { CoinProgress } from "../../api";
+import { PortfolioTableCoins } from '../../api';
 
 export type Portfolio = {
-  coins: CoinProgress[];
+  coins: PortfolioTableCoins[];
   userDeviceToken: string;
 };

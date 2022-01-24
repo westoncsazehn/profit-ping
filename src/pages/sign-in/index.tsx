@@ -1,16 +1,10 @@
 import React from 'react';
-import { signInWithPopup } from 'firebase/auth';
-import { connect } from 'react-redux';
-import { auth, provider } from '../../api';
-import { signInUser } from '../../store';
+import { Button } from '@mui/material';
 
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    signInUser: () => dispatch(signInUser())
-  };
+export const SignInPage = ({ onSignIn }: any) => {
+  return (
+    <>
+      <Button onClick={onSignIn}>LOG IN</Button>
+    </>
+  );
 };
-export const SignInPage = (props: any) => {
-  return <></>;
-};
-
-export const SignInPageRx = connect(null, mapDispatchToProps)(SignInPage);

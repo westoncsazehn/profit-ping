@@ -17,6 +17,7 @@ export const getDeviceToken = (userEmail: string) => ({
 export const addDeviceToken = () => ({
   type: portfolioActionTypes.ADD_GET_DEVICE_TOKEN
 });
-export const getUsersCryptoList = () => ({
-  type: portfolioActionTypes.GET_USERS_CRYPTO_LIST
+export const getUsersCryptoList = (email: string) => ({
+  type: portfolioActionTypes.GET_USERS_CRYPTO_LIST,
+  payload: email
 });
