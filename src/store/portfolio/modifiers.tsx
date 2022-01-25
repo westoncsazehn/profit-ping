@@ -1,11 +1,9 @@
-import React from 'react';
 import {
   GeckoCoin,
   GeckoCoinHistoryItem,
   FirestoreCoin,
   PortfolioTableCoins
 } from '../../api';
-import { Avatar } from '@mui/material';
 import { format } from 'date-fns';
 
 const getHistoryPrice = (

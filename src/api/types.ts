@@ -8,11 +8,14 @@ export type GeckoCoin = {
   image: string;
   current_price: number;
 };
-export type FirestoreCoin = {
+export type FirestoreAddCoin = {
   coin: string;
   initialDate: Date;
   initialInvestment: number;
   targetMultiplier: number;
+}
+export type FirestoreCoin = FirestoreAddCoin & {
+  initialPricePerCoin: number;
 };
 export type CoinProgress = Partial<GeckoCoin & FirestoreCoin> & {
   historyPriceInUSD: number;
