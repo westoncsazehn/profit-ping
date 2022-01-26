@@ -17,11 +17,12 @@ import {
 } from '../../api';
 import { getUserEmail } from '../user';
 import { getFormattedUserCoinsList } from './modifiers';
-import { FBUser } from '../types';
+import { loadingActionTypes } from '../loading';
 
 const deviceTokenCollection = collection(db, DEVICE_TOKEN_DB);
 
 function* getDeviceTokenSaga({ payload: email }: { payload: string }): any {
+  yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
   try {
     let userDeviceToken: string = '';
     const userDeviceTokenQuery = query(
@@ -34,6 +35,7 @@ function* getDeviceTokenSaga({ payload: email }: { payload: string }): any {
       userDeviceToken = deviceToken;
     });
     yield put({ type: 'GET_DEVICE_TOKEN_SUCCESS', payload: userDeviceToken });
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
     // TODO: add alert for error
     // @ts-ignore
   } catch (e: any) {
@@ -42,6 +44,7 @@ function* getDeviceTokenSaga({ payload: email }: { payload: string }): any {
 }
 
 function* addDeviceTokenSaga(): any {
+  yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
   try {
     const email: string = yield select(getUserEmail);
     // TODO: set vapidKey to env config
@@ -57,6 +60,7 @@ function* addDeviceTokenSaga(): any {
       type: portfolioActionTypes.ADD_GET_DEVICE_TOKEN_SUCCESS,
       payload: newDeviceToken
     });
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
     // TODO: add alert for error
     // @ts-ignore
   } catch (e: any) {
@@ -78,6 +82,7 @@ function* getUsersCryptoListSaga({
   type: string;
   payload: string;
 }): any {
+  yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
   try {
     if (!email) yield put(defaultResponse);
     const coinDbRef = collection(db, COIN_DB);
@@ -120,6 +125,7 @@ function* getUsersCryptoListSaga({
       type: portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS,
       payload: userCoinPortfolio
     });
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
     // TODO: add alert for error
     // @ts-ignore
   } catch (e: any) {

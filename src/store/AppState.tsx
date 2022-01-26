@@ -1,7 +1,8 @@
 import React from 'react';
-import { FBUser, Portfolio } from './types';
+import { FBUser, LoaderType, Portfolio } from './types';
 
 export type AppState = {
   portfolio: Portfolio;
   user: FBUser;
+  loader: LoaderType;
 };

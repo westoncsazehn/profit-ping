@@ -1,7 +1,6 @@
 // 3rd party libraries
 import React, { useContext, useEffect, useState } from 'react';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import { onMessage } from 'firebase/messaging';
 import { connect } from 'react-redux';
 import Container from '@mui/material/Container';
 // local
@@ -35,7 +34,7 @@ const PortfolioPage = ({
   getUserDeviceToken: any;
   addDeviceToken: any;
   getUsersCryptoList: any;
-}) => {
+} & AppState) => {
   const user = useContext<FBUser>(UserContext);
   const { coins = [], userDeviceToken = '' } = portfolio;
   const [deviceToken] = useState<string>(userDeviceToken);
@@ -45,7 +44,9 @@ const PortfolioPage = ({
 
   // get list of user's crypto with metadata
   useEffect(() => {
-    if (email) getUsersCryptoList(email);
+    if (email) {
+      getUsersCryptoList(email);
+    }
   }, []);
 
   // get user's device token

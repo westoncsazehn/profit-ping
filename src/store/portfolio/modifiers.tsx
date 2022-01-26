@@ -30,7 +30,8 @@ const getCurrentGeckoCrypto = (
   }
   return currentItem;
 };
-const toUSD = (value: string | number): string => `$${Number(value)}`;
+const toUSD = (value: string | number): string =>
+  `$${Number(value).toFixed(2)}`;
 export const getFormattedUserCoinsList = (
   userCoinList: FirestoreCoin[],
   geckoCurrentList: GeckoCoin[],
@@ -52,19 +53,18 @@ export const getFormattedUserCoinsList = (
       'MM-dd-yyyy'
     );
     const target: string = `${toUSD(currentPriceInUSD)} / ${toUSD(
-      (targetMultiplier * historyPriceInUSD).toFixed(2)
+      targetMultiplier * historyPriceInUSD
     )}`;
     const multiplier: string = `${(
       currentPriceInUSD / historyPriceInUSD
-    ).toFixed(2)}x / ${targetMultiplier}x`;
-    const gain: string = `${toUSD(
-      (currentPriceInUSD - historyPriceInUSD).toFixed(2)
-    )}`;
+    ).toFixed(1)}x / ${targetMultiplier}x`;
+    const gain: string = `${toUSD(currentPriceInUSD - historyPriceInUSD)}`;
     userCoinPortfolio.push({
       id,
       name,
       image,
-      initial: historyPriceInUSD.toFixed(2),
+      quantity: initialInvestment,
+      initial: toUSD(historyPriceInUSD),
       initialDate: initialDateString,
       target,
       multiplier,

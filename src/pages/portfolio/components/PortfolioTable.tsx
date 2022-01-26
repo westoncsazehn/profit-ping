@@ -1,5 +1,5 @@
 // 3rd party
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import {
   Avatar,
   CardHeader,
@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 // local
 import { PortfolioTableCoins } from '../../../api';
-import { Add } from '@mui/icons-material';
+import { AddCircle } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 type HeaderItem = {
@@ -26,6 +26,10 @@ const headerItems: HeaderItem[] = [
   {
     label: 'Coin',
     value: 'name'
+  },
+  {
+    label: 'Quantity',
+    value: 'quantity'
   },
   {
     label: 'Initial Investment',
@@ -46,16 +50,21 @@ const headerItems: HeaderItem[] = [
   {
     label: 'Gain',
     value: 'gain'
-  },
-  { label: '', value: '' }
+  }
 ];
 const rowKeys: string[] = headerItems
   .slice()
   .map((item) => item.value as string);
 
-export const PortfolioTable = (props: { coins: PortfolioTableCoins[] }) => {
-  const { coins = [] } = props;
+export const PortfolioTable = ({
+  coins = []
+}: {
+  coins: PortfolioTableCoins[];
+}) => {
   const navigate = useNavigate();
+
+  useEffect(() => {}, []);
+
   const headers = headerItems?.map((header: HeaderItem) => (
     <TableCell key={JSON.stringify(header)}>{header.label}</TableCell>
   ));
@@ -85,19 +94,16 @@ export const PortfolioTable = (props: { coins: PortfolioTableCoins[] }) => {
         </TableHead>
         <TableBody>
           {body}
-          <TableRow key="addCoinKey">
-            <TableCell>
-              <CardHeader
-                sx={{ p: 0 }}
-                avatar={
-                  <IconButton color="primary" onClick={() => navigate('/coin')}>
-                    <Add fontSize="small" />
-                  </IconButton>
-                }
-                title="ADD COIN"
-              />
-            </TableCell>
-          </TableRow>
+
+          <CardHeader
+            sx={{ paddingLeft: '16px' }}
+            avatar={
+              <IconButton color="default" onClick={() => navigate('/add-coin')}>
+                <AddCircle fontSize="medium" />
+              </IconButton>
+            }
+            title="ADD COIN"
+          />
         </TableBody>
       </Table>
     </TableContainer>

@@ -13,20 +13,15 @@ export type FirestoreAddCoin = {
   initialDate: Date;
   initialInvestment: number;
   targetMultiplier: number;
-}
+};
 export type FirestoreCoin = FirestoreAddCoin & {
   initialPricePerCoin: number;
-};
-export type CoinProgress = Partial<GeckoCoin & FirestoreCoin> & {
-  historyPriceInUSD: number;
-  currentPriceInUSD: number;
-  multiplier: number;
-  gain?: number;
 };
 export type PortfolioTableCoins = {
   id: string;
   name: string;
   image: string;
+  quantity: number; // amount of coins
   initial: string;
   target: string; // current price / target multi price
   multiplier: string; // current multi / target multi

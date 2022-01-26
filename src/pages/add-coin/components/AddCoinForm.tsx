@@ -1,3 +1,4 @@
+// 3rd party
 import React from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -19,9 +20,18 @@ import {
   Typography,
   styled
 } from '@mui/material';
+import {
+  getMonth,
+  getYear,
+  getDay,
+  isExists,
+  isBefore,
+  addDays
+} from 'date-fns';
+// local
 import { FirestoreAddCoin, GeckoCoin } from '../../../api';
 import { DatePicker } from './DatePicker';
-import { getMonth, getYear, getDay, isExists } from 'date-fns';
+import { Loader } from '../../components';
 
 const coinError: string = 'A coin must be selected';
 const initialDateError: string =
@@ -30,10 +40,16 @@ const initialInvestmentError: string =
   'Initial investment is required and must be greater than 0.';
 const targetMultiplierError: string =
   'Multiplier value is required and must be 1.5 or greater.';
+// TODO: once gecko api call limit vs # of end-user requests,
+// then limit min date based on currently selected coin's first price date
 const validateDate = (value: Date | undefined): boolean => {
   if (!value) return false;
   const year: number = getYear(value);
-  return isExists(year, getMonth(value), getDay(value)) && year >= 2000;
+  return (
+    isExists(year, getMonth(value), getDay(value)) &&
+    year >= 2000 &&
+    isBefore(value, addDays(new Date(), 1))
+  );
 };
 const AddCoinSchema = yup.object().shape({
   coin: yup.string().required(coinError),
@@ -73,19 +89,23 @@ export const AddCoinForm = ({
             paddingBottom: '25px'
           }
         }}>
+        <Typography align="center" sx={{ margin: '-25px 0 25px 0' }}>
+          Add a coin to track and set a multiplier. When the multiplier is hit,
+          we will notify you.
+        </Typography>
         <Formik
           enableReinitialize
           initialValues={{
             coin: coins[0].id,
             initialDate,
             initialInvestment: 0,
-            targetMultiplier: 0
+            targetMultiplier: 1.5
           }}
           validationSchema={AddCoinSchema}
           onSubmit={(values, { setSubmitting }) => {
             setTimeout(() => {
-              // addCoin(values);
-              // setSubmitting(false);
+              addCoin(values);
+              setSubmitting(false);
             }, 400);
           }}>
           {({
@@ -98,7 +118,6 @@ export const AddCoinForm = ({
             isValid,
             initialTouched
           }) => {
-            console.log('errors', errors);
             const coinErrors = errors.coin || touched.coin;
             const initialDateErrors = errors.initialDate || touched.initialDate;
             const initialInvestmentErrors =
@@ -135,7 +154,9 @@ export const AddCoinForm = ({
                       </MenuItem>
                     ))}
                   </Select>
-                  <Typography color="error">{coinErrors}</Typography>
+                  <Typography color="error" component="p">
+                    {errors.coin}
+                  </Typography>
                 </StyledFormControl>
                 <StyledFormControl
                   required
@@ -154,21 +175,24 @@ export const AddCoinForm = ({
                     value={values.initialDate}
                     name="initialDate"
                   />
-                  <Typography color="error">{initialDateErrors}</Typography>
+                  <Typography color="error" component="p">
+                    {errors.initialDate}
+                  </Typography>
                 </StyledFormControl>
                 <StyledFormControl
                   required
                   fullWidth
                   error={Boolean(initialInvestmentErrors)}>
-                  <FormLabel>Initial Amount of Coins</FormLabel>
+                  <FormLabel>Initial amount of coins</FormLabel>
                   <TextField
                     id="initialInvestment"
                     type="number"
                     onChange={handleChange}
+                    autoComplete="off"
                     value={values.initialInvestment}
                   />
-                  <Typography color="error">
-                    {initialInvestmentErrors}
+                  <Typography color="error" component="p">
+                    {errors.initialInvestment}
                   </Typography>
                 </StyledFormControl>
                 <StyledFormControl
@@ -177,22 +201,20 @@ export const AddCoinForm = ({
                   error={Boolean(multiplierErrors)}>
                   <FormLabel>Select target multiplier</FormLabel>
                   <Stack direction="row" spacing={2}>
+                    <Typography>{values.targetMultiplier + 'x'}</Typography>
                     <Slider
                       value={values.targetMultiplier}
                       name="targetMultiplier"
                       onChange={handleChange}
-                      step={0.5}
+                      step={0.25}
                       min={1.5}
                       max={10}
                       marks
                     />
-                    <Typography>
-                      {values.targetMultiplier
-                        ? values.targetMultiplier + 'x'
-                        : ''}
-                    </Typography>
                   </Stack>
-                  <Typography color="error">{multiplierErrors}</Typography>
+                  <Typography color="error" component="p">
+                    {errors.targetMultiplier}
+                  </Typography>
                 </StyledFormControl>
                 <Button
                   variant="contained"
