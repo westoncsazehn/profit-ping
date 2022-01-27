@@ -29,9 +29,8 @@ import {
   addDays
 } from 'date-fns';
 // local
-import { FirestoreAddCoin, GeckoCoin } from '../../../api';
+import { FirestoreAddCoin, BasePortfolioCoin } from '../../../store';
 import { DatePicker } from './DatePicker';
-import { Loader } from '../../components';
 
 const coinError: string = 'A coin must be selected';
 const initialDateError: string =
@@ -74,7 +73,7 @@ export const AddCoinForm = ({
   coins,
   addCoin
 }: {
-  coins: GeckoCoin[];
+  coins: BasePortfolioCoin[];
   addCoin: (coin: FirestoreAddCoin) => void;
 }) => {
   const initialDate: Date = new Date();

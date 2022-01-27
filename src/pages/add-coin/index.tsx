@@ -3,13 +3,14 @@ import { AxiosResponse } from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 // local
+import { UserContext, getCryptoList } from '../../api';
 import {
-  GeckoCoin,
-  UserContext,
-  getCryptoList,
+  addCoin,
+  FBUser,
+  setIsLoading,
+  BasePortfolioCoin,
   FirestoreAddCoin
-} from '../../api';
-import { addCoin, FBUser, setIsLoading } from '../../store';
+} from '../../store';
 import { AddCoinForm } from './components';
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -25,19 +26,18 @@ export const AddCoinPage = ({
   addCoin: any;
 }) => {
   const { email } = useContext<FBUser>(UserContext);
-  const [coins, setCoins] = useState<GeckoCoin[]>();
+  const [coins, setCoins] = useState<BasePortfolioCoin[]>();
 
   // no coin param
   useEffect(() => {
     if (!coins?.length) setIsLoading(true);
-    getCryptoList().then((list: AxiosResponse<GeckoCoin[]>) => {
+    getCryptoList().then((list: AxiosResponse<BasePortfolioCoin[]>) => {
       setCoins(list.data);
       setIsLoading(false);
     });
   }, []);
 
   const onAddCoin = (coin: FirestoreAddCoin) => {
-    console.log('onAddCoin coin', coin);
     if (email && coin) addCoin(coin, email);
   };
 

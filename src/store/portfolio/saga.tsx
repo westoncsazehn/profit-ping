@@ -1,23 +1,33 @@
 // 3rd party
 import { all, call, put, takeEvery, select } from 'redux-saga/effects';
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+  limit,
+  doc,
+  deleteDoc
+} from 'firebase/firestore';
 import { getToken } from 'firebase/messaging';
+import { QueryDocumentSnapshot } from '@firebase/firestore';
 import { format } from 'date-fns';
 // local
 import { portfolioActionTypes } from './actions';
 import {
   COIN_DB,
-  FirestoreCoin,
   db,
   DEVICE_TOKEN_DB,
   getCryptoHistory,
   getCryptoList,
-  messaging,
-  PortfolioTableCoins
+  messaging
 } from '../../api';
 import { getUserEmail } from '../user';
 import { getFormattedUserCoinsList } from './modifiers';
 import { loadingActionTypes } from '../loading';
+import { CoinAction, FirestoreCoin, PortfolioCoinsResponse } from '../types';
+import { getCoins } from './selectors';
 
 const deviceTokenCollection = collection(db, DEVICE_TOKEN_DB);
 
@@ -115,12 +125,13 @@ function* getUsersCryptoListSaga({
         )
       )
     );
-    // get PortfolioTableCoins formatted data from all lists: user, gecko: current & history
-    const userCoinPortfolio: PortfolioTableCoins[] = getFormattedUserCoinsList(
-      userCryptoList,
-      geckoCoinList,
-      geckoCoinHistoryList
-    );
+    // get PortfolioTableCoin formatted data from all lists: user, gecko: current & history
+    const userCoinPortfolio: PortfolioCoinsResponse[] =
+      getFormattedUserCoinsList(
+        userCryptoList,
+        geckoCoinList,
+        geckoCoinHistoryList
+      );
     yield put({
       type: portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS,
       payload: userCoinPortfolio
@@ -136,6 +147,67 @@ function* getUsersCryptoListSaga({
   }
 }
 
+function* deleteDocument(id: string, user: string): any {
+  const deleteDocRef = collection(db, COIN_DB);
+  const deleteDocRefQuery = query(
+    deleteDocRef,
+    where('user', '==', user),
+    where('coin', '==', id),
+    limit(1)
+  );
+  const docs = yield call(getDocs, deleteDocRefQuery);
+  let count = 0;
+  let docID: string = '';
+  docs.forEach((doc: QueryDocumentSnapshot<FirestoreCoin>) => {
+    if (count === 0) docID = doc.id;
+    count++;
+  });
+  if (docID) yield deleteDoc(doc(db, `${COIN_DB}/${docID}`));
+}
+
+function* removeCoinSaga({ payload }: { payload: CoinAction }): any {
+  try {
+    yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
+    const { id, user } = payload;
+    yield deleteDocument(id, user);
+    const coins: PortfolioCoinsResponse[] = yield select(getCoins);
+    const filteredCoins = coins.filter((coin) => coin.id !== id);
+    yield put({
+      type: portfolioActionTypes.REMOVE_COIN_SUCCESS,
+      payload: filteredCoins
+    });
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
+  } catch (e: any) {
+    //  TODO: implement error handler
+    yield put({
+      type: portfolioActionTypes.REMOVE_COIN_FAILED,
+      payload: e.toString()
+    });
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
+  }
+}
+function* takeProfitSaga({ payload }: { payload: CoinAction }): any {
+  try {
+    yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
+    const { id, user } = payload;
+    yield deleteDocument(id, user);
+    const coins: PortfolioCoinsResponse[] = yield select(getCoins);
+    const filteredCoins = coins.filter((coin) => coin.id !== id);
+    yield put({
+      type: portfolioActionTypes.TAKE_PROFIT_SUCCESS,
+      payload: filteredCoins
+    });
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
+  } catch (e: any) {
+    //  TODO: implement error handler
+    yield put({
+      type: portfolioActionTypes.TAKE_PROFIT_FAILED,
+      payload: e.toString()
+    });
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
+  }
+}
+
 function* portfolioSagas() {
   yield all([
     // @ts-ignore
@@ -146,7 +218,11 @@ function* portfolioSagas() {
       // @ts-ignore
       portfolioActionTypes.GET_USERS_CRYPTO_LIST,
       getUsersCryptoListSaga
-    )
+    ),
+    // @ts-ignore
+    takeEvery(portfolioActionTypes.REMOVE_COIN, removeCoinSaga),
+    // @ts-ignore
+    takeEvery(portfolioActionTypes.TAKE_PROFIT, takeProfitSaga)
   ]);
 }
 

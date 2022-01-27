@@ -2,11 +2,11 @@
 import { all, call, put, takeEvery } from 'redux-saga/effects';
 import { format } from 'date-fns';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
-
 // local
 import { addCoinActionTypes } from './actions';
-import { COIN_DB, db, FirestoreAddCoin, getCryptoHistory } from '../../api';
+import { COIN_DB, db, getCryptoHistory } from '../../api';
 import { loadingActionTypes } from '../loading';
+import { FirestoreAddCoin } from '../types';
 
 function* addCoinSaga({
   payload: { coin: payloadCoin, email }

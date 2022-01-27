@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { GeckoCoin, GeckoCoinHistoryItem } from '../types';
+import { BasePortfolioCoin, GeckoCoinHistoryItem } from '../../store';
 
 const gecko = axios.create({
   baseURL: 'https://api.coingecko.com/api/v3/',
@@ -9,7 +9,7 @@ const gecko = axios.create({
 
 export const getCryptoList = (
   coins?: string
-): Promise<AxiosResponse<GeckoCoin[]>> => {
+): Promise<AxiosResponse<BasePortfolioCoin[]>> => {
   const params: URLSearchParams = new URLSearchParams({
     vs_currency: 'usd',
     order: 'market_cap_desc',

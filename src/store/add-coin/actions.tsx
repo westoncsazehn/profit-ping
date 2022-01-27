@@ -1,4 +1,4 @@
-import { FirestoreAddCoin } from '../../api';
+import { FirestoreAddCoin } from '../types';
 
 export const addCoinActionTypes = {
   ADD_COIN: 'ADD_COIN'

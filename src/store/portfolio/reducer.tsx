@@ -16,6 +16,9 @@ export const portfolioReducer = (
       return { ...state, userDeviceToken: action.payload };
     case portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS:
       return { ...state, coins: action.payload };
+    case portfolioActionTypes.REMOVE_COIN_SUCCESS:
+    case portfolioActionTypes.TAKE_PROFIT_SUCCESS:
+      return { ...state, coins: action.payload };
     case portfolioActionTypes.GET_DEVICE_TOKEN_FAILED:
     default:
       return state;

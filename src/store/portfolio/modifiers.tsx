@@ -1,10 +1,9 @@
 import {
-  GeckoCoin,
+  BasePortfolioCoin,
   GeckoCoinHistoryItem,
   FirestoreCoin,
-  PortfolioTableCoins
-} from '../../api';
-import { format } from 'date-fns';
+  PortfolioCoinsResponse
+} from '../types';
 
 const getHistoryPrice = (
   id: string,
@@ -20,56 +19,37 @@ const getHistoryPrice = (
 };
 const getCurrentGeckoCrypto = (
   id: string,
-  cryptoCurrentItem: GeckoCoin[]
-): GeckoCoin => {
-  const currentItem: GeckoCoin | undefined = cryptoCurrentItem.find(
-    (geckoCoin: GeckoCoin) => geckoCoin.id === id
+  cryptoCurrentItem: BasePortfolioCoin[]
+): BasePortfolioCoin => {
+  const currentItem: BasePortfolioCoin | undefined = cryptoCurrentItem.find(
+    (geckoCoin: BasePortfolioCoin) => geckoCoin.id === id
   );
   if (!currentItem) {
     throw new Error(`crypto: ${id} not found from api`);
   }
   return currentItem;
 };
-const toUSD = (value: string | number): string =>
-  `$${Number(value).toFixed(2)}`;
 export const getFormattedUserCoinsList = (
   userCoinList: FirestoreCoin[],
-  geckoCurrentList: GeckoCoin[],
+  geckoCurrentList: BasePortfolioCoin[],
   geckoHistoryList: GeckoCoinHistoryItem[]
-): PortfolioTableCoins[] => {
-  const userCoinPortfolio: PortfolioTableCoins[] = [];
+): PortfolioCoinsResponse[] => {
+  const userCoinPortfolio: PortfolioCoinsResponse[] = [];
   userCoinList.forEach((coin: FirestoreCoin) => {
     const { initialDate, initialInvestment, targetMultiplier } = coin;
     const historyPrice = getHistoryPrice(coin?.coin, geckoHistoryList);
     const currentIem = getCurrentGeckoCrypto(coin?.coin, geckoCurrentList);
     const { name, id, symbol, image, current_price } = currentIem;
-    const currentPriceInUSD: number = current_price * initialInvestment;
-    const historyPriceInUSD: number = Number(
-      (historyPrice * initialInvestment).toFixed(2)
-    );
-    const initialDateString: string = format(
-      // @ts-ignore
-      initialDate.toDate(),
-      'MM-dd-yyyy'
-    );
-    const target: string = `${toUSD(currentPriceInUSD)} / ${toUSD(
-      targetMultiplier * historyPriceInUSD
-    )}`;
-    const multiplier: string = `${(
-      currentPriceInUSD / historyPriceInUSD
-    ).toFixed(1)}x / ${targetMultiplier}x`;
-    const gain: string = `${toUSD(currentPriceInUSD - historyPriceInUSD)}`;
     userCoinPortfolio.push({
       id,
       name,
       image,
-      quantity: initialInvestment,
-      initial: toUSD(historyPriceInUSD),
-      initialDate: initialDateString,
-      target,
-      multiplier,
-      gain,
-      symbol: symbol.toUpperCase()
+      symbol: symbol.toUpperCase(),
+      initialInvestment,
+      historyPrice,
+      currentPrice: Number(current_price),
+      initialDate,
+      targetMultiplier
     });
   });
   return userCoinPortfolio;
