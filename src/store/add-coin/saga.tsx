@@ -7,6 +7,8 @@ import { addCoinActionTypes } from './actions';
 import { COIN_DB, db, getCryptoHistory } from '../../api';
 import { loadingActionTypes } from '../loading';
 import { FirestoreAddCoin } from '../types';
+import { displayAlertActionTypes } from '../display-alert';
+import { AlertColor } from '@mui/material';
 
 function* addCoinSaga({
   payload: { coin: payloadCoin, email }
@@ -34,10 +36,25 @@ function* addCoinSaga({
       targetMultiplier,
       initialPricePerCoin
     });
-    window.location.href = '/';
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
+    // yield put({ type: loadingActionTypes.SET_IS_LOADING });
+    yield window?.history?.back();
+    yield put({
+      type: displayAlertActionTypes.INIT_ALERT,
+      payload: {
+        open: true,
+        message: `Successfully added coin: ${coin} to portfolio.`,
+        severity: 'success' as AlertColor
+      }
+    });
   } catch (error: any) {
-    // TODO: display error
+    yield put({
+      type: displayAlertActionTypes.INIT_ALERT,
+      payload: {
+        open: true,
+        message: `Error adding coin to portfolio.`,
+        severity: 'error' as AlertColor
+      }
+    });
   }
 }
 

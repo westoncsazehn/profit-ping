@@ -23,10 +23,12 @@ const StyledCaption = styled('caption')(() => ({ padding: '0' }));
 export const PortfolioTable = ({
   coins = [],
   onRemoveCoin,
+  onEditCoin,
   onTakeProfit
 }: {
   coins: PortfolioTableCoin[];
   onRemoveCoin: any;
+  onEditCoin: any;
   onTakeProfit: any;
 }) => {
   const navigate = useNavigate();
@@ -38,12 +40,11 @@ export const PortfolioTable = ({
       {rowKeys
         .slice()
         .map((key: string, rowIndex: number) =>
-          getTableCellContent(
-            coin,
-            key as keyof PortfolioTableCoin,
-            rowIndex,
-            { onRemoveCoin, onTakeProfit }
-          )
+          getTableCellContent(coin, key as keyof PortfolioTableCoin, rowIndex, {
+            onRemoveCoin,
+            onEditCoin,
+            onTakeProfit
+          })
         )}
     </TableRow>
   ));

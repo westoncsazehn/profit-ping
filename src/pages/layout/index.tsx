@@ -21,9 +21,16 @@ import { connect } from 'react-redux';
 import { auth, UserContext } from '../../api';
 import { AddCoinPageRx } from '../add-coin';
 import { PortfolioPageRx } from '../portfolio';
-import { FBUser, signInUser } from '../../store';
+import {
+  AppState,
+  DisplayAlertType,
+  FBUser,
+  initAlert,
+  signInUser
+} from '../../store';
 import { SignInPageRx } from '../sign-in';
 import { ADD_COIN_URL, LOGIN_URL } from '../meta-data/urls';
+import { DisplayAlert } from '../components';
 
 const menuStyle = {
   backgroundColor: 'white',
@@ -39,13 +46,31 @@ const StyledLink = styled(Link)(() => ({
 }));
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => ({
-  signInUser: () => dispatch(signInUser())
+  signInUser: () => dispatch(signInUser()),
+  initAlert: (alert: DisplayAlertType) => dispatch(initAlert(alert))
 });
-export const Layout = ({ signInUser }: { signInUser: any }) => {
+const mapStateToProps = ({ displayAlert }: AppState) => ({ displayAlert });
+export const Layout = ({
+  signInUser,
+  displayAlert: { open, message, severity },
+  initAlert
+}: {
+  signInUser: any;
+  displayAlert: DisplayAlertType;
+  initAlert: any;
+}) => {
   const user = useContext<FBUser>(UserContext);
   const { pathname = '' } = window?.location;
   const [page, setPage] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(Boolean(user?.email));
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        initAlert({ open: false });
+      }, 5000);
+    }
+  }, [open]);
 
   useEffect(() => {
     setPage(
@@ -125,6 +150,7 @@ export const Layout = ({ signInUser }: { signInUser: any }) => {
             </Container>
           </>
         ) : null}
+        <DisplayAlert {...{ open, message, severity }} />
         <Routes>
           <Route
             path="/"
@@ -137,9 +163,10 @@ export const Layout = ({ signInUser }: { signInUser: any }) => {
             }
           />
           <Route path={`/${ADD_COIN_URL}`} element={<AddCoinPageRx />} />
+          <Route path={`/${ADD_COIN_URL}/:id`} element={<AddCoinPageRx />} />
         </Routes>
       </BrowserRouter>
     </>
   );
 };
-export const LayoutRx = connect(null, mapDispatchToProps)(Layout);
+export const LayoutRx = connect(mapStateToProps, mapDispatchToProps)(Layout);

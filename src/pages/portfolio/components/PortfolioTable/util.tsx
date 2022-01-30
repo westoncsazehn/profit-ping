@@ -1,7 +1,7 @@
 // 3rd party
 import React from 'react';
 import { Avatar, Box, CardHeader, IconButton, TableCell } from '@mui/material';
-import { Close, PriceCheck } from '@mui/icons-material';
+import {Close, Edit, PriceCheck} from '@mui/icons-material';
 // local
 import { HeaderItem, PortfolioTableCoin } from '../../../../store';
 
@@ -51,11 +51,12 @@ export const getCoinNameCellContent = (coin: PortfolioTableCoin) => (
 );
 type CoinActions = {
   onRemoveCoin: (coin: PortfolioTableCoin) => void;
+  onEditCoin: (coin: PortfolioTableCoin) => void;
   onTakeProfit: (coin: PortfolioTableCoin) => void;
 };
 export const getCoinActionContent = (
   coin: PortfolioTableCoin,
-  { onRemoveCoin, onTakeProfit }: CoinActions,
+  { onRemoveCoin, onEditCoin, onTakeProfit }: CoinActions,
   isInProfit: boolean
 ) => {
   return (
@@ -69,6 +70,12 @@ export const getCoinActionContent = (
             <PriceCheck />
           </IconButton>
         ) : null}
+        <IconButton
+            color="primary"
+            aria-label="edit coin"
+            onClick={() => onEditCoin(coin)}>
+          <Edit />
+        </IconButton>
         <IconButton
           color="error"
           aria-label="remove coin"

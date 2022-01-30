@@ -23,7 +23,7 @@ import {
 import {
   getMonth,
   getYear,
-  getDay,
+  getDate,
   isExists,
   isBefore,
   addDays
@@ -45,7 +45,7 @@ const validateDate = (value: Date | undefined): boolean => {
   if (!value) return false;
   const year: number = getYear(value);
   return (
-    isExists(year, getMonth(value), getDay(value)) &&
+    isExists(year, getMonth(value), getDate(value)) &&
     year >= 2000 &&
     isBefore(value, addDays(new Date(), 1))
   );
@@ -71,13 +71,15 @@ const StyledFormControl = styled(FormControl)(() => ({
 
 export const AddCoinForm = ({
   coins,
-  addCoin
+  addCoin,
+  selectedCoin
 }: {
   coins: BasePortfolioCoin[];
   addCoin: (coin: FirestoreAddCoin) => void;
+  selectedCoin?: string;
 }) => {
   const initialDate: Date = new Date();
-  return (
+  return coins?.length ? (
     <Container>
       <Box
         component={Paper}
@@ -101,12 +103,7 @@ export const AddCoinForm = ({
             targetMultiplier: 1.5
           }}
           validationSchema={AddCoinSchema}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              addCoin(values);
-              setSubmitting(false);
-            }, 400);
-          }}>
+          onSubmit={(values) => addCoin(values)}>
           {({
             values,
             errors,
@@ -133,6 +130,7 @@ export const AddCoinForm = ({
                   <Select
                     value={values.coin}
                     onChange={handleChange}
+                    disabled={Boolean(selectedCoin)}
                     inputProps={{
                       name: 'coin',
                       id: 'coin'
@@ -227,5 +225,5 @@ export const AddCoinForm = ({
         </Formik>
       </Box>
     </Container>
-  );
+  ) : null;
 };

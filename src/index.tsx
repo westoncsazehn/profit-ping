@@ -1,7 +1,6 @@
 // 3rd party
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { AppPageRx } from './App';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
@@ -11,21 +10,36 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 // local
-import { portfolioReducer, userReducer, loadingReducer } from './store';
+import { AppPageRx } from './App';
+import {
+  portfolioReducer,
+  userReducer,
+  loadingReducer,
+  displayAlertReducer,
+  cryptoApiReducer
+} from './store';
 import portfolioSagas from './store/portfolio/saga';
 import userSagas from './store/user/saga';
 import addCoinSagas from './store/add-coin/saga';
+import cryptApiSagas from './store/crypto-api/saga';
 
 // combine all reducers
 const rootReducer = combineReducers({
   user: userReducer,
   portfolio: portfolioReducer,
-  loader: loadingReducer
+  loader: loadingReducer,
+  displayAlert: displayAlertReducer,
+  cryptoApi: cryptoApiReducer
 });
 
 // combine all sagas
 function* rootSaga() {
-  yield all([fork(userSagas), fork(portfolioSagas), fork(addCoinSagas)]);
+  yield all([
+    fork(userSagas),
+    fork(portfolioSagas),
+    fork(addCoinSagas),
+    fork(cryptApiSagas)
+  ]);
 }
 
 // init store with saga/reducers

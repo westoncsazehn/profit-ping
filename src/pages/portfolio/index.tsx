@@ -19,6 +19,8 @@ import {
 } from '../../store';
 import { PortfolioTable } from './components';
 import { getFormattedTableValues } from './util';
+import { useNavigate } from 'react-router-dom';
+import {ADD_COIN_URL} from "../meta-data/urls";
 
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => {
@@ -47,6 +49,7 @@ const PortfolioPage = ({
   takeProfit: any;
 } & AppState) => {
   const user = useContext<FBUser>(UserContext);
+  const navigate = useNavigate();
   const { coins = [], userDeviceToken = '' } = portfolio;
   const tableFormattedCoins: PortfolioTableCoin[] =
     getFormattedTableValues(coins);
@@ -58,6 +61,10 @@ const PortfolioPage = ({
   const onRemoveCoin = (coin: PortfolioTableCoin) => {
     const { id = '' } = coin;
     if (id && email) removeCoin({ id, user: email });
+  };
+  const onEditCoin = (coin: PortfolioTableCoin) => {
+    const { id = '' } = coin;
+    if (id && email) navigate(`/${ADD_COIN_URL}/${id}`);
   };
   const onTakeProfit = (coin: PortfolioTableCoin) => {
     const { id = '' } = coin;
@@ -99,6 +106,7 @@ const PortfolioPage = ({
         coins={tableFormattedCoins}
         onRemoveCoin={onRemoveCoin}
         onTakeProfit={onTakeProfit}
+        onEditCoin={onEditCoin}
       />
     </Container>
   );

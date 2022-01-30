@@ -28,8 +28,25 @@ import { getFormattedUserCoinsList } from './modifiers';
 import { loadingActionTypes } from '../loading';
 import { CoinAction, FirestoreCoin, PortfolioCoinsResponse } from '../types';
 import { getCoins } from './selectors';
+import { displayAlertActionTypes } from '../display-alert';
+import { AlertColor } from '@mui/material';
 
 const deviceTokenCollection = collection(db, DEVICE_TOKEN_DB);
+
+// get user's coin portfolio, then grab coin unique identifiers > 'coin' prop
+export function* getCoinIDSFromPortfolio(email: string): any {
+  if (!email) return [];
+  const coinDbRef = collection(db, COIN_DB);
+  const coinsQuery = query(coinDbRef, where('user', '==', email));
+  // get list from `coin` collection of user's coins from firebase/firestore
+  const userCryptoListResults = yield call(getDocs, coinsQuery);
+  if (!userCryptoListResults.docs?.length) return [];
+  const coinIDList: FirestoreCoin[] = [];
+  userCryptoListResults.forEach((doc: any) =>
+    coinIDList.push(doc?.data()?.coin)
+  );
+  return coinIDList;
+}
 
 function* getDeviceTokenSaga({ payload: email }: { payload: string }): any {
   yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
@@ -177,13 +194,24 @@ function* removeCoinSaga({ payload }: { payload: CoinAction }): any {
       payload: filteredCoins
     });
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
-  } catch (e: any) {
-    //  TODO: implement error handler
     yield put({
-      type: portfolioActionTypes.REMOVE_COIN_FAILED,
-      payload: e.toString()
+      type: displayAlertActionTypes.INIT_ALERT,
+      payload: {
+        open: true,
+        message: `Successfully removed coin from portfolio.`,
+        severity: 'success' as AlertColor
+      }
     });
+  } catch (e: any) {
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
+    yield put({
+      type: displayAlertActionTypes.INIT_ALERT,
+      payload: {
+        open: true,
+        message: e.toString(),
+        severity: 'error' as AlertColor
+      }
+    });
   }
 }
 function* takeProfitSaga({ payload }: { payload: CoinAction }): any {
@@ -198,13 +226,24 @@ function* takeProfitSaga({ payload }: { payload: CoinAction }): any {
       payload: filteredCoins
     });
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
-  } catch (e: any) {
-    //  TODO: implement error handler
     yield put({
-      type: portfolioActionTypes.TAKE_PROFIT_FAILED,
-      payload: e.toString()
+      type: displayAlertActionTypes.INIT_ALERT,
+      payload: {
+        open: true,
+        message: `Successfully took coin profits.`,
+        severity: 'success' as AlertColor
+      }
     });
+  } catch (e: any) {
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
+    yield put({
+      type: displayAlertActionTypes.INIT_ALERT,
+      payload: {
+        open: true,
+        message: e.toString(),
+        severity: 'error' as AlertColor
+      }
+    });
   }
 }
 

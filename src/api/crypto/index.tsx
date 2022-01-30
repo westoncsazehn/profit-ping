@@ -22,7 +22,7 @@ export const getCryptoList = (
   }
   return gecko.get(`coins/markets?${params.toString()}`);
 };
-// TODO: add throw error logic with display alert functionality
+
 export const getCryptoHistory = (
   crypto: string,
   date: string
