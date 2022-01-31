@@ -6,7 +6,8 @@ const initialAddCoinState = {
     coin: '',
     initialDate: new Date(),
     initialInvestment: 0,
-    targetMultiplier: 1.5
+    targetMultiplier: 1.5,
+    error: null
   }
 };
 
@@ -17,10 +18,11 @@ export const addCoinReducer = (
     payload
   }: { type: keyof typeof addCoinActionTypes; payload: FirestoreCoin }
 ) => {
-  switch (type) {
-    case addCoinActionTypes.SET_SELECTED_COIN:
-      return { ...state, selectedCoin: { ...payload } };
-    default:
-      return state;
+  if (addCoinActionTypes.SET_SELECTED_COIN === type) {
+    return { ...state, selectedCoin: { ...state.selectedCoin, ...payload } };
+  } else if (addCoinActionTypes.SET_DEFAULT_SELECTED_COIN === type) {
+    return initialAddCoinState;
+  } else {
+    return state;
   }
 };

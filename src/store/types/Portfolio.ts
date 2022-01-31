@@ -9,14 +9,21 @@ export type BasePortfolioCoin = {
 };
 export type PortfolioTableCoin = BasePortfolioCoin & {
   quantity: number; // amount of coins
-  initial: ReactNode; // $initial amount (quantity * history price)
+  initialUSD: ReactNode;// $initial amount (quantity * history price)
+  initialUSDSortValue: number;
   target: ReactNode; // $current price / $target multi price
   multiplier: ReactNode; // current multi / target multi
+  multiplierSortValue: number;
   gain: ReactNode; // current price - history price
+  gainSortValue: number;
   initialDate: string;
+  initialDateSortValue: number;
   inProfit: boolean;
   action?: ReactNode;
 };
+export type SortableDataType = {
+  initialPrice: number
+}
 export type PortfolioCoinsResponse = BasePortfolioCoin & {
   initialDate: Date;
   initialInvestment: number;

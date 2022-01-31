@@ -6,18 +6,39 @@ import {
   collection,
   Timestamp,
   updateDoc,
-  getDoc,
-  doc,
-  where
+  doc
 } from 'firebase/firestore';
+import { AlertColor } from '@mui/material';
 // local
 import { addCoinActionTypes } from './actions';
-import { COIN_DB, db, getCryptoHistory } from '../../api';
+import { COIN_DB, db, getCryptoHistory, getCryptoList } from '../../api';
 import { loadingActionTypes } from '../loading';
-import { FirestoreAddCoin, FirestoreCoin } from '../types';
+import { BasePortfolioCoin, FirestoreAddCoin, FirestoreCoin } from '../types';
 import { displayAlertActionTypes } from '../display-alert';
-import { AlertColor } from '@mui/material';
 import { getCoinByID } from '../portfolio';
+
+function* getCurrentPriceByCoinID(coin: string): any {
+  const { data } = yield call(getCryptoList, coin);
+  const coinData: BasePortfolioCoin = data.find(
+    (item: BasePortfolioCoin) => item.id === coin
+  );
+  return coinData?.current_price || 0;
+}
+
+function* checkIfInProfit(
+  coin: string,
+  historyPrice: number,
+  quantity: number,
+  multiplier: number
+): Generator<boolean> {
+  // @ts-ignore
+  const currentPrice: number = yield getCurrentPriceByCoinID(coin);
+  if (0 === currentPrice) {
+    return false;
+  }
+  const qm: number = quantity * multiplier;
+  return currentPrice * qm >= historyPrice * qm;
+}
 
 function* addCoinSaga({
   payload: { coin: payloadCoin, email }
@@ -37,30 +58,46 @@ function* addCoinSaga({
       }
     } = historyItem?.data;
     const initialPricePerCoin: number = Number(initialPriceUSD.toFixed(2));
-    yield call(addDoc, collection(db, COIN_DB), {
-      user: email,
+    const isInProfit: boolean = yield checkIfInProfit(
       coin,
-      initialDate: Timestamp.fromDate(new Date(initialDate)),
+      initialPriceUSD,
       initialInvestment,
-      targetMultiplier,
-      initialPricePerCoin
-    });
-    // yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    yield window?.history?.back();
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
-        open: true,
-        message: `Successfully added coin: ${coin} to portfolio.`,
-        severity: 'success' as AlertColor
-      }
-    });
+      targetMultiplier
+    );
+    if (isInProfit) {
+      yield put({
+        type: addCoinActionTypes.SET_SELECTED_COIN,
+        payload: {
+          error: `${coin} is already in profit based on ${targetMultiplier}x multiplier.`
+        }
+      });
+      yield put({ type: loadingActionTypes.SET_IS_LOADING });
+    } else {
+      yield call(addDoc, collection(db, COIN_DB), {
+        user: email,
+        coin,
+        initialDate: Timestamp.fromDate(new Date(initialDate)),
+        initialInvestment,
+        targetMultiplier,
+        initialPricePerCoin
+      });
+      yield window?.history?.back();
+      yield put({
+        type: displayAlertActionTypes.INIT_ALERT,
+        payload: {
+          open: true,
+          message: `Successfully added coin: ${coin} to portfolio.`,
+          severity: 'success' as AlertColor
+        }
+      });
+    }
   } catch (error: any) {
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
     yield put({
       type: displayAlertActionTypes.INIT_ALERT,
       payload: {
         open: true,
-        message: `Error adding coin to portfolio.`,
+        message: error.toString(),
         severity: 'error' as AlertColor
       }
     });
@@ -122,9 +159,15 @@ function* getPortfolioCoinSaga({
   };
 }): any {
   try {
-    const payload = yield getCoinByID(id, email);
-    payload.initialDate = payload.initialDate.toDate();
-    yield put({ type: addCoinActionTypes.SET_SELECTED_COIN, payload });
+    if (!id) {
+      yield put({
+        type: addCoinActionTypes.SET_DEFAULT_SELECTED_COIN
+      });
+    } else {
+      const payload = yield getCoinByID(id, email);
+      payload.initialDate = payload.initialDate.toDate();
+      yield put({ type: addCoinActionTypes.SET_SELECTED_COIN, payload });
+    }
   } catch (e: any) {
     yield put({
       type: displayAlertActionTypes.INIT_ALERT,

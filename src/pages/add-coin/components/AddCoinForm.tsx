@@ -97,6 +97,11 @@ export const AddCoinForm = ({
           Add a coin to track and set a multiplier. When the multiplier is hit,
           we will notify you.
         </Typography>
+        {selectedCoin?.error ? (
+          <Typography align="center" color="error">
+            {selectedCoin?.error}
+          </Typography>
+        ) : null}
         <Formik
           enableReinitialize
           initialValues={selectedCoin}

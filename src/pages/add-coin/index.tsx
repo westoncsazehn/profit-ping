@@ -1,6 +1,7 @@
 // 3rd party libraries
 import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { useParams } from 'react-router-dom';
 // local
 import { UserContext } from '../../api';
 import {
@@ -16,7 +17,6 @@ import {
 } from '../../store';
 import { AddCoinForm } from './components';
 import { getList } from '../../store';
-import { useParams } from 'react-router-dom';
 
 const mapDispatchToProps = (dispatch: any) => ({
   setIsLoading: (isLoading?: boolean) => dispatch(setIsLoading(isLoading)),
@@ -55,7 +55,7 @@ export const AddCoinPage = ({
 
   // if param id, get user's portfolio coin data
   useEffect(() => {
-    if (id?.length && email) getPortfolioCoin(id, email);
+    if (email) getPortfolioCoin(id, email);
   }, []);
 
   const onAddCoin = (coin: FirestoreAddCoin) => {

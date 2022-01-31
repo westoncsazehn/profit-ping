@@ -1,11 +1,19 @@
 //3rd party
 import React from 'react';
-import { format } from 'date-fns';
+import { format, getTime } from 'date-fns';
 import { ReactNode } from 'react';
-import { Typography } from '@mui/material';
+import { styled, Typography } from '@mui/material';
 // local
 import { PortfolioCoinsResponse, PortfolioTableCoin } from '../../store';
 
+const StyledTypography = styled(Typography)(() => ({
+  display: 'inline-block'
+}));
+const StyledDividerTypography = styled('span')(() => ({
+  padding: '0 5px',
+  display: 'inline-block'
+}));
+const Divider = () => <StyledDividerTypography>/</StyledDividerTypography>;
 const toUSD = (value: string | number): string =>
   `$${Number(value).toFixed(2)}`;
 const getCompareTypography = (
@@ -19,7 +27,7 @@ const getCompareTypography = (
   const formattedValue: string =
     isUSD || isX ? displayValue.toFixed(2) : String(displayValue);
   return (
-    <Typography
+    <StyledTypography
       color={
         isClosing
           ? 'text.primary'
@@ -27,18 +35,18 @@ const getCompareTypography = (
           ? 'text.primary'
           : 'success.main'
       }>
-      {isClosing ? '/' : ''}
+      {isClosing ? <Divider /> : null}
       {isUSD ? '$' : ''}
       {formattedValue}
       {isX ? 'x' : ''}
-    </Typography>
+    </StyledTypography>
   );
 };
 const getGain = (value: number): ReactNode => (
-  <Typography
+  <StyledTypography
     color={value > 0 ? 'success.main' : value < 0 ? 'error' : 'text.primary'}>
     {toUSD(value)}
-  </Typography>
+  </StyledTypography>
 );
 const getTarget = (
   value: number,
@@ -74,14 +82,22 @@ export const getFormattedTableValues = (
       initialDate.toDate(),
       'MM-dd-yyyy'
     );
+    const initialPrice: number = historyPrice * initialInvestment;
+    const gainValue: number = currentPriceInUSD - historyPriceInUSD;
+    // TODO: getTime based on initialDate value
+    const dateSortValue: number = getTime(new Date());
     return {
       ...coin,
       quantity: initialInvestment,
-      initial: toUSD(historyPrice * initialInvestment),
+      initialUSD: toUSD(initialPrice),
+      initialUSDSortValue: initialPrice,
       target: getTarget(currentPriceInUSD, targetInUSD, true),
       multiplier: getTarget(currentMultiplier, targetMultiplier, false, true),
-      gain: getGain(currentPriceInUSD - historyPriceInUSD),
+      multiplierSortValue: targetMultiplier,
+      gain: getGain(gainValue),
+      gainSortValue: gainValue,
       initialDate: initialDateString,
+      initialDateSortValue: dateSortValue,
       inProfit: currentPriceInUSD - historyPriceInUSD > 0
     };
   });

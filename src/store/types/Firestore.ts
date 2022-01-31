@@ -7,4 +7,5 @@ export type FirestoreAddCoin = {
 };
 export type FirestoreCoin = FirestoreAddCoin & {
   initialPricePerCoin: number;
+  error?: string;
 };

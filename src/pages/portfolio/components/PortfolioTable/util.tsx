@@ -1,22 +1,25 @@
 // 3rd party
 import React from 'react';
 import { Avatar, Box, CardHeader, IconButton, TableCell } from '@mui/material';
-import {Close, Edit, PriceCheck} from '@mui/icons-material';
+import { Close, Edit, PriceCheck } from '@mui/icons-material';
 // local
 import { HeaderItem, PortfolioTableCoin } from '../../../../store';
 
 export const headerItems: HeaderItem[] = [
   {
     label: 'Coin',
-    value: 'name'
+    value: 'name',
+    sortKey: 'name'
   },
   {
     label: 'Quantity',
-    value: 'quantity'
+    value: 'quantity',
+    sortKey: 'quantity'
   },
   {
     label: 'Initial Investment',
-    value: 'initial'
+    value: 'initialUSD',
+    sortKey: 'initialUSDSortValue'
   },
   {
     label: 'Initial Date',
@@ -24,15 +27,17 @@ export const headerItems: HeaderItem[] = [
   },
   {
     label: 'Target',
-    value: 'target' // current price / target multiplier price
+    value: 'target'
   },
   {
     label: 'Gain',
-    value: 'gain'
+    value: 'gain',
+    sortKey: 'gainSortValue'
   },
   {
     label: 'Multiplier',
-    value: 'multiplier' // current multi / target multi
+    value: 'multiplier',
+    sortKey: 'multiplierSortValue'
   },
   {
     label: 'Action',
@@ -62,6 +67,12 @@ export const getCoinActionContent = (
   return (
     <>
       <Box>
+        <IconButton
+          color="inherit"
+          aria-label="edit coin"
+          onClick={() => onEditCoin(coin)}>
+          <Edit />
+        </IconButton>
         {isInProfit ? (
           <IconButton
             color="success"
@@ -70,12 +81,6 @@ export const getCoinActionContent = (
             <PriceCheck />
           </IconButton>
         ) : null}
-        <IconButton
-            color="primary"
-            aria-label="edit coin"
-            onClick={() => onEditCoin(coin)}>
-          <Edit />
-        </IconButton>
         <IconButton
           color="error"
           aria-label="remove coin"
