@@ -2,6 +2,7 @@
 import React from 'react';
 // local
 import {
+  AddCoinStateType,
   CryptoApiStateType,
   DisplayAlertType,
   FBUser,
@@ -15,4 +16,5 @@ export type AppState = {
   loader: LoaderType;
   displayAlert: DisplayAlertType;
   cryptoApi: CryptoApiStateType;
+  addCoin: AddCoinStateType;
 };

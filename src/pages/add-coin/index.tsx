@@ -9,7 +9,10 @@ import {
   setIsLoading,
   FirestoreAddCoin,
   AppState,
-  BasePortfolioCoin
+  BasePortfolioCoin,
+  FirestoreCoin,
+  getPortfolioCoin,
+  updateCoin
 } from '../../store';
 import { AddCoinForm } from './components';
 import { getList } from '../../store';
@@ -17,19 +20,32 @@ import { useParams } from 'react-router-dom';
 
 const mapDispatchToProps = (dispatch: any) => ({
   setIsLoading: (isLoading?: boolean) => dispatch(setIsLoading(isLoading)),
-  getList: (email: string, id: string = '') => dispatch(getList(email, id)),
   addCoin: (coin: FirestoreAddCoin, email: string) =>
-    dispatch(addCoin(coin, email))
+    dispatch(addCoin(coin, email)),
+  updateCoin: (coin: FirestoreAddCoin, email: string) =>
+    dispatch(updateCoin(coin, email)),
+  getList: (email: string, id: string = '') => dispatch(getList(email, id)),
+  getPortfolioCoin: (id: string, email: string) =>
+    dispatch(getPortfolioCoin(id, email))
 });
-const mapStateToProps = ({ cryptoApi }: AppState) => cryptoApi;
+const mapStateToProps = ({ cryptoApi, addCoin }: AppState) => ({
+  ...cryptoApi,
+  ...addCoin
+});
 export const AddCoinPage = ({
   cryptoList,
   addCoin,
-  getList
+  updateCoin,
+  getList,
+  getPortfolioCoin,
+  selectedCoin
 }: {
   cryptoList: BasePortfolioCoin[];
   addCoin: any;
+  updateCoin: any;
   getList: any;
+  getPortfolioCoin: any;
+  selectedCoin: FirestoreCoin;
 }) => {
   const { email } = useContext<FBUser>(UserContext);
   const { id = '' } = useParams();
@@ -37,14 +53,23 @@ export const AddCoinPage = ({
   // get list of coins for add coin form
   useEffect(() => getList(email, id), []);
 
+  // if param id, get user's portfolio coin data
+  useEffect(() => {
+    if (id?.length && email) getPortfolioCoin(id, email);
+  }, []);
+
   const onAddCoin = (coin: FirestoreAddCoin) => {
     if (email && coin) {
-      addCoin(coin, email);
+      id ? updateCoin(coin, email) : addCoin(coin, email);
     }
   };
   return (
     <>
-      <AddCoinForm coins={cryptoList} addCoin={onAddCoin} selectedCoin={id} />
+      <AddCoinForm
+        coins={cryptoList}
+        addCoin={onAddCoin}
+        selectedCoin={selectedCoin}
+      />
     </>
   );
 };

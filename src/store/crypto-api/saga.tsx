@@ -22,7 +22,7 @@ function* getListSaga({
     const { data }: { data: BasePortfolioCoin[] } = yield call(getCryptoList);
     const filteredCoinData =
       data?.filter((coin: BasePortfolioCoin) =>
-        id ? coin.id === id : !coinIDList.includes(coin.id)
+        Boolean(id) ? coin.id === id : !coinIDList.includes(coin.id)
       ) || [];
     yield put({
       type: cryptoAPIActionTypes.SET_LIST,

@@ -33,6 +33,26 @@ import { AlertColor } from '@mui/material';
 
 const deviceTokenCollection = collection(db, DEVICE_TOKEN_DB);
 
+export function* getCoinByID(
+  id: string,
+  email: string,
+  returnRef?: boolean
+): any {
+  if (!id) return null;
+  const coinDbRef = collection(db, COIN_DB);
+  const coinsQuery = query(
+    coinDbRef,
+    where('user', '==', email),
+    where('coin', '==', id),
+    limit(1)
+  );
+  const results = yield call(getDocs, coinsQuery);
+  if (!results.docs?.length) return null;
+  const coinList: FirestoreCoin[] = [];
+  results.forEach((doc: any) => coinList.push(returnRef ? doc : doc?.data()));
+  return (coinList && coinList[0]) || null;
+}
+
 // get user's coin portfolio, then grab coin unique identifiers > 'coin' prop
 export function* getCoinIDSFromPortfolio(email: string): any {
   if (!email) return [];

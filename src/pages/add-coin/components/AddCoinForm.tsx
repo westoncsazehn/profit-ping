@@ -29,7 +29,11 @@ import {
   addDays
 } from 'date-fns';
 // local
-import { FirestoreAddCoin, BasePortfolioCoin } from '../../../store';
+import {
+  FirestoreAddCoin,
+  BasePortfolioCoin,
+  FirestoreCoin
+} from '../../../store';
 import { DatePicker } from './DatePicker';
 
 const coinError: string = 'A coin must be selected';
@@ -76,9 +80,8 @@ export const AddCoinForm = ({
 }: {
   coins: BasePortfolioCoin[];
   addCoin: (coin: FirestoreAddCoin) => void;
-  selectedCoin?: string;
+  selectedCoin: FirestoreCoin;
 }) => {
-  const initialDate: Date = new Date();
   return coins?.length ? (
     <Container>
       <Box
@@ -96,12 +99,7 @@ export const AddCoinForm = ({
         </Typography>
         <Formik
           enableReinitialize
-          initialValues={{
-            coin: coins[0].id,
-            initialDate,
-            initialInvestment: 0,
-            targetMultiplier: 1.5
-          }}
+          initialValues={selectedCoin}
           validationSchema={AddCoinSchema}
           onSubmit={(values) => addCoin(values)}>
           {({
@@ -130,7 +128,7 @@ export const AddCoinForm = ({
                   <Select
                     value={values.coin}
                     onChange={handleChange}
-                    disabled={Boolean(selectedCoin)}
+                    disabled={Boolean(selectedCoin?.coin)}
                     inputProps={{
                       name: 'coin',
                       id: 'coin'

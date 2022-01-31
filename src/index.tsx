@@ -16,7 +16,8 @@ import {
   userReducer,
   loadingReducer,
   displayAlertReducer,
-  cryptoApiReducer
+  cryptoApiReducer,
+  addCoinReducer
 } from './store';
 import portfolioSagas from './store/portfolio/saga';
 import userSagas from './store/user/saga';
@@ -29,7 +30,8 @@ const rootReducer = combineReducers({
   portfolio: portfolioReducer,
   loader: loadingReducer,
   displayAlert: displayAlertReducer,
-  cryptoApi: cryptoApiReducer
+  cryptoApi: cryptoApiReducer,
+  addCoin: addCoinReducer
 });
 
 // combine all sagas
