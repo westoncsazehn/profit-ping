@@ -52,7 +52,6 @@ export const AddCoinPage = ({
 
   // get list of coins for add coin form
   useEffect(() => getList(email, id), []);
-
   // if param id, get user's portfolio coin data
   useEffect(() => {
     if (email) getPortfolioCoin(id, email);

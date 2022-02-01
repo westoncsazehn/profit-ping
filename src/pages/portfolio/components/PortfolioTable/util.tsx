@@ -1,7 +1,7 @@
 // 3rd party
 import React from 'react';
 import { Avatar, Box, CardHeader, IconButton, TableCell } from '@mui/material';
-import { Close, Edit, PriceCheck } from '@mui/icons-material';
+import { AlarmOff, Edit } from '@mui/icons-material';
 // local
 import { HeaderItem, PortfolioTableCoin } from '../../../../store';
 
@@ -9,7 +9,7 @@ export const headerItems: HeaderItem[] = [
   {
     label: 'Coin',
     value: 'name',
-    sortKey: 'name'
+    sortKey: 'nameSortValue'
   },
   {
     label: 'Quantity',
@@ -57,12 +57,10 @@ export const getCoinNameCellContent = (coin: PortfolioTableCoin) => (
 type CoinActions = {
   onRemoveCoin: (coin: PortfolioTableCoin) => void;
   onEditCoin: (coin: PortfolioTableCoin) => void;
-  onTakeProfit: (coin: PortfolioTableCoin) => void;
 };
 export const getCoinActionContent = (
   coin: PortfolioTableCoin,
-  { onRemoveCoin, onEditCoin, onTakeProfit }: CoinActions,
-  isInProfit: boolean
+  { onRemoveCoin, onEditCoin }: CoinActions
 ) => {
   return (
     <>
@@ -73,19 +71,11 @@ export const getCoinActionContent = (
           onClick={() => onEditCoin(coin)}>
           <Edit />
         </IconButton>
-        {isInProfit ? (
-          <IconButton
-            color="success"
-            aria-label="take coin's profit"
-            onClick={() => onTakeProfit(coin)}>
-            <PriceCheck />
-          </IconButton>
-        ) : null}
         <IconButton
-          color="error"
+          color="inherit"
           aria-label="remove coin"
           onClick={() => onRemoveCoin(coin)}>
-          <Close />
+          <AlarmOff />
         </IconButton>
       </Box>
     </>
@@ -101,7 +91,7 @@ export const getTableCellContent = (
     key === 'name' ? (
       getCoinNameCellContent(coin)
     ) : key === 'action' ? (
-      getCoinActionContent(coin, actions, Boolean(coin?.inProfit))
+      getCoinActionContent(coin, actions)
     ) : (
       <>{coin[key]}</>
     );

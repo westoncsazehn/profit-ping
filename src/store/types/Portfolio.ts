@@ -1,3 +1,4 @@
+// 3rd party
 import { ReactNode } from 'react';
 
 export type BasePortfolioCoin = {
@@ -8,8 +9,9 @@ export type BasePortfolioCoin = {
   current_price?: number;
 };
 export type PortfolioTableCoin = BasePortfolioCoin & {
+  nameSortValue: string;
   quantity: number; // amount of coins
-  initialUSD: ReactNode;// $initial amount (quantity * history price)
+  initialUSD: ReactNode; // $initial amount (quantity * history price)
   initialUSDSortValue: number;
   target: ReactNode; // $current price / $target multi price
   multiplier: ReactNode; // current multi / target multi
@@ -21,18 +23,10 @@ export type PortfolioTableCoin = BasePortfolioCoin & {
   inProfit: boolean;
   action?: ReactNode;
 };
-export type SortableDataType = {
-  initialPrice: number
-}
-export type PortfolioCoinsResponse = BasePortfolioCoin & {
-  initialDate: Date;
-  initialInvestment: number;
-  targetMultiplier: number;
-  historyPrice: number;
-  currentPrice: number;
-};
+export type SortByType = { sortKey: string; direction: string };
 export type Portfolio = {
-  coins: PortfolioCoinsResponse[];
+  coins: PortfolioTableCoin[];
+  sortBy: SortByType;
   userDeviceToken: string;
 };
 // used to remove & take profits for a coin

@@ -1,8 +1,9 @@
+// 3rd party
+import { createContext } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
-import { createContext } from 'react';
 import { getMessaging } from 'firebase/messaging';
 
 const {

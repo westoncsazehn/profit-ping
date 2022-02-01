@@ -1,3 +1,4 @@
+// local
 import { FBUser } from '../types';
 
 export const userActionTypes = {

@@ -1,4 +1,4 @@
-import { CoinAction } from '../types';
+import { CoinAction, SortByType } from '../types';
 
 export const portfolioActionTypes = {
   GET_DEVICE_TOKEN: 'GET_DEVICE_TOKEN',
@@ -15,7 +15,8 @@ export const portfolioActionTypes = {
   REMOVE_COIN_FAILED: 'REMOVE_COIN_FAILED',
   TAKE_PROFIT: 'TAKE_PROFIT',
   TAKE_PROFIT_SUCCESS: 'TAKE_PROFIT_SUCCESS',
-  TAKE_PROFIT_FAILED: 'TAKE_PROFIT_FAILED'
+  TAKE_PROFIT_FAILED: 'TAKE_PROFIT_FAILED',
+  SORT_CRYPTO_LIST: 'SORT_CRYPTO_LIST'
 };
 
 export const getDeviceToken = (userEmail: string) => ({
@@ -33,7 +34,7 @@ export const removeCoin = (coinAction: CoinAction) => ({
   type: portfolioActionTypes.REMOVE_COIN,
   payload: coinAction
 });
-export const takeProfit = (coinAction: CoinAction) => ({
-  type: portfolioActionTypes.TAKE_PROFIT,
-  payload: coinAction
+export const sortCryptoList = (sortBy: SortByType) => ({
+  type: portfolioActionTypes.SORT_CRYPTO_LIST,
+  payload: sortBy
 });

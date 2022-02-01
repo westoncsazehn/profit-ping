@@ -13,6 +13,7 @@ import {
 import { getToken } from 'firebase/messaging';
 import { QueryDocumentSnapshot } from '@firebase/firestore';
 import { format } from 'date-fns';
+import { AlertColor } from '@mui/material';
 // local
 import { portfolioActionTypes } from './actions';
 import {
@@ -26,10 +27,10 @@ import {
 import { getUserEmail } from '../user';
 import { getFormattedUserCoinsList } from './modifiers';
 import { loadingActionTypes } from '../loading';
-import { CoinAction, FirestoreCoin, PortfolioCoinsResponse } from '../types';
+import { CoinAction, FirestoreCoin, PortfolioTableCoin } from '../types';
 import { getCoins } from './selectors';
 import { displayAlertActionTypes } from '../display-alert';
-import { AlertColor } from '@mui/material';
+import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_KEY } from './reducer';
 
 const deviceTokenCollection = collection(db, DEVICE_TOKEN_DB);
 
@@ -163,15 +164,18 @@ function* getUsersCryptoListSaga({
       )
     );
     // get PortfolioTableCoin formatted data from all lists: user, gecko: current & history
-    const userCoinPortfolio: PortfolioCoinsResponse[] =
-      getFormattedUserCoinsList(
-        userCryptoList,
-        geckoCoinList,
-        geckoCoinHistoryList
-      );
+    const userCoinPortfolio: PortfolioTableCoin[] = getFormattedUserCoinsList(
+      userCryptoList,
+      geckoCoinList,
+      geckoCoinHistoryList
+    );
     yield put({
       type: portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS,
       payload: userCoinPortfolio
+    });
+    yield put({
+      type: portfolioActionTypes.SORT_CRYPTO_LIST,
+      payload: { sortKey: DEFAULT_SORT_KEY, direction: DEFAULT_SORT_DIRECTION }
     });
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
     // TODO: add alert for error
@@ -207,7 +211,7 @@ function* removeCoinSaga({ payload }: { payload: CoinAction }): any {
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
     const { id, user } = payload;
     yield deleteDocument(id, user);
-    const coins: PortfolioCoinsResponse[] = yield select(getCoins);
+    const coins: PortfolioTableCoin[] = yield select(getCoins);
     const filteredCoins = coins.filter((coin) => coin.id !== id);
     yield put({
       type: portfolioActionTypes.REMOVE_COIN_SUCCESS,
@@ -219,38 +223,6 @@ function* removeCoinSaga({ payload }: { payload: CoinAction }): any {
       payload: {
         open: true,
         message: `Successfully removed coin from portfolio.`,
-        severity: 'success' as AlertColor
-      }
-    });
-  } catch (e: any) {
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
-        open: true,
-        message: e.toString(),
-        severity: 'error' as AlertColor
-      }
-    });
-  }
-}
-function* takeProfitSaga({ payload }: { payload: CoinAction }): any {
-  try {
-    yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
-    const { id, user } = payload;
-    yield deleteDocument(id, user);
-    const coins: PortfolioCoinsResponse[] = yield select(getCoins);
-    const filteredCoins = coins.filter((coin) => coin.id !== id);
-    yield put({
-      type: portfolioActionTypes.TAKE_PROFIT_SUCCESS,
-      payload: filteredCoins
-    });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
-        open: true,
-        message: `Successfully took coin profits.`,
         severity: 'success' as AlertColor
       }
     });
@@ -279,9 +251,7 @@ function* portfolioSagas() {
       getUsersCryptoListSaga
     ),
     // @ts-ignore
-    takeEvery(portfolioActionTypes.REMOVE_COIN, removeCoinSaga),
-    // @ts-ignore
-    takeEvery(portfolioActionTypes.TAKE_PROFIT, takeProfitSaga)
+    takeEvery(portfolioActionTypes.REMOVE_COIN, removeCoinSaga)
   ]);
 }
 

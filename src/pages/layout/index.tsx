@@ -40,10 +40,15 @@ const menuStyle = {
   boxShadow: 'none',
   color: 'black'
 };
+const StyledImageLogo = styled('img')(() => ({
+  width: '100px',
+  verticalAlign: 'middle'
+}));
 const StyledLink = styled(Link)(() => ({
   textDecoration: 'none',
   color: 'black'
 }));
+const PROFIT_PING_LOGO_PATH: string = 'profit-ping-logo-small.png';
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => ({
   signInUser: () => dispatch(signInUser()),
@@ -94,7 +99,12 @@ export const Layout = ({
                 <Toolbar>
                   <Box sx={{ flexGrow: 1 }}>
                     <Button variant="text">
-                      <StyledLink to="/">PROFIT PING</StyledLink>
+                      <StyledLink to="/">
+                        <StyledImageLogo
+                          alt="Profit Ping Logo"
+                          src={PROFIT_PING_LOGO_PATH}
+                        />
+                      </StyledLink>
                     </Button>
                   </Box>
                   <Box sx={{ flexGrow: 0 }}>
@@ -126,7 +136,7 @@ export const Layout = ({
             <Container>
               <Toolbar sx={{ padding: '0px !important' }}>
                 <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6">/ {page}</Typography>
+                  <Typography variant="h6">{page}</Typography>
                 </Box>
                 <Box sx={{ flexGrow: 0, float: 'right' }}>
                   <FormGroup>

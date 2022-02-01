@@ -1,3 +1,4 @@
+// 3rd party
 import { AlertColor } from '@mui/material';
 
 export type DisplayAlertType = {

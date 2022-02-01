@@ -37,7 +37,11 @@ function* checkIfInProfit(
     return false;
   }
   const qm: number = quantity * multiplier;
-  return currentPrice * qm >= historyPrice * qm;
+  const currentMultiplier: number = (currentPrice * qm) / (historyPrice * qm);
+  if (currentMultiplier >= multiplier) {
+    return `${coin} is already ${currentMultiplier.toFixed(2)}x in profit.`;
+  }
+  return false;
 }
 
 function* addCoinSaga({
@@ -58,17 +62,17 @@ function* addCoinSaga({
       }
     } = historyItem?.data;
     const initialPricePerCoin: number = Number(initialPriceUSD.toFixed(2));
-    const isInProfit: boolean = yield checkIfInProfit(
+    const inProfitMessage: boolean = yield checkIfInProfit(
       coin,
       initialPriceUSD,
       initialInvestment,
       targetMultiplier
     );
-    if (isInProfit) {
+    if (inProfitMessage) {
       yield put({
         type: addCoinActionTypes.SET_SELECTED_COIN,
         payload: {
-          error: `${coin} is already in profit based on ${targetMultiplier}x multiplier.`
+          error: inProfitMessage
         }
       });
       yield put({ type: loadingActionTypes.SET_IS_LOADING });

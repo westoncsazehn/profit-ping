@@ -1,7 +1,9 @@
+// 3rd party
 import React from 'react';
 import { all, call, put, takeEvery } from 'redux-saga/effects';
-import { userActionTypes } from './actions';
 import { signInWithPopup } from 'firebase/auth';
+// local
+import { userActionTypes } from './actions';
 import { auth, provider } from '../../api';
 
 function* signInUserSaga(): any {

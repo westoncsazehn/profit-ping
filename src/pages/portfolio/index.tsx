@@ -3,24 +3,24 @@ import React, { useContext, useEffect, useState } from 'react';
 import { onMessage } from 'firebase/messaging';
 import { connect } from 'react-redux';
 import Container from '@mui/material/Container';
+import { useNavigate } from 'react-router-dom';
 // local
 import { messaging, UserContext } from '../../api';
+import { ADD_COIN_URL } from '../meta-data/urls';
 import {
   CoinAction,
   PortfolioTableCoin,
   removeCoin,
-  takeProfit,
   addDeviceToken,
   getDeviceToken,
   getUsersCryptoList,
   FBUser,
   Portfolio,
-  AppState
+  AppState,
+  sortCryptoList,
+  SortByType
 } from '../../store';
 import { PortfolioTable } from './components';
-import { getFormattedTableValues } from './util';
-import { useNavigate } from 'react-router-dom';
-import {ADD_COIN_URL} from "../meta-data/urls";
 
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => {
@@ -29,7 +29,7 @@ const mapDispatchToProps = (dispatch: any) => {
     addDeviceToken: () => dispatch(addDeviceToken()),
     getUsersCryptoList: (email: string) => dispatch(getUsersCryptoList(email)),
     removeCoin: (coinAction: CoinAction) => dispatch(removeCoin(coinAction)),
-    takeProfit: (coinAction: CoinAction) => dispatch(takeProfit(coinAction))
+    sortCryptoList: (sortBy: SortByType) => dispatch(sortCryptoList(sortBy))
   };
 };
 const mapStateToProps = (state: AppState) => state;
@@ -39,20 +39,18 @@ const PortfolioPage = ({
   addDeviceToken,
   getUsersCryptoList,
   removeCoin,
-  takeProfit
+  sortCryptoList
 }: {
   portfolio: Portfolio;
   getUserDeviceToken: any;
   addDeviceToken: any;
   getUsersCryptoList: any;
   removeCoin: any;
-  takeProfit: any;
+  sortCryptoList: any;
 } & AppState) => {
   const user = useContext<FBUser>(UserContext);
   const navigate = useNavigate();
-  const { coins = [], userDeviceToken = '' } = portfolio;
-  const tableFormattedCoins: PortfolioTableCoin[] =
-    getFormattedTableValues(coins);
+  const { coins = [], userDeviceToken = '', sortBy } = portfolio;
   const [deviceToken] = useState<string>(userDeviceToken);
   const [hasGetDeviceTokenRan, setHasGetDeviceTokenRan] =
     useState<boolean>(false);
@@ -66,9 +64,10 @@ const PortfolioPage = ({
     const { id = '' } = coin;
     if (id && email) navigate(`/${ADD_COIN_URL}/${id}`);
   };
-  const onTakeProfit = (coin: PortfolioTableCoin) => {
-    const { id = '' } = coin;
-    if (id && email) takeProfit({ id, user: email });
+  const onSortBy = (sortBy: SortByType) => {
+    if (sortBy?.sortKey && sortBy?.direction) {
+      sortCryptoList(sortBy);
+    }
   };
 
   // get list of user's crypto with metadata
@@ -103,10 +102,11 @@ const PortfolioPage = ({
   return (
     <Container>
       <PortfolioTable
-        coins={tableFormattedCoins}
+        coins={coins}
         onRemoveCoin={onRemoveCoin}
-        onTakeProfit={onTakeProfit}
         onEditCoin={onEditCoin}
+        onSortBy={onSortBy}
+        sortBy={sortBy}
       />
     </Container>
   );
