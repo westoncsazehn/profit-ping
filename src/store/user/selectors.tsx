@@ -1,3 +1,3 @@
 import { AppState } from '../AppState';
 
-export const getUserEmail = ({ user }: AppState) => user?.email;
+export const getUserUID = ({ user }: AppState) => user?.uid;

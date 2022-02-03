@@ -18,7 +18,13 @@ import {
 import { AddCircle } from '@mui/icons-material';
 // local
 import { HeaderItem, PortfolioTableCoin, SortByType } from '../../../../store';
-import { getTableCellContent, headerItems, rowKeys } from './util';
+import {
+  getTableCellContent,
+  getTableHeaderTitle,
+  headerItems,
+  rowKeys
+} from './util';
+import { ADD_COIN_URL } from '../../../common/values';
 
 const StyledCaption = styled('caption')(() => ({ padding: '0' }));
 export const PortfolioTable = ({
@@ -52,14 +58,14 @@ export const PortfolioTable = ({
     <TableCell key={JSON.stringify(header)}>
       {header?.sortKey ? (
         <TableSortLabel
-          active={sortBy.sortKey === header.sortKey}
+          active={sortKey === header.sortKey}
           // @ts-ignore
           direction={direction as SortDirection}
           onClick={() => onSortHandler(header)}>
-          {header.label}
+          {getTableHeaderTitle(header)}
         </TableSortLabel>
       ) : (
-        header.label
+        getTableHeaderTitle(header)
       )}
     </TableCell>
   ));
@@ -85,7 +91,9 @@ export const PortfolioTable = ({
           <CardHeader
             sx={{ p: 0 }}
             avatar={
-              <IconButton color="default" onClick={() => navigate('/add-coin')}>
+              <IconButton
+                color="default"
+                onClick={() => navigate(`/${ADD_COIN_URL}`)}>
                 <AddCircle fontSize="medium" />
               </IconButton>
             }

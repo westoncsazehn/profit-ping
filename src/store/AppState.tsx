@@ -1,19 +1,17 @@
-// 3rd party
-import React from 'react';
 // local
 import {
   AddCoinStateType,
   CryptoApiStateType,
   DisplayAlertType,
   FBUser,
-  LoaderType,
+  LoaderState,
   Portfolio
 } from './types';
 
 export type AppState = {
   portfolio: Portfolio;
   user: FBUser;
-  loader: LoaderType;
+  loader: LoaderState;
   displayAlert: DisplayAlertType;
   cryptoApi: CryptoApiStateType;
   addCoin: AddCoinStateType;

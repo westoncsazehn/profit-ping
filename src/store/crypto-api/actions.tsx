@@ -3,7 +3,7 @@ export const cryptoAPIActionTypes = {
   SET_LIST: 'SET_LIST'
 };
 
-export const getList = (email: string, id: string = '') => ({
+export const getList = (uid: string, id: string = '') => ({
   type: cryptoAPIActionTypes.GET_LIST,
-  payload: { email, id }
+  payload: { uid, id }
 });

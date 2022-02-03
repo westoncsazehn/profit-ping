@@ -8,15 +8,15 @@ export const addCoinActionTypes = {
   SET_DEFAULT_SELECTED_COIN: 'SET_DEFAULT_SELECTED_COIN'
 };
 
-export const addCoin = (coin: FirestoreAddCoin, email: string) => ({
+export const addCoin = (coin: FirestoreAddCoin, uid: string) => ({
   type: addCoinActionTypes.ADD_COIN,
-  payload: { coin, email }
+  payload: { coin, uid }
 });
-export const updateCoin = (coin: FirestoreAddCoin, email: string) => ({
+export const updateCoin = (coin: FirestoreAddCoin, uid: string) => ({
   type: addCoinActionTypes.UPDATE_COIN,
-  payload: { coin, email }
+  payload: { coin, uid }
 });
-export const getPortfolioCoin = (id: string, email: string) => ({
+export const getPortfolioCoin = (id: string, uid: string) => ({
   type: addCoinActionTypes.GET_PORTFOLIO_COIN,
-  payload: {id, email}
+  payload: { id, uid }
 });

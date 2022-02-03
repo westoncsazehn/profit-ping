@@ -24,7 +24,7 @@ import {
   getCryptoList,
   messaging
 } from '../../api';
-import { getUserEmail } from '../user';
+import { getUserUID } from '../user';
 import { getFormattedUserCoinsList } from './modifiers';
 import { loadingActionTypes } from '../loading';
 import { CoinAction, FirestoreCoin, PortfolioTableCoin } from '../types';
@@ -36,14 +36,14 @@ const deviceTokenCollection = collection(db, DEVICE_TOKEN_DB);
 
 export function* getCoinByID(
   id: string,
-  email: string,
+  uid: string,
   returnRef?: boolean
 ): any {
   if (!id) return null;
   const coinDbRef = collection(db, COIN_DB);
   const coinsQuery = query(
     coinDbRef,
-    where('user', '==', email),
+    where('user', '==', uid),
     where('coin', '==', id),
     limit(1)
   );
@@ -55,10 +55,10 @@ export function* getCoinByID(
 }
 
 // get user's coin portfolio, then grab coin unique identifiers > 'coin' prop
-export function* getCoinIDSFromPortfolio(email: string): any {
-  if (!email) return [];
+export function* getCoinIDSFromPortfolio(uid: string): any {
+  if (!uid) return [];
   const coinDbRef = collection(db, COIN_DB);
-  const coinsQuery = query(coinDbRef, where('user', '==', email));
+  const coinsQuery = query(coinDbRef, where('user', '==', uid));
   // get list from `coin` collection of user's coins from firebase/firestore
   const userCryptoListResults = yield call(getDocs, coinsQuery);
   if (!userCryptoListResults.docs?.length) return [];
@@ -69,13 +69,13 @@ export function* getCoinIDSFromPortfolio(email: string): any {
   return coinIDList;
 }
 
-function* getDeviceTokenSaga({ payload: email }: { payload: string }): any {
+function* getDeviceTokenSaga({ payload: uid }: { payload: string }): any {
   yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
   try {
     let userDeviceToken: string = '';
     const userDeviceTokenQuery = query(
       deviceTokenCollection,
-      where('user', '==', email)
+      where('user', '==', uid)
     );
     const deviceTokenDocRef = yield call(getDocs, userDeviceTokenQuery);
     deviceTokenDocRef.forEach((doc: any) => {
@@ -94,7 +94,7 @@ function* getDeviceTokenSaga({ payload: email }: { payload: string }): any {
 function* addDeviceTokenSaga(): any {
   yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
   try {
-    const email: string = yield select(getUserEmail);
+    const uid: string = yield select(getUserUID);
     // TODO: set vapidKey to env config
     const deviceToken: string = yield call(getToken, messaging, {
       vapidKey:
@@ -102,7 +102,7 @@ function* addDeviceTokenSaga(): any {
     });
     const newDeviceToken = yield call(addDoc, collection(db, DEVICE_TOKEN_DB), {
       deviceToken,
-      user: email
+      user: uid
     });
     yield put({
       type: portfolioActionTypes.ADD_GET_DEVICE_TOKEN_SUCCESS,
@@ -125,16 +125,16 @@ const defaultResponse = {
 };
 
 function* getUsersCryptoListSaga({
-  payload: email
+  payload: uid
 }: {
   type: string;
   payload: string;
 }): any {
   yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
   try {
-    if (!email) yield put(defaultResponse);
+    if (!uid) yield put(defaultResponse);
     const coinDbRef = collection(db, COIN_DB);
-    const coinsQuery = query(coinDbRef, where('user', '==', email));
+    const coinsQuery = query(coinDbRef, where('user', '==', uid));
     // get list from `coin` collection of user's coins from firebase/firestore
     const userCryptoListResults = yield call(getDocs, coinsQuery);
     if (!userCryptoListResults.docs?.length) {

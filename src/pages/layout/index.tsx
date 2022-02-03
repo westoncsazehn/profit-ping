@@ -1,6 +1,6 @@
 // 3rd party
 import React, { useContext, useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import {
   AppBar,
@@ -19,17 +19,8 @@ import {
 import { connect } from 'react-redux';
 // local
 import { auth, UserContext } from '../../api';
-import { AddCoinPageRx } from '../add-coin';
-import { PortfolioPageRx } from '../portfolio';
-import {
-  AppState,
-  DisplayAlertType,
-  FBUser,
-  initAlert,
-  signInUser
-} from '../../store';
-import { SignInPageRx } from '../sign-in';
-import { ADD_COIN_URL, LOGIN_URL } from '../meta-data/urls';
+import { AppState, DisplayAlertType, FBUser, initAlert } from '../../store';
+import { ADD_COIN_URL, LOGIN_URL } from '../common/values';
 import { DisplayAlert } from '../components';
 
 const menuStyle = {
@@ -51,23 +42,22 @@ const StyledLink = styled(Link)(() => ({
 const PROFIT_PING_LOGO_PATH: string = 'profit-ping-logo-small.png';
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => ({
-  signInUser: () => dispatch(signInUser()),
   initAlert: (alert: DisplayAlertType) => dispatch(initAlert(alert))
 });
 const mapStateToProps = ({ displayAlert }: AppState) => ({ displayAlert });
 export const Layout = ({
-  signInUser,
   displayAlert: { open, message, severity },
-  initAlert
+  initAlert,
+  children
 }: {
-  signInUser: any;
   displayAlert: DisplayAlertType;
-  initAlert: any;
+  initAlert: ({ open }: any) => void;
+  children: React.ReactNode;
 }) => {
   const user = useContext<FBUser>(UserContext);
-  const { pathname = '' } = window?.location;
   const [page, setPage] = useState<string>('');
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(Boolean(user?.email));
+  const isLoggedIn: boolean = Boolean(user?.uid);
+  const { pathname = '' } = useLocation();
 
   useEffect(() => {
     if (open) {
@@ -78,104 +68,90 @@ export const Layout = ({
   }, [open]);
 
   useEffect(() => {
-    setPage(
-      pathname === LOGIN_URL
-        ? 'Login'
-        : pathname.includes(ADD_COIN_URL)
-        ? 'Add Coin'
-        : isLoggedIn
-        ? 'Portfolio'
-        : 'Sign In'
-    );
-  }, [pathname]);
+    let currenPath: string = '';
+    const path: string = pathname.replace(/\//g, '');
+    switch (path) {
+      case LOGIN_URL:
+        currenPath = 'LOGIN';
+        break;
+      case ADD_COIN_URL:
+        currenPath = 'ADD COIN';
+        break;
+      default:
+        currenPath = isLoggedIn ? 'PORTFOLIO' : 'SIGN IN';
+        break;
+    }
+    setPage(currenPath);
+  }, [isLoggedIn, pathname]);
 
   return (
     <>
-      <BrowserRouter>
-        {isLoggedIn ? (
-          <>
-            <AppBar position="static" sx={menuStyle}>
-              <Container maxWidth="xl">
-                <Toolbar>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Button variant="text">
-                      <StyledLink to="/">
-                        <StyledImageLogo
-                          alt="Profit Ping Logo"
-                          src={PROFIT_PING_LOGO_PATH}
-                        />
-                      </StyledLink>
-                    </Button>
-                  </Box>
-                  <Box sx={{ flexGrow: 0 }}>
-                    <CardHeader
-                      sx={{
-                        p: 0,
-                        flexDirection: 'row-reverse',
-                        '.MuiCardHeader-avatar': { marginRight: 'unset' }
-                      }}
-                      title={`Welcome${user ? ' ' + user.displayName : ''}!`}
-                      titleTypographyProps={{
-                        paddingRight: '10px'
-                      }}
-                      avatar={
-                        <Avatar
-                          alt={user?.displayName || ''}
-                          src={user?.photoURL || ''}
-                          sx={{
-                            display: 'relative',
-                            float: 'right'
-                          }}
-                        />
-                      }
-                    />
-                  </Box>
-                </Toolbar>
-              </Container>
-            </AppBar>
-            <Container>
-              <Toolbar sx={{ padding: '0px !important' }}>
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6">{page}</Typography>
-                </Box>
-                <Box sx={{ flexGrow: 0, float: 'right' }}>
-                  <FormGroup>
-                    <FormControlLabel
-                      value="end"
-                      control={<Switch color="primary" size="small" />}
-                      label={isLoggedIn ? 'Logout' : 'Login'}
-                      labelPlacement="end"
-                      onChange={async () => {
-                        setIsLoggedIn(false);
-                        await signOut(auth);
-                      }}
-                      checked={isLoggedIn}
-                      sx={{
-                        span: { fontSize: '0.8rem' }
-                      }}
-                    />
-                  </FormGroup>
-                </Box>
-              </Toolbar>
-            </Container>
-          </>
-        ) : null}
-        <DisplayAlert {...{ open, message, severity }} />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              isLoggedIn ? (
-                <PortfolioPageRx />
-              ) : (
-                <SignInPageRx onSignIn={signInUser} />
-              )
-            }
-          />
-          <Route path={`/${ADD_COIN_URL}`} element={<AddCoinPageRx />} />
-          <Route path={`/${ADD_COIN_URL}/:id`} element={<AddCoinPageRx />} />
-        </Routes>
-      </BrowserRouter>
+      <AppBar position="static" sx={menuStyle}>
+        <Container maxWidth="xl">
+          <Toolbar>
+            <Box sx={{ flexGrow: 1 }}>
+              <Button variant="text">
+                <StyledLink to="/">
+                  <StyledImageLogo
+                    alt="Profit Ping Logo"
+                    src={PROFIT_PING_LOGO_PATH}
+                  />
+                </StyledLink>
+              </Button>
+            </Box>
+            <Box sx={{ flexGrow: 0 }}>
+              <CardHeader
+                sx={{
+                  p: 0,
+                  flexDirection: 'row-reverse',
+                  '.MuiCardHeader-avatar': { marginRight: 'unset' },
+                  display: isLoggedIn ? 'flex' : 'none'
+                }}
+                title={`Welcome${user ? ' ' + user.displayName : ''}!`}
+                titleTypographyProps={{
+                  paddingRight: '10px'
+                }}
+                avatar={
+                  <Avatar
+                    alt={user?.displayName || ''}
+                    src={user?.photoURL || ''}
+                    sx={{
+                      float: 'right'
+                    }}
+                  />
+                }
+              />
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+      <Container>
+        <Toolbar sx={{ padding: '0px !important' }}>
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="h6">{page}</Typography>
+          </Box>
+          <Box sx={{ flexGrow: 0, float: 'right' }}>
+            <FormGroup>
+              <FormControlLabel
+                value="end"
+                control={<Switch color="primary" size="small" />}
+                label={isLoggedIn ? 'Logout' : 'Login'}
+                labelPlacement="end"
+                onChange={async () => {
+                  await signOut(auth);
+                }}
+                checked={isLoggedIn}
+                sx={{
+                  span: { fontSize: '0.8rem' },
+                  display: isLoggedIn ? 'inherit' : 'none'
+                }}
+              />
+            </FormGroup>
+          </Box>
+        </Toolbar>
+      </Container>
+      <DisplayAlert {...{ open, message, severity }} />
+      {children}
     </>
   );
 };

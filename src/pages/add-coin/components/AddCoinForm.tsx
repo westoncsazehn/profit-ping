@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   Avatar,
+  Grid,
   ListItemText,
   ListItemAvatar,
   TextField,
@@ -35,6 +36,8 @@ import {
   FirestoreCoin
 } from '../../../store';
 import { DatePicker } from './DatePicker';
+import { HelpOutline } from '@mui/icons-material';
+import { StyledTooltip } from '../../portfolio/components/PortfolioTable/styles';
 
 const coinError: string = 'A coin must be selected';
 const initialDateError: string =
@@ -72,6 +75,13 @@ const AddCoinSchema = yup.object().shape({
 const StyledFormControl = styled(FormControl)(() => ({
   paddingBottom: '3.25rem'
 }));
+export const StyledHelpOutline = styled(HelpOutline)(() => ({
+  fontSize: '0.75rem',
+  display: 'inline-block',
+  cursor: 'pointer',
+  marginLeft: '2px !important',
+  marginTop: '3px !important'
+}));
 
 export const AddCoinForm = ({
   coins,
@@ -93,7 +103,7 @@ export const AddCoinForm = ({
             paddingBottom: '25px'
           }
         }}>
-        <Typography align="center" sx={{ margin: '-25px 0 25px 0' }}>
+        <Typography align="center" sx={{ margin: '-25px 0 50px 0' }}>
           Add a coin to track and set a multiplier. When the multiplier is hit,
           we will notify you.
         </Typography>
@@ -125,103 +135,138 @@ export const AddCoinForm = ({
               errors.targetMultiplier || touched.targetMultiplier;
             return (
               <form onSubmit={handleSubmit}>
-                <StyledFormControl
-                  required
-                  fullWidth
-                  error={Boolean(coinErrors)}>
-                  <FormLabel>Select a coin</FormLabel>
-                  <Select
-                    value={values.coin}
-                    onChange={handleChange}
-                    disabled={Boolean(selectedCoin?.coin)}
-                    inputProps={{
-                      name: 'coin',
-                      id: 'coin'
-                    }}>
-                    {coins.slice().map((coin) => (
-                      <MenuItem value={coin.id} key={coin.id}>
-                        <ListItemAvatar
-                          sx={{ maxWidth: '57px', display: 'inline-block' }}>
-                          <Avatar
-                            alt={coin?.name || ''}
-                            src={coin?.image || ''}
-                          />
-                        </ListItemAvatar>
-                        <ListItemText
-                          sx={{ overflow: 'auto', display: 'inline-block' }}>
-                          {coin.name}
-                        </ListItemText>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <Typography color="error" component="p">
-                    {errors.coin}
-                  </Typography>
-                </StyledFormControl>
-                <StyledFormControl
-                  required
-                  fullWidth
-                  error={Boolean(initialDateErrors)}>
-                  <FormLabel>Initial date (date coin was acquired)</FormLabel>
-                  <DatePicker
-                    onDateChange={(value: any) =>
-                      handleChange({
-                        target: {
-                          value: value ? new Date(value) : null,
-                          name: 'initialDate'
+                <Grid container spacing={3}>
+                  <Grid item xs={6}>
+                    <StyledFormControl
+                      required
+                      fullWidth
+                      error={Boolean(coinErrors)}>
+                      <FormLabel>Select a coin</FormLabel>
+                      <Select
+                        value={values.coin}
+                        onChange={handleChange}
+                        disabled={Boolean(selectedCoin?.coin)}
+                        inputProps={{
+                          name: 'coin',
+                          id: 'coin'
+                        }}>
+                        {coins.slice().map((coin) => (
+                          <MenuItem value={coin.id} key={coin.id}>
+                            <ListItemAvatar
+                              sx={{
+                                maxWidth: '57px',
+                                display: 'inline-block'
+                              }}>
+                              <Avatar
+                                alt={coin?.name || ''}
+                                src={coin?.image || ''}
+                              />
+                            </ListItemAvatar>
+                            <ListItemText
+                              sx={{
+                                overflow: 'auto',
+                                display: 'inline-block'
+                              }}>
+                              {coin.name}
+                            </ListItemText>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <Typography color="error" component="p">
+                        {errors.coin}
+                      </Typography>
+                    </StyledFormControl>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <StyledFormControl
+                      required
+                      fullWidth
+                      error={Boolean(initialDateErrors)}>
+                      <Stack direction="row" spacing={1}>
+                        <FormLabel>Initial date</FormLabel>
+                        <StyledTooltip
+                          title="Date of initial coin purchase"
+                          placement="top"
+                          arrow>
+                          <StyledHelpOutline />
+                        </StyledTooltip>
+                      </Stack>
+                      <DatePicker
+                        onDateChange={(value: any) =>
+                          handleChange({
+                            target: {
+                              value: value ? new Date(value) : null,
+                              name: 'initialDate'
+                            }
+                          })
                         }
-                      })
-                    }
-                    value={values.initialDate}
-                    name="initialDate"
-                  />
-                  <Typography color="error" component="p">
-                    {errors.initialDate}
-                  </Typography>
-                </StyledFormControl>
-                <StyledFormControl
-                  required
-                  fullWidth
-                  error={Boolean(initialInvestmentErrors)}>
-                  <FormLabel>Initial amount of coins</FormLabel>
-                  <TextField
-                    id="initialInvestment"
-                    type="number"
-                    onChange={handleChange}
-                    autoComplete="off"
-                    value={values.initialInvestment}
-                  />
-                  <Typography color="error" component="p">
-                    {errors.initialInvestment}
-                  </Typography>
-                </StyledFormControl>
-                <StyledFormControl
-                  required
-                  fullWidth
-                  error={Boolean(multiplierErrors)}>
-                  <FormLabel>Select target multiplier</FormLabel>
-                  <Stack direction="row" spacing={2}>
-                    <Typography>{values.targetMultiplier + 'x'}</Typography>
-                    <Slider
-                      value={values.targetMultiplier}
-                      name="targetMultiplier"
-                      onChange={handleChange}
-                      step={0.25}
-                      min={1.5}
-                      max={10}
-                      marks
-                    />
-                  </Stack>
-                  <Typography color="error" component="p">
-                    {errors.targetMultiplier}
-                  </Typography>
-                </StyledFormControl>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={isSubmitting || !isValid || !initialTouched}>
-                  Submit
-                </Button>
+                        value={values.initialDate}
+                        name="initialDate"
+                      />
+                      <Typography color="error" component="p">
+                        {errors.initialDate}
+                      </Typography>
+                    </StyledFormControl>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <StyledFormControl
+                      required
+                      fullWidth
+                      error={Boolean(initialInvestmentErrors)}>
+                      <FormLabel>Initial amount of coins</FormLabel>
+                      <TextField
+                        id="initialInvestment"
+                        type="number"
+                        onChange={handleChange}
+                        autoComplete="off"
+                        value={values.initialInvestment}
+                      />
+                      <Typography color="error" component="p">
+                        {errors.initialInvestment}
+                      </Typography>
+                    </StyledFormControl>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <StyledFormControl
+                      required
+                      fullWidth
+                      error={Boolean(multiplierErrors)}>
+                      <Stack direction="row" spacing={1}>
+                        <FormLabel>Select target multiplier</FormLabel>
+                        <StyledTooltip
+                          title="You will be messaged when this multiplier is reached."
+                          placement="top"
+                          arrow>
+                          <StyledHelpOutline />
+                        </StyledTooltip>
+                      </Stack>
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        sx={{ paddingTop: '15px' }}>
+                        <Typography>{values.targetMultiplier + 'x'}</Typography>
+                        <Slider
+                          value={values.targetMultiplier}
+                          name="targetMultiplier"
+                          onChange={handleChange}
+                          step={0.25}
+                          min={1.5}
+                          max={10}
+                          marks
+                        />
+                      </Stack>
+                      <Typography color="error" component="p">
+                        {errors.targetMultiplier}
+                      </Typography>
+                    </StyledFormControl>
+                  </Grid>
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    disabled={isSubmitting || !isValid || !initialTouched}>
+                    Submit
+                  </Button>
+                </Grid>
               </form>
             );
           }}

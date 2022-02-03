@@ -32,5 +32,5 @@ export type Portfolio = {
 // used to remove & take profits for a coin
 export type CoinAction = {
   id: string; // coin's id
-  user: string; // user's email
+  user: string; // user's uid
 };

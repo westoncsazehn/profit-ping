@@ -1,12 +1,12 @@
-// 3rd party libraries
+// 3rd party
 import React, { useContext, useEffect, useState } from 'react';
 import { onMessage } from 'firebase/messaging';
 import { connect } from 'react-redux';
 import Container from '@mui/material/Container';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // local
 import { messaging, UserContext } from '../../api';
-import { ADD_COIN_URL } from '../meta-data/urls';
+import { ADD_COIN_URL, BASE_URL } from '../common/values';
 import {
   CoinAction,
   PortfolioTableCoin,
@@ -20,14 +20,14 @@ import {
   sortCryptoList,
   SortByType
 } from '../../store';
-import { PortfolioTable } from './components';
+import { PortfolioTable, RemoveCoinModal } from './components';
 
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getUserDeviceToken: (payload: string) => dispatch(getDeviceToken(payload)),
     addDeviceToken: () => dispatch(addDeviceToken()),
-    getUsersCryptoList: (email: string) => dispatch(getUsersCryptoList(email)),
+    getUsersCryptoList: (uid: string) => dispatch(getUsersCryptoList(uid)),
     removeCoin: (coinAction: CoinAction) => dispatch(removeCoin(coinAction)),
     sortCryptoList: (sortBy: SortByType) => dispatch(sortCryptoList(sortBy))
   };
@@ -50,19 +50,30 @@ const PortfolioPage = ({
 } & AppState) => {
   const user = useContext<FBUser>(UserContext);
   const navigate = useNavigate();
+  const { pathname = '' } = useLocation();
   const { coins = [], userDeviceToken = '', sortBy } = portfolio;
   const [deviceToken] = useState<string>(userDeviceToken);
+  const [coinToRemove, setCoinToRemove] = useState<
+    PortfolioTableCoin | undefined
+  >();
   const [hasGetDeviceTokenRan, setHasGetDeviceTokenRan] =
     useState<boolean>(false);
-  const { email } = user;
+  const { uid } = user;
 
   const onRemoveCoin = (coin: PortfolioTableCoin) => {
-    const { id = '' } = coin;
-    if (id && email) removeCoin({ id, user: email });
+    if (Boolean(coin)) setCoinToRemove(coin);
+  };
+  const closeModal = () => setCoinToRemove(undefined);
+  const submitModal = () => {
+    if (coinToRemove) {
+      const { id = '' } = coinToRemove;
+      if (id && uid) removeCoin({ id, user: uid });
+      closeModal();
+    }
   };
   const onEditCoin = (coin: PortfolioTableCoin) => {
     const { id = '' } = coin;
-    if (id && email) navigate(`/${ADD_COIN_URL}/${id}`);
+    if (id && uid) navigate(`/${ADD_COIN_URL}/${id}`);
   };
   const onSortBy = (sortBy: SortByType) => {
     if (sortBy?.sortKey && sortBy?.direction) {
@@ -70,27 +81,34 @@ const PortfolioPage = ({
     }
   };
 
+  // for 404 cases, reload with correct path
+  useEffect(() => {
+    if (pathname !== BASE_URL) {
+      navigate(BASE_URL);
+    }
+  }, [pathname]);
+
   // get list of user's crypto with metadata
   useEffect(() => {
-    if (email) {
-      getUsersCryptoList(email);
+    if (uid) {
+      getUsersCryptoList(uid);
     }
   }, []);
 
   // get user's device token
   useEffect(() => {
-    if (email && !deviceToken) {
-      getUserDeviceToken(email);
+    if (uid && !deviceToken) {
+      getUserDeviceToken(uid);
       setHasGetDeviceTokenRan(true);
     }
-  }, [deviceToken, email, getUserDeviceToken]);
+  }, [deviceToken, uid, getUserDeviceToken]);
 
   // add user's device token to db if none exists
   useEffect(() => {
-    if (email && !deviceToken && hasGetDeviceTokenRan) {
+    if (uid && !deviceToken && hasGetDeviceTokenRan) {
       addDeviceToken();
     }
-  }, [addDeviceToken, deviceToken, email, hasGetDeviceTokenRan]);
+  }, [addDeviceToken, deviceToken, uid, hasGetDeviceTokenRan]);
 
   // subscribe to messaging notifications
   useEffect(() => {
@@ -107,6 +125,12 @@ const PortfolioPage = ({
         onEditCoin={onEditCoin}
         onSortBy={onSortBy}
         sortBy={sortBy}
+      />
+      <RemoveCoinModal
+        coin={coinToRemove}
+        open={Boolean(coinToRemove)}
+        closeModal={closeModal}
+        submit={submitModal}
       />
     </Container>
   );

@@ -13,12 +13,12 @@ function* getListSaga({
   payload
 }: {
   type: typeof cryptoAPIActionTypes.SET_LIST;
-  payload: { email: string; id?: string };
+  payload: { uid: string; id?: string };
 }): any {
   try {
-    const { id = '', email } = payload;
+    const { id = '', uid } = payload;
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
-    const coinIDList = yield call(getCoinIDSFromPortfolio, email);
+    const coinIDList = yield call(getCoinIDSFromPortfolio, uid);
     const { data }: { data: BasePortfolioCoin[] } = yield call(getCryptoList);
     const filteredCoinData =
       data?.filter((coin: BasePortfolioCoin) =>

@@ -19,16 +19,16 @@ export const portfolioActionTypes = {
   SORT_CRYPTO_LIST: 'SORT_CRYPTO_LIST'
 };
 
-export const getDeviceToken = (userEmail: string) => ({
+export const getDeviceToken = (uid: string) => ({
   type: portfolioActionTypes.GET_DEVICE_TOKEN,
-  payload: userEmail
+  payload: uid
 });
 export const addDeviceToken = () => ({
   type: portfolioActionTypes.ADD_GET_DEVICE_TOKEN
 });
-export const getUsersCryptoList = (email: string) => ({
+export const getUsersCryptoList = (uid: string) => ({
   type: portfolioActionTypes.GET_USERS_CRYPTO_LIST,
-  payload: email
+  payload: uid
 });
 export const removeCoin = (coinAction: CoinAction) => ({
   type: portfolioActionTypes.REMOVE_COIN,

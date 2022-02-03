@@ -3,10 +3,10 @@ import { userActionTypes } from '../user';
 import { FBUser } from '../types';
 
 const initialUserState: FBUser = {
-  displayName: null,
-  email: null,
-  phoneNumber: null,
-  photoURL: null,
+  displayName: '',
+  email: '',
+  phoneNumber: '',
+  photoURL: '',
   providerId: '',
   uid: ''
 };

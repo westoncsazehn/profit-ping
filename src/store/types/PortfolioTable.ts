@@ -6,4 +6,5 @@ export type HeaderItem = {
   value: string | ReactNode;
   action?: ReactNode;
   sortKey?: string;
+  tooltip?: string;
 };

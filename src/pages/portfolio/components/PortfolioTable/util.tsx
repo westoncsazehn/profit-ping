@@ -1,9 +1,26 @@
 // 3rd party
 import React from 'react';
-import { Avatar, Box, CardHeader, IconButton, TableCell } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  CardHeader,
+  IconButton,
+  TableCell,
+  Typography
+} from '@mui/material';
 import { AlarmOff, Edit } from '@mui/icons-material';
 // local
-import { HeaderItem, PortfolioTableCoin } from '../../../../store';
+import {
+  CoinActionsType,
+  HeaderItem,
+  PortfolioTableCoin
+} from '../../../../store';
+import {
+  StyledTooltip,
+  StyledTooltipIcon,
+  StyledWarningTooltip,
+  TOOLTIP_COMMON_PROPS
+} from './styles';
 
 export const headerItems: HeaderItem[] = [
   {
@@ -14,30 +31,36 @@ export const headerItems: HeaderItem[] = [
   {
     label: 'Quantity',
     value: 'quantity',
-    sortKey: 'quantity'
+    sortKey: 'quantity',
+    tooltip: 'Number of coins initially invested.'
   },
   {
     label: 'Initial Investment',
     value: 'initialUSD',
-    sortKey: 'initialUSDSortValue'
+    sortKey: 'initialUSDSortValue',
+    tooltip: '(Quantity of coins) x (Price of coin based on initial date)'
   },
   {
     label: 'Initial Date',
-    value: 'initialDate'
+    value: 'initialDate',
+    tooltip: 'Date of initial coin purchase.'
   },
   {
     label: 'Target',
-    value: 'target'
+    value: 'target',
+    tooltip: '(Current investment value) / (Target multiplier value)'
   },
   {
     label: 'Gain',
     value: 'gain',
-    sortKey: 'gainSortValue'
+    sortKey: 'gainSortValue',
+    tooltip: 'Amount of unrealized profits.'
   },
   {
     label: 'Multiplier',
     value: 'multiplier',
-    sortKey: 'multiplierSortValue'
+    sortKey: 'multiplierSortValue',
+    tooltip: 'Target multiplier set to trigger message.'
   },
   {
     label: 'Action',
@@ -54,38 +77,46 @@ export const getCoinNameCellContent = (coin: PortfolioTableCoin) => (
     title={coin.symbol}
   />
 );
-type CoinActions = {
-  onRemoveCoin: (coin: PortfolioTableCoin) => void;
-  onEditCoin: (coin: PortfolioTableCoin) => void;
-};
+
 export const getCoinActionContent = (
   coin: PortfolioTableCoin,
-  { onRemoveCoin, onEditCoin }: CoinActions
-) => {
-  return (
-    <>
-      <Box>
-        <IconButton
-          color="inherit"
-          aria-label="edit coin"
-          onClick={() => onEditCoin(coin)}>
+  { onRemoveCoin, onEditCoin }: CoinActionsType
+) => (
+  <>
+    <Box>
+      <IconButton
+        color="inherit"
+        aria-label="edit coin"
+        onClick={() => onEditCoin(coin)}>
+        <StyledTooltip
+          title={`Edit ${coin?.name || 'coin'} investment details.`}
+          {...TOOLTIP_COMMON_PROPS}>
           <Edit />
-        </IconButton>
-        <IconButton
-          color="inherit"
-          aria-label="remove coin"
-          onClick={() => onRemoveCoin(coin)}>
+        </StyledTooltip>
+      </IconButton>
+      <IconButton
+        color="inherit"
+        aria-label="remove coin"
+        onClick={() => onRemoveCoin(coin)}
+        sx={{
+          '&:hover': {
+            color: 'red'
+          }
+        }}>
+        <StyledWarningTooltip
+          title={`Remove ${coin?.name || 'coin'} and stop tracking multiplier.`}
+          {...TOOLTIP_COMMON_PROPS}>
           <AlarmOff />
-        </IconButton>
-      </Box>
-    </>
-  );
-};
+        </StyledWarningTooltip>
+      </IconButton>
+    </Box>
+  </>
+);
 export const getTableCellContent = (
   coin: PortfolioTableCoin,
   key: keyof PortfolioTableCoin,
   index: number,
-  actions: CoinActions
+  actions: CoinActionsType
 ) => {
   const item =
     key === 'name' ? (
@@ -96,4 +127,26 @@ export const getTableCellContent = (
       <>{coin[key]}</>
     );
   return <TableCell key={key + index} align="left" children={item} />;
+};
+export const getTableHeaderTitle = (header: HeaderItem) => {
+  // @ts-ignore
+  const title = (
+    <Typography
+      color="text.main"
+      sx={{
+        display: 'inline-block'
+      }}>
+      {header?.label}
+    </Typography>
+  );
+  return (
+    <>
+      {title}
+      {header?.tooltip ? (
+        <StyledTooltip title={String(header.tooltip)} {...TOOLTIP_COMMON_PROPS}>
+          <StyledTooltipIcon />
+        </StyledTooltip>
+      ) : null}
+    </>
+  );
 };

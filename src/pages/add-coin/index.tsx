@@ -1,4 +1,4 @@
-// 3rd party libraries
+// 3rd party
 import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -20,13 +20,13 @@ import { getList } from '../../store';
 
 const mapDispatchToProps = (dispatch: any) => ({
   setIsLoading: (isLoading?: boolean) => dispatch(setIsLoading(isLoading)),
-  addCoin: (coin: FirestoreAddCoin, email: string) =>
-    dispatch(addCoin(coin, email)),
-  updateCoin: (coin: FirestoreAddCoin, email: string) =>
-    dispatch(updateCoin(coin, email)),
-  getList: (email: string, id: string = '') => dispatch(getList(email, id)),
-  getPortfolioCoin: (id: string, email: string) =>
-    dispatch(getPortfolioCoin(id, email))
+  addCoin: (coin: FirestoreAddCoin, uid: string) =>
+    dispatch(addCoin(coin, uid)),
+  updateCoin: (coin: FirestoreAddCoin, uid: string) =>
+    dispatch(updateCoin(coin, uid)),
+  getList: (uid: string, id: string = '') => dispatch(getList(uid, id)),
+  getPortfolioCoin: (id: string, uid: string) =>
+    dispatch(getPortfolioCoin(id, uid))
 });
 const mapStateToProps = ({ cryptoApi, addCoin }: AppState) => ({
   ...cryptoApi,
@@ -47,21 +47,22 @@ export const AddCoinPage = ({
   getPortfolioCoin: any;
   selectedCoin: FirestoreCoin;
 }) => {
-  const { email } = useContext<FBUser>(UserContext);
+  const { uid } = useContext<FBUser>(UserContext);
   const { id = '' } = useParams();
 
   // get list of coins for add coin form
-  useEffect(() => getList(email, id), []);
+  useEffect(() => getList(uid, id), []);
   // if param id, get user's portfolio coin data
   useEffect(() => {
-    if (email) getPortfolioCoin(id, email);
+    if (uid) getPortfolioCoin(id, uid);
   }, []);
 
   const onAddCoin = (coin: FirestoreAddCoin) => {
-    if (email && coin) {
-      id ? updateCoin(coin, email) : addCoin(coin, email);
+    if (uid && coin) {
+      id ? updateCoin(coin, uid) : addCoin(coin, uid);
     }
   };
+
   return (
     <>
       <AddCoinForm

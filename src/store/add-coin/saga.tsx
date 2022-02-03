@@ -45,9 +45,9 @@ function* checkIfInProfit(
 }
 
 function* addCoinSaga({
-  payload: { coin: payloadCoin, email }
+  payload: { coin: payloadCoin, uid }
 }: {
-  payload: { coin: FirestoreAddCoin; email: string };
+  payload: { coin: FirestoreAddCoin; uid: string };
 }): any {
   try {
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
@@ -78,7 +78,7 @@ function* addCoinSaga({
       yield put({ type: loadingActionTypes.SET_IS_LOADING });
     } else {
       yield call(addDoc, collection(db, COIN_DB), {
-        user: email,
+        user: uid,
         coin,
         initialDate: Timestamp.fromDate(new Date(initialDate)),
         initialInvestment,
@@ -108,9 +108,9 @@ function* addCoinSaga({
   }
 }
 function* updateCoinSaga({
-  payload: { coin: payloadCoin, email }
+  payload: { coin: payloadCoin, uid }
 }: {
-  payload: { coin: FirestoreCoin; email: string };
+  payload: { coin: FirestoreCoin; uid: string };
 }): any {
   try {
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
@@ -121,11 +121,11 @@ function* updateCoinSaga({
       targetMultiplier,
       initialPricePerCoin
     } = payloadCoin;
-    const { id = '' } = yield getCoinByID(coin, email, true);
+    const { id = '' } = yield getCoinByID(coin, uid, true);
     if (!id) throw new Error('no coin id found in portfolio');
     // @ts-ignore
     yield call(updateDoc, doc(db, COIN_DB, id), {
-      user: email,
+      user: uid,
       coin,
       initialDate: Timestamp.fromDate(new Date(initialDate)),
       initialInvestment,
@@ -155,11 +155,11 @@ function* updateCoinSaga({
 }
 
 function* getPortfolioCoinSaga({
-  payload: { id, email }
+  payload: { id, uid }
 }: {
   payload: {
     id: string;
-    email: string;
+    uid: string;
   };
 }): any {
   try {
@@ -168,7 +168,7 @@ function* getPortfolioCoinSaga({
         type: addCoinActionTypes.SET_DEFAULT_SELECTED_COIN
       });
     } else {
-      const payload = yield getCoinByID(id, email);
+      const payload = yield getCoinByID(id, uid);
       payload.initialDate = payload.initialDate.toDate();
       yield put({ type: addCoinActionTypes.SET_SELECTED_COIN, payload });
     }
