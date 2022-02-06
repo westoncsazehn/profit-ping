@@ -1,7 +1,6 @@
 // 3rd party
 import React from 'react';
 import {
-  Avatar,
   Box,
   CardHeader,
   IconButton,
@@ -16,6 +15,10 @@ import {
   PortfolioTableCoin
 } from '../../../../store';
 import {
+  StyledAvatar,
+  StyledLabelContentSpan,
+  StyledRemoveCoinIconButton,
+  StyledTableHeaderTitle,
   StyledTooltip,
   StyledTooltipIcon,
   StyledWarningTooltip,
@@ -73,7 +76,7 @@ export const rowKeys: string[] = headerItems
 export const getCoinNameCellContent = (coin: PortfolioTableCoin) => (
   <CardHeader
     sx={{ p: 0 }}
-    avatar={<Avatar alt={coin.name} src={coin.image} />}
+    avatar={<StyledAvatar alt={coin.name} src={coin.image} />}
     title={coin.symbol}
   />
 );
@@ -94,21 +97,16 @@ export const getCoinActionContent = (
           <Edit />
         </StyledTooltip>
       </IconButton>
-      <IconButton
+      <StyledRemoveCoinIconButton
         color="inherit"
         aria-label="remove coin"
-        onClick={() => onRemoveCoin(coin)}
-        sx={{
-          '&:hover': {
-            color: 'red'
-          }
-        }}>
+        onClick={() => onRemoveCoin(coin)}>
         <StyledWarningTooltip
           title={`Remove ${coin?.name || 'coin'} and stop tracking multiplier.`}
           {...TOOLTIP_COMMON_PROPS}>
           <AlarmOff />
         </StyledWarningTooltip>
-      </IconButton>
+      </StyledRemoveCoinIconButton>
     </Box>
   </>
 );
@@ -128,25 +126,22 @@ export const getTableCellContent = (
     );
   return <TableCell key={key + index} align="left" children={item} />;
 };
+
 export const getTableHeaderTitle = (header: HeaderItem) => {
   // @ts-ignore
   const title = (
-    <Typography
-      color="text.main"
-      sx={{
-        display: 'inline-block'
-      }}>
+    <StyledTableHeaderTitle color="text.main">
       {header?.label}
-    </Typography>
+    </StyledTableHeaderTitle>
   );
   return (
-    <>
+    <StyledLabelContentSpan>
       {title}
       {header?.tooltip ? (
         <StyledTooltip title={String(header.tooltip)} {...TOOLTIP_COMMON_PROPS}>
           <StyledTooltipIcon />
         </StyledTooltip>
       ) : null}
-    </>
+    </StyledLabelContentSpan>
   );
 };

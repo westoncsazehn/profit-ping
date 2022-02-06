@@ -1,18 +1,12 @@
 // 3rd party
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import {
   AppBar,
-  Avatar,
   Box,
   Button,
-  CardHeader,
   Container,
-  FormControlLabel,
-  FormGroup,
-  styled,
-  Switch,
   Toolbar,
   Typography
 } from '@mui/material';
@@ -20,26 +14,17 @@ import { connect } from 'react-redux';
 // local
 import { auth, UserContext } from '../../api';
 import { AppState, DisplayAlertType, FBUser, initAlert } from '../../store';
-import { ADD_COIN_URL, LOGIN_URL } from '../common/values';
+import { PROFIT_PING_LOGO_PATH, SETTINGS_URL } from '../common';
 import { DisplayAlert } from '../components';
+import {
+  AccountMenu,
+  menuStyle,
+  StyledToolBar,
+  StyledLink,
+  StyledImageLogo
+} from './components';
+import { getPageTitle } from './util';
 
-const menuStyle = {
-  backgroundColor: 'white',
-  border: 'solid 1px black',
-  borderRight: 'none',
-  borderLeft: 'none',
-  boxShadow: 'none',
-  color: 'black'
-};
-const StyledImageLogo = styled('img')(() => ({
-  width: '100px',
-  verticalAlign: 'middle'
-}));
-const StyledLink = styled(Link)(() => ({
-  textDecoration: 'none',
-  color: 'black'
-}));
-const PROFIT_PING_LOGO_PATH: string = 'profit-ping-logo-small.png';
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => ({
   initAlert: (alert: DisplayAlertType) => dispatch(initAlert(alert))
@@ -56,9 +41,13 @@ export const Layout = ({
 }) => {
   const user = useContext<FBUser>(UserContext);
   const [page, setPage] = useState<string>('');
-  const isLoggedIn: boolean = Boolean(user?.uid);
+  const [menuElement, setMenuElement] = useState(null);
   const { pathname = '' } = useLocation();
+  const navigate = useNavigate();
+  const isLoggedIn: boolean = Boolean(user?.uid);
+  const isMenuOpen = Boolean(menuElement);
 
+  // if there is alert data available, then trigger initAlert()
   useEffect(() => {
     if (open) {
       setTimeout(() => {
@@ -66,29 +55,30 @@ export const Layout = ({
       }, 5000);
     }
   }, [open]);
+  // on page change, get path, then set page title
+  useEffect(
+    () => setPage(getPageTitle(pathname, isLoggedIn)),
+    [isLoggedIn, pathname]
+  );
 
-  useEffect(() => {
-    let currenPath: string = '';
-    const path: string = pathname.replace(/\//g, '');
-    switch (path) {
-      case LOGIN_URL:
-        currenPath = 'LOGIN';
-        break;
-      case ADD_COIN_URL:
-        currenPath = 'ADD COIN';
-        break;
-      default:
-        currenPath = isLoggedIn ? 'PORTFOLIO' : 'SIGN IN';
-        break;
-    }
-    setPage(currenPath);
-  }, [isLoggedIn, pathname]);
+  const handleClick = (event: any) => {
+    setMenuElement(event.currentTarget);
+  };
+  const handleClose = () => {
+    setMenuElement(null);
+  };
+  const onSignOut = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    handleClose();
+    await signOut(auth);
+  };
+  const onInitSettings = () => navigate(SETTINGS_URL);
 
   return (
     <>
       <AppBar position="static" sx={menuStyle}>
-        <Container maxWidth="xl">
-          <Toolbar>
+        <Container maxWidth="xl" sx={{ p: 0 }}>
+          <StyledToolBar sx={{ p: 0 }}>
             <Box sx={{ flexGrow: 1 }}>
               <Button variant="text">
                 <StyledLink to="/">
@@ -99,54 +89,25 @@ export const Layout = ({
                 </StyledLink>
               </Button>
             </Box>
-            <Box sx={{ flexGrow: 0 }}>
-              <CardHeader
-                sx={{
-                  p: 0,
-                  flexDirection: 'row-reverse',
-                  '.MuiCardHeader-avatar': { marginRight: 'unset' },
-                  display: isLoggedIn ? 'flex' : 'none'
-                }}
-                title={`Welcome${user ? ' ' + user.displayName : ''}!`}
-                titleTypographyProps={{
-                  paddingRight: '10px'
-                }}
-                avatar={
-                  <Avatar
-                    alt={user?.displayName || ''}
-                    src={user?.photoURL || ''}
-                    sx={{
-                      float: 'right'
-                    }}
-                  />
-                }
-              />
-            </Box>
-          </Toolbar>
+            <AccountMenu
+              {...{
+                isLoggedIn,
+                user,
+                menuElement,
+                isMenuOpen,
+                handleClick,
+                handleClose,
+                onSignOut,
+                onInitSettings
+              }}
+            />
+          </StyledToolBar>
         </Container>
       </AppBar>
       <Container>
         <Toolbar sx={{ padding: '0px !important' }}>
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="h6">{page}</Typography>
-          </Box>
-          <Box sx={{ flexGrow: 0, float: 'right' }}>
-            <FormGroup>
-              <FormControlLabel
-                value="end"
-                control={<Switch color="primary" size="small" />}
-                label={isLoggedIn ? 'Logout' : 'Login'}
-                labelPlacement="end"
-                onChange={async () => {
-                  await signOut(auth);
-                }}
-                checked={isLoggedIn}
-                sx={{
-                  span: { fontSize: '0.8rem' },
-                  display: isLoggedIn ? 'inherit' : 'none'
-                }}
-              />
-            </FormGroup>
           </Box>
         </Toolbar>
       </Container>

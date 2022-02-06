@@ -29,6 +29,7 @@ import {
   isBefore,
   addDays
 } from 'date-fns';
+import { HelpOutline } from '@mui/icons-material';
 // local
 import {
   FirestoreAddCoin,
@@ -36,7 +37,6 @@ import {
   FirestoreCoin
 } from '../../../store';
 import { DatePicker } from './DatePicker';
-import { HelpOutline } from '@mui/icons-material';
 import { StyledTooltip } from '../../portfolio/components/PortfolioTable/styles';
 
 const coinError: string = 'A coin must be selected';
@@ -72,8 +72,21 @@ const AddCoinSchema = yup.object().shape({
     .min(1.5, targetMultiplierError)
     .required(targetMultiplierError)
 });
-const StyledFormControl = styled(FormControl)(() => ({
-  paddingBottom: '3.25rem'
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: '1rem',
+  [theme.breakpoints.up('md')]: {
+    padding: '3rem'
+  }
+}));
+const StyledFormTitleDescription = styled(Typography)(({ theme }) => ({
+  margin: '15px 0',
+  [theme.breakpoints.up('md')]: { marginBottom: '50px' }
+}));
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+  paddingBottom: '1.25rem',
+  [theme.breakpoints.up('md')]: {
+    paddingBottom: '3rem'
+  }
 }));
 export const StyledHelpOutline = styled(HelpOutline)(() => ({
   fontSize: '0.75rem',
@@ -82,31 +95,31 @@ export const StyledHelpOutline = styled(HelpOutline)(() => ({
   marginLeft: '2px !important',
   marginTop: '3px !important'
 }));
+export const StyledFormButtons = styled(Button)(({ theme }) => ({
+  height: '2.5rem',
+  width: '100px',
+  float: 'right',
+  marginTop: '15px'
+}));
 
 export const AddCoinForm = ({
   coins,
   addCoin,
-  selectedCoin
+  selectedCoin,
+  onCancel
 }: {
   coins: BasePortfolioCoin[];
   addCoin: (coin: FirestoreAddCoin) => void;
   selectedCoin: FirestoreCoin;
+  onCancel: () => void;
 }) => {
   return coins?.length ? (
     <Container>
-      <Box
-        component={Paper}
-        elevation={1}
-        sx={{
-          p: 10,
-          FormLabel: {
-            paddingBottom: '25px'
-          }
-        }}>
-        <Typography align="center" sx={{ margin: '-25px 0 50px 0' }}>
+      <Box component={StyledPaper}>
+        <StyledFormTitleDescription>
           Add a coin to track and set a multiplier. When the multiplier is hit,
           we will notify you.
-        </Typography>
+        </StyledFormTitleDescription>
         {selectedCoin?.error ? (
           <Typography align="center" color="error">
             {selectedCoin?.error}
@@ -135,8 +148,8 @@ export const AddCoinForm = ({
               errors.targetMultiplier || touched.targetMultiplier;
             return (
               <form onSubmit={handleSubmit}>
-                <Grid container spacing={3}>
-                  <Grid item xs={6}>
+                <Grid container spacing={{ md: 4 }}>
+                  <Grid item xs={12} md={6}>
                     <StyledFormControl
                       required
                       fullWidth
@@ -177,7 +190,7 @@ export const AddCoinForm = ({
                       </Typography>
                     </StyledFormControl>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6}>
                     <StyledFormControl
                       required
                       fullWidth
@@ -208,7 +221,7 @@ export const AddCoinForm = ({
                       </Typography>
                     </StyledFormControl>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6}>
                     <StyledFormControl
                       required
                       fullWidth
@@ -226,7 +239,7 @@ export const AddCoinForm = ({
                       </Typography>
                     </StyledFormControl>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6}>
                     <StyledFormControl
                       required
                       fullWidth
@@ -260,12 +273,26 @@ export const AddCoinForm = ({
                       </Typography>
                     </StyledFormControl>
                   </Grid>
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    disabled={isSubmitting || !isValid || !initialTouched}>
-                    Submit
-                  </Button>
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      'button:last-child': { marginRight: '10px' }
+                    }}>
+                    <StyledFormButtons
+                      variant="contained"
+                      color="inherit"
+                      type="button"
+                      onClick={onCancel}>
+                      Cancel
+                    </StyledFormButtons>
+                    <StyledFormButtons
+                      variant="contained"
+                      type="submit"
+                      disabled={isSubmitting || !isValid || !initialTouched}>
+                      Submit
+                    </StyledFormButtons>
+                  </Grid>
                 </Grid>
               </form>
             );

@@ -24,7 +24,7 @@ import {
   headerItems,
   rowKeys
 } from './util';
-import { ADD_COIN_URL } from '../../../common/values';
+import { ADD_COIN_URL } from '../../../common';
 
 const StyledCaption = styled('caption')(() => ({ padding: '0' }));
 export const PortfolioTable = ({
@@ -59,6 +59,7 @@ export const PortfolioTable = ({
       {header?.sortKey ? (
         <TableSortLabel
           active={sortKey === header.sortKey}
+          hideSortIcon={!header?.sortKey}
           // @ts-ignore
           direction={direction as SortDirection}
           onClick={() => onSortHandler(header)}>

@@ -6,7 +6,7 @@ import Container from '@mui/material/Container';
 import { useLocation, useNavigate } from 'react-router-dom';
 // local
 import { messaging, UserContext } from '../../api';
-import { ADD_COIN_URL, BASE_URL } from '../common/values';
+import { DeleteItemConfirmModal, ADD_COIN_URL, BASE_URL } from '../common';
 import {
   CoinAction,
   PortfolioTableCoin,
@@ -20,7 +20,7 @@ import {
   sortCryptoList,
   SortByType
 } from '../../store';
-import { PortfolioTable, RemoveCoinModal } from './components';
+import { PortfolioTable } from './components';
 
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => {
@@ -126,11 +126,14 @@ const PortfolioPage = ({
         onSortBy={onSortBy}
         sortBy={sortBy}
       />
-      <RemoveCoinModal
-        coin={coinToRemove}
+      <DeleteItemConfirmModal
         open={Boolean(coinToRemove)}
         closeModal={closeModal}
         submit={submitModal}
+        title="Portfolio Coin Removal"
+        description={`Are you sure you wish to remove ${
+          coinToRemove?.name || 'this coin'
+        }?`}
       />
     </Container>
   );

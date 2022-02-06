@@ -1,21 +1,21 @@
 // 3rd party
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Box, Typography, Modal, Button, Stack } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-// local
-import { PortfolioTableCoin } from '../../../store';
 
 export type RemoveCoinModalProps = {
-  coin?: PortfolioTableCoin;
   closeModal: () => void;
   submit: () => void;
   open: boolean;
+  title: ReactNode | string;
+  description: ReactNode | string;
 };
-export const RemoveCoinModal = ({
-  coin,
+export const DeleteItemConfirmModal = ({
   closeModal,
   submit,
-  open
+  open,
+  title,
+  description
 }: RemoveCoinModalProps) => {
   return (
     <Modal
@@ -31,15 +31,15 @@ export const RemoveCoinModal = ({
           backgroundColor: 'white',
           boxShadow: 24,
           p: 4,
-          width: 400,
+          width: 'auto',
           height: 'fit-content',
           color: 'primary'
         }}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
-          Portfolio Coin Removal
+          {title}
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          Are you sure you wish to remove {coin?.name || 'this coin'}?
+          {description}
         </Typography>
         <Stack
           direction="row"

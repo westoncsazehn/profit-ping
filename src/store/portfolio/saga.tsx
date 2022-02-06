@@ -185,6 +185,7 @@ function* getUsersCryptoListSaga({
       type: portfolioActionTypes.GET_USERS_CRYPTO_FAILED,
       payload: e.toString()
     });
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
   }
 }
 

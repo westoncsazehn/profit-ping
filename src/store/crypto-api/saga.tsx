@@ -18,7 +18,7 @@ function* getListSaga({
   try {
     const { id = '', uid } = payload;
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
-    const coinIDList = yield call(getCoinIDSFromPortfolio, uid);
+    const coinIDList = yield call(getCoinIDSFromPortfolio, uid) || [];
     const { data }: { data: BasePortfolioCoin[] } = yield call(getCryptoList);
     const filteredCoinData =
       data?.filter((coin: BasePortfolioCoin) =>
@@ -30,6 +30,7 @@ function* getListSaga({
     });
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
   } catch (e: any) {
+    console.log('e', e);
     yield put({
       type: displayAlertActionTypes.INIT_ALERT,
       payload: {

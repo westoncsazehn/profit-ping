@@ -1,12 +1,13 @@
 // 3rd party
 import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // local
 import { UserContext } from '../../api';
 import {
   addCoin,
   FBUser,
+  getList,
   setIsLoading,
   FirestoreAddCoin,
   AppState,
@@ -16,7 +17,7 @@ import {
   updateCoin
 } from '../../store';
 import { AddCoinForm } from './components';
-import { getList } from '../../store';
+import { BASE_URL } from '../common';
 
 const mapDispatchToProps = (dispatch: any) => ({
   setIsLoading: (isLoading?: boolean) => dispatch(setIsLoading(isLoading)),
@@ -47,6 +48,7 @@ export const AddCoinPage = ({
   getPortfolioCoin: any;
   selectedCoin: FirestoreCoin;
 }) => {
+  const navigate = useNavigate();
   const { uid } = useContext<FBUser>(UserContext);
   const { id = '' } = useParams();
 
@@ -62,6 +64,7 @@ export const AddCoinPage = ({
       id ? updateCoin(coin, uid) : addCoin(coin, uid);
     }
   };
+  const onCancel = () => navigate(BASE_URL);
 
   return (
     <>
@@ -69,6 +72,7 @@ export const AddCoinPage = ({
         coins={cryptoList}
         addCoin={onAddCoin}
         selectedCoin={selectedCoin}
+        onCancel={onCancel}
       />
     </>
   );

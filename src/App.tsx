@@ -9,11 +9,12 @@ import {
   LayoutRx,
   Loader,
   PortfolioPageRx,
-  SignInPageRx
+  SignInPageRx,
+  SettingsPageRx
 } from './pages';
 import { AppState, FBUser, signInUser } from './store';
 import { auth, UserContext } from './api';
-import { ADD_COIN_URL } from './pages/common/values';
+import { ADD_COIN_URL, SETTINGS_URL } from './pages/common';
 
 const mapStateToProps = ({ user, loader }: AppState) => ({
   user,
@@ -44,6 +45,7 @@ const App = ({
             <Route path="/" element={baseUrlContent} />
             <Route path={`/${ADD_COIN_URL}`} element={<AddCoinPageRx />} />
             <Route path={`/${ADD_COIN_URL}/:id`} element={<AddCoinPageRx />} />
+            <Route path={`/${SETTINGS_URL}`} element={<SettingsPageRx />} />
             <Route path="*" element={baseUrlContent} />
           </Routes>
         </LayoutRx>
