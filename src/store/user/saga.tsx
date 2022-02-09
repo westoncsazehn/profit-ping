@@ -1,21 +1,33 @@
 // 3rd party
-import React from 'react';
 import { all, call, put, takeEvery } from 'redux-saga/effects';
 import { signInWithPopup } from 'firebase/auth';
 // local
 import { userActionTypes } from './actions';
 import { auth, provider } from '../../api';
+import { loadingActionTypes } from '../loading';
+import { FBUser } from '../types';
+import { displayAlertActionTypes } from '../display-alert';
+import { AlertColor } from '@mui/material';
 
 function* signInUserSaga(): any {
   try {
-    const { user } = yield call(signInWithPopup, auth, provider);
+    yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
+    const { user }: { user: FBUser } = yield call(
+      signInWithPopup,
+      auth,
+      provider
+    );
     yield put({ type: userActionTypes.SIGN_IN_USER_SUCCESS, payload: user });
-    // TODO: implement an alert
-    // @ts-ignore
+    window?.history?.go(0);
   } catch (e: any) {
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
     yield put({
-      type: userActionTypes.SIGN_IN_USER_FAILED,
-      message: e.message
+      type: displayAlertActionTypes.INIT_ALERT,
+      payload: {
+        open: true,
+        message: 'Unable to authenticate user.',
+        severity: 'error' as AlertColor
+      }
     });
   }
 }

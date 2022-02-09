@@ -83,7 +83,8 @@ function* addCoinSaga({
         initialDate: Timestamp.fromDate(new Date(initialDate)),
         initialInvestment,
         targetMultiplier,
-        initialPricePerCoin
+        initialPricePerCoin,
+        isMessageEnabled: true
       });
       yield window?.history?.back();
       yield put({
@@ -130,7 +131,8 @@ function* updateCoinSaga({
       initialDate: Timestamp.fromDate(new Date(initialDate)),
       initialInvestment,
       targetMultiplier,
-      initialPricePerCoin
+      initialPricePerCoin,
+      isMessageEnabled: true
     });
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
     yield window?.history?.back();

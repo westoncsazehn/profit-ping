@@ -1,11 +1,11 @@
 // 3rd party
 import React, { useEffect } from 'react';
-import { Button } from '@mui/material';
+import { Box, Button, Container, Paper } from '@mui/material';
 import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 // local
 import { AppState } from '../../store';
-import { LOGIN_URL } from '../common/values';
+import { LOGIN_URL } from '../common';
 
 const mapStateToProps = ({ loader }: AppState) => ({ loader });
 const SignInPage = ({ onSignIn }: { onSignIn: any }) => {
@@ -17,9 +17,14 @@ const SignInPage = ({ onSignIn }: { onSignIn: any }) => {
       navigate(LOGIN_URL);
     }
   }, [pathname]);
+
   return (
     <>
-      <Button onClick={onSignIn}>SIGN IN</Button>
+      <Container sx={{ p: 0 }}>
+        <Box component={Paper}>
+          <Button onClick={onSignIn}>SIGN IN</Button>
+        </Box>
+      </Container>
     </>
   );
 };

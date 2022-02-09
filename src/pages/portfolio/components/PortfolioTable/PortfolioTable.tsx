@@ -17,7 +17,13 @@ import {
 } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
 // local
-import { HeaderItem, PortfolioTableCoin, SortByType } from '../../../../store';
+import {
+  HeaderItem,
+  PortfolioTableCoin,
+  SortByType,
+  DEFAULT_SORT_DIRECTION,
+  DEFAULT_SORT_KEY
+} from '../../../../store';
 import {
   getTableCellContent,
   getTableHeaderTitle,
@@ -32,7 +38,7 @@ export const PortfolioTable = ({
   onRemoveCoin,
   onEditCoin,
   onSortBy,
-  sortBy
+  sortBy = { sortKey: DEFAULT_SORT_KEY, direction: DEFAULT_SORT_DIRECTION }
 }: {
   coins: PortfolioTableCoin[];
   onRemoveCoin: any;

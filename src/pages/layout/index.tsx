@@ -72,7 +72,10 @@ export const Layout = ({
     handleClose();
     await signOut(auth);
   };
-  const onInitSettings = () => navigate(SETTINGS_URL);
+  const onInitSettings = () => {
+    setMenuElement(null);
+    navigate(SETTINGS_URL);
+  };
 
   return (
     <>

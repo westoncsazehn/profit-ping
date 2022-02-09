@@ -5,7 +5,8 @@ import {
   DisplayAlertType,
   FBUser,
   LoaderState,
-  Portfolio
+  Portfolio,
+  PhoneNumberStateType
 } from './types';
 
 export type AppState = {
@@ -15,4 +16,5 @@ export type AppState = {
   displayAlert: DisplayAlertType;
   cryptoApi: CryptoApiStateType;
   addCoin: AddCoinStateType;
+  phoneNumber: PhoneNumberStateType;
 };

@@ -2,7 +2,11 @@
 import { createContext } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import {
+  getFunctions,
+  connectFunctionsEmulator,
+  httpsCallable
+} from 'firebase/functions';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getMessaging } from 'firebase/messaging';
 
@@ -40,3 +44,11 @@ export const UserContext = createContext<FBUser>();
 // databases
 export const COIN_DB: string = 'coin';
 export const DEVICE_TOKEN_DB: string = 'deviceToken';
+export const PHONE_NUMBER_DB: string = 'phone';
+
+// delete user cloud function
+export const deleteUser = httpsCallable(functions, 'deleteUser');
+export const sendMessages = httpsCallable(
+  functions,
+  'messageProfitingCoinsToDevices'
+);

@@ -1,12 +1,6 @@
 // 3rd party
 import React from 'react';
-import {
-  Box,
-  CardHeader,
-  IconButton,
-  TableCell,
-  Typography
-} from '@mui/material';
+import { Box, CardHeader, IconButton, TableCell, Avatar } from '@mui/material';
 import { AlarmOff, Edit } from '@mui/icons-material';
 // local
 import {
@@ -15,7 +9,6 @@ import {
   PortfolioTableCoin
 } from '../../../../store';
 import {
-  StyledAvatar,
   StyledLabelContentSpan,
   StyledRemoveCoinIconButton,
   StyledTableHeaderTitle,
@@ -76,7 +69,7 @@ export const rowKeys: string[] = headerItems
 export const getCoinNameCellContent = (coin: PortfolioTableCoin) => (
   <CardHeader
     sx={{ p: 0 }}
-    avatar={<StyledAvatar alt={coin.name} src={coin.image} />}
+    avatar={<Avatar alt={coin.name} src={coin.image} />}
     title={coin.symbol}
   />
 );

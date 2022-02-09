@@ -28,13 +28,26 @@ const App = ({
   signInUser,
   loader: { isLoading }
 }: { signInUser: any } & Pick<AppState, 'loader'>) => {
-  const [user, setUser] = useState<FBUser | null>();
+  const [user, setUser] = useState<FBUser | null>(
+    JSON.parse(String(sessionStorage.getItem('user'))) as FBUser
+  );
+
+  onAuthStateChanged(auth, (user) => {
+    const sessionUser = sessionStorage.getItem('user');
+    if (user && !sessionUser) {
+      sessionStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
+    } else if (!user) {
+      sessionStorage.removeItem('user');
+      setUser(null);
+    }
+  });
+
   const baseUrlContent = Boolean(user) ? (
     <PortfolioPageRx />
   ) : (
     <SignInPageRx onSignIn={signInUser} />
   );
-  onAuthStateChanged(auth, (user) => setUser(user || null));
 
   return (
     <UserContext.Provider value={user}>

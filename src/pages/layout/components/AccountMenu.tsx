@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Logout, Settings } from '@mui/icons-material';
 // local
-import { AccountMenuProps } from '@store/types';
+import { AccountMenuProps } from '../../../store';
 import { getCardHeaderStyles, ToolbarMenuPaperProps } from './styles';
 
 export const AccountMenu = ({

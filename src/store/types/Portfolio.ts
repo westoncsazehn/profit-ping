@@ -21,6 +21,7 @@ export type PortfolioTableCoin = BasePortfolioCoin & {
   initialDate: string;
   initialDateSortValue: number;
   inProfit: boolean;
+  isMessageEnabled?: boolean;
   action?: ReactNode;
 };
 export type SortByType = { sortKey: string; direction: string };

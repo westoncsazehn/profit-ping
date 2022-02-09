@@ -142,9 +142,9 @@ function* getUsersCryptoListSaga({
     }
     const userCryptoList: FirestoreCoin[] = [];
     // set current crypto data to an array we can actually use
-    userCryptoListResults.forEach((doc: any) => {
-      return userCryptoList.push(doc.data());
-    });
+    userCryptoListResults.forEach((doc: any) =>
+      userCryptoList.push(doc.data())
+    );
     // create list of crypto id's
     const userCryptoIDs: string = userCryptoList
       .slice()

@@ -9,6 +9,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+
 // local
 import { AppPageRx } from './App';
 import {
@@ -17,12 +18,15 @@ import {
   loadingReducer,
   displayAlertReducer,
   cryptoApiReducer,
-  addCoinReducer
+  addCoinReducer,
+  phoneNumberReducer
 } from './store';
 import portfolioSagas from './store/portfolio/saga';
 import userSagas from './store/user/saga';
 import addCoinSagas from './store/add-coin/saga';
 import cryptApiSagas from './store/crypto-api/saga';
+import phoneNumberSagas from './store/phone-number/saga';
+import deleteUserSagas from './store/delete-user/saga';
 
 // combine all reducers
 const rootReducer = combineReducers({
@@ -31,22 +35,24 @@ const rootReducer = combineReducers({
   loader: loadingReducer,
   displayAlert: displayAlertReducer,
   cryptoApi: cryptoApiReducer,
-  addCoin: addCoinReducer
+  addCoin: addCoinReducer,
+  phoneNumber: phoneNumberReducer
 });
-
 // combine all sagas
 function* rootSaga() {
   yield all([
     fork(userSagas),
     fork(portfolioSagas),
     fork(addCoinSagas),
-    fork(cryptApiSagas)
+    fork(cryptApiSagas),
+    fork(phoneNumberSagas),
+    fork(deleteUserSagas)
   ]);
 }
-
 // init store with saga/reducers
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
+// @ts-ignore
 sagaMiddleware.run(rootSaga);
 
 ReactDOM.render(

@@ -47,12 +47,6 @@ export const StyledTooltipIcon = styled(HelpOutline)(() => ({
   paddingBottom: '2px',
   cursor: 'pointer'
 }));
-export const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  paddingRight: '5px',
-  [theme.breakpoints.up('md')]: {
-    paddingRight: '15px'
-  }
-}));
 export const StyledLabelContentSpan = styled('span')(() => ({
   width: 'max-content',
   display: 'flex'

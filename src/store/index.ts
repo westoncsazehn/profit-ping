@@ -6,3 +6,5 @@ export * from './loading';
 export * from './add-coin';
 export * from './display-alert';
 export * from './crypto-api';
+export * from './phone-number';
+export * from './delete-user';

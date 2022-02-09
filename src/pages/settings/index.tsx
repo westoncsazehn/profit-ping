@@ -1,63 +1,131 @@
 // 3rd party
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Box, Container, IconButton, Typography } from '@mui/material';
-// local
-import { AppState } from '@store/AppState';
+import {
+  Alert,
+  Box,
+  Container,
+  Button,
+  Paper,
+  styled,
+  Typography
+} from '@mui/material';
 import { Delete } from '@mui/icons-material';
+// local
 import { DeleteItemConfirmModal } from '../common';
+import { AddPhoneNumberForm } from './components';
+import {
+  AppState,
+  FBUser,
+  addPhoneNumber,
+  getPhoneNumber,
+  deleteUser
+} from '../../store';
+import { UserContext } from '../../api';
 
-// const mapDispatchToProps = (dispatch: any) => ({
-//   ooo: (ooo: OOO) => dispatch(ooo(ooo))
-// });
-// const mapStateToProps = (appState: AppState) => appState;
-export const SettingsPage = (props: any) => {
-  console.log('props', props);
-  const phoneNumber: number = 1234567890;
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: '1rem',
+  [theme.breakpoints.up('md')]: {
+    padding: '3rem'
+  }
+}));
+const mapDispatchToProps = (dispatch: any) => ({
+  getPhoneNumber: (uid: string) => dispatch(getPhoneNumber(uid)),
+  addPhoneNumber: (uid: string, phoneNumber: number) =>
+    dispatch(addPhoneNumber(uid, phoneNumber)),
+  deleteUser: (uid: string) => dispatch(deleteUser(uid))
+});
+const mapStateToProps = ({ phoneNumber }: AppState) => phoneNumber;
+const SettingsPage = ({
+  phoneNumber,
+  getPhoneNumber,
+  addPhoneNumber,
+  deleteUser
+}: {
+  phoneNumber: number;
+  getPhoneNumber: any;
+  addPhoneNumber: any;
+  deleteUser: any;
+}) => {
+  const { uid } = useContext<FBUser>(UserContext);
+  const hasPhoneNumber: boolean = Boolean(phoneNumber);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const onDeleteAllUserData = () => {
-    console.log('delete all user data');
+  const [isPhoneInputDisabled, setIsPhoneInputDisabled] = useState<boolean>(
+    phoneNumber !== 0
+  );
+
+  useEffect(() => {
+    setIsPhoneInputDisabled(true);
+    if (!phoneNumber) {
+      getPhoneNumber(uid);
+    }
+  }, []);
+
+  const onSubmitPhoneNumber = (newNumber: number) => {
+    addPhoneNumber(uid, newNumber);
+    setIsPhoneInputDisabled(true);
   };
-  const onSubmit = () => {
-    console.log('modal submit called');
+  const onCancelPhoneNumberForm = () => {
+    setIsPhoneInputDisabled(true);
   };
-  const onCloseModal = () => {
-    console.log('modal close called');
+  const onModalSubmit = () => {
+    setIsModalOpen(false);
+    deleteUser(uid);
+  };
+  const onModalClose = () => {
     setIsModalOpen(false);
   };
-  const title = (
-    <>
-      <Typography>Account Removal</Typography>
-    </>
-  );
   const description = (
     <>
-      <Typography>Are you sure you wish to remove your account? </Typography>
-      <Typography>This will remove all data and messaging features.</Typography>
+      <span>Are you sure you wish to remove your account? </span>
+      <br />
+      <span>This will remove all data and messaging features.</span>
     </>
   );
+
   return (
     <>
-      <Container maxWidth="xl" sx={{ p: 0 }}>
-        <Box>
-          <Typography
-            color={Boolean(phoneNumber) ? 'inherit' : 'error'}
-            component="p">
-            Phone Number: {phoneNumber}
-          </Typography>
-          <IconButton onClick={onDeleteAllUserData}>
-            <Delete />
-          </IconButton>
+      <Container sx={{ p: 0 }}>
+        <Box component={StyledPaper}>
+          {!hasPhoneNumber ? (
+            <Alert severity="warning" sx={{ marginBottom: '25px' }}>
+              No phone number is registered. You cannot receive messages until
+              one is added.
+            </Alert>
+          ) : null}
+          <AddPhoneNumberForm
+            key={String(phoneNumber)}
+            phoneNumber={phoneNumber}
+            onSubmitPhoneNumber={onSubmitPhoneNumber}
+            onCancelPhoneNumber={onCancelPhoneNumberForm}
+            isDisabled={isPhoneInputDisabled}
+            setIsPhoneInputDisabled={setIsPhoneInputDisabled}
+          />
+        </Box>
+        <Box component={StyledPaper} sx={{ marginTop: 2 }}>
+          <Alert
+            severity="error"
+            sx={{
+              '.MuiAlert-icon': { p: 0, m: 'auto 0', height: 'fit-content' }
+            }}>
+            <Button color="inherit" onClick={() => setIsModalOpen(true)}>
+              <Delete />
+              <Typography>Delete Profile</Typography>
+            </Button>
+          </Alert>
         </Box>
       </Container>
       <DeleteItemConfirmModal
-        closeModal={onCloseModal}
-        submit={onSubmit}
+        closeModal={onModalClose}
+        submit={onModalSubmit}
         open={isModalOpen}
-        title={title}
+        title="Account Removal"
         description={description}
       />
     </>
   );
 };
-export const SettingsPageRx = connect(null, null)(SettingsPage);
+export const SettingsPageRx = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SettingsPage);

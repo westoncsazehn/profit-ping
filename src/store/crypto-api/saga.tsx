@@ -30,7 +30,6 @@ function* getListSaga({
     });
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
   } catch (e: any) {
-    console.log('e', e);
     yield put({
       type: displayAlertActionTypes.INIT_ALERT,
       payload: {

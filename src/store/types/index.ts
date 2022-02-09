@@ -9,3 +9,4 @@ export * from './CryptoApiStateType';
 export * from './AddCoinStateType';
 export * from './CoinActionsType';
 export * from './AccountMenuProps';
+export * from './PhoneNumberStateType';
