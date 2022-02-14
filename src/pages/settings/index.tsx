@@ -1,5 +1,5 @@
 // 3rd party
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Alert,
@@ -8,12 +8,14 @@ import {
   Button,
   Paper,
   styled,
-  Typography
+  Typography,
+  TextField
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
+import { signInWithPhoneNumber } from 'firebase/auth';
 // local
 import { DeleteItemConfirmModal } from '../common';
-import { AddPhoneNumberForm } from './components';
+import { AddPhoneNumberForm, PhoneVerificationField } from './components';
 import {
   AppState,
   FBUser,
@@ -21,7 +23,7 @@ import {
   getPhoneNumber,
   deleteUser
 } from '../../store';
-import { UserContext } from '../../api';
+import { auth, UserContext } from '../../api';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: '1rem',
@@ -50,9 +52,10 @@ const SettingsPage = ({
   const { uid } = useContext<FBUser>(UserContext);
   const hasPhoneNumber: boolean = Boolean(phoneNumber);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isPhoneInputDisabled, setIsPhoneInputDisabled] = useState<boolean>(
-    phoneNumber !== 0
-  );
+  const [isPhoneInputDisabled, setIsPhoneInputDisabled] =
+    useState<boolean>(true);
+  const [captchaConfirmation, setCaptchaConfirmation] = useState<any>(null);
+  const phoneVerificationFieldRef = useRef();
 
   useEffect(() => {
     setIsPhoneInputDisabled(true);
@@ -61,9 +64,22 @@ const SettingsPage = ({
     }
   }, []);
 
-  const onSubmitPhoneNumber = (newNumber: number) => {
-    addPhoneNumber(uid, newNumber);
-    setIsPhoneInputDisabled(true);
+  useEffect(() => {
+    // @ts-ignore
+    if (Boolean(phoneVerificationFieldRef?.current.children?.length > 0)) {
+      setIsPhoneInputDisabled(true);
+    }
+  }, [phoneVerificationFieldRef]);
+
+  const onSubmitPhoneNumber = (newNumber: number, captchaVerifier: any) => {
+    signInWithPhoneNumber(auth, `+1${newNumber}`, captchaVerifier)
+      .then((confirmationResult) => {
+        console.log('confirmationResult', confirmationResult);
+        setCaptchaConfirmation(confirmationResult);
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
   };
   const onCancelPhoneNumberForm = () => {
     setIsPhoneInputDisabled(true);
@@ -74,6 +90,15 @@ const SettingsPage = ({
   };
   const onModalClose = () => {
     setIsModalOpen(false);
+  };
+  const onPhoneVerification = (e: any) => {
+    const value = e.target.value;
+    if (value && value.length === 6) {
+      captchaConfirmation.confirm(value).then(() => {
+        console.log('user successfully phone verified');
+        setIsPhoneInputDisabled(true);
+      });
+    }
   };
   const description = (
     <>
@@ -101,6 +126,13 @@ const SettingsPage = ({
             isDisabled={isPhoneInputDisabled}
             setIsPhoneInputDisabled={setIsPhoneInputDisabled}
           />
+          {/*// @ts-ignore*/}
+          <Box ref={phoneVerificationFieldRef}>
+            <PhoneVerificationField
+              onPhoneVerification={onPhoneVerification}
+              captchaConfirmation={Boolean(123) }
+            />
+          </Box>
         </Box>
         <Box component={StyledPaper} sx={{ marginTop: 2 }}>
           <Alert

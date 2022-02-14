@@ -1,6 +1,6 @@
 // 3rd party
 import React from 'react';
-import { Avatar, IconButton, styled, Typography } from '@mui/material';
+import { IconButton, styled, Typography } from '@mui/material';
 import Tooltip, { tooltipClasses, TooltipProps } from '@mui/material/Tooltip';
 import { HelpOutline } from '@mui/icons-material';
 

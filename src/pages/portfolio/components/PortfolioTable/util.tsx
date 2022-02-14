@@ -1,6 +1,13 @@
 // 3rd party
 import React from 'react';
-import { Box, CardHeader, IconButton, TableCell, Avatar } from '@mui/material';
+import {
+  Box,
+  CardHeader,
+  IconButton,
+  TableCell,
+  Typography,
+  Avatar
+} from '@mui/material';
 import { AlarmOff, Edit } from '@mui/icons-material';
 // local
 import {
@@ -85,7 +92,11 @@ export const getCoinActionContent = (
         aria-label="edit coin"
         onClick={() => onEditCoin(coin)}>
         <StyledTooltip
-          title={`Edit ${coin?.name || 'coin'} investment details.`}
+          title={
+            <Typography>
+              Edit {coin?.name || 'coin'} investment details.
+            </Typography>
+          }
           {...TOOLTIP_COMMON_PROPS}>
           <Edit />
         </StyledTooltip>
@@ -95,7 +106,11 @@ export const getCoinActionContent = (
         aria-label="remove coin"
         onClick={() => onRemoveCoin(coin)}>
         <StyledWarningTooltip
-          title={`Remove ${coin?.name || 'coin'} and stop tracking multiplier.`}
+          title={
+            <Typography>
+              Remove {coin?.name || 'coin'} and stop tracking multiplier.
+            </Typography>
+          }
           {...TOOLTIP_COMMON_PROPS}>
           <AlarmOff />
         </StyledWarningTooltip>
