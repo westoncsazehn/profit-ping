@@ -8,9 +8,6 @@ export const userActionTypes = {
   SET_USER: 'SIGN_IN_USER'
 };
 
-export const signInUser = () => ({
-  type: userActionTypes.SIGN_IN_USER
-});
 export const setUser = (user: FBUser) => ({
   type: userActionTypes.SET_USER,
   payload: user

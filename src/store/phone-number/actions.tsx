@@ -12,6 +12,5 @@ export const getPhoneNumber = (uid: string) => ({
   payload: uid
 });
 export const addPhoneNumber = (uid: string, phoneNumber: number) => ({
-  type: phoneNumberActionTypes.ADD_PHONE_NUMBER,
   payload: { uid, phoneNumber }
 });

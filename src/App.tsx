@@ -1,5 +1,5 @@
 // 3rd party
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { onAuthStateChanged } from 'firebase/auth';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -10,60 +10,64 @@ import {
   Loader,
   PortfolioPageRx,
   SignInPageRx,
-  SettingsPageRx
+  SettingsPageRx,
+  LandingPage
 } from './pages';
-import { AppState, FBUser, signInUser } from './store';
-import { auth, UserContext } from './api';
-import { ADD_COIN_URL, SETTINGS_URL } from './pages/common';
+import { AppState, FBUser, LoaderState, setUser } from './store';
+import { auth } from './api';
+import {
+  ADD_COIN_URL,
+  PORTFOLIO_URL,
+  SETTINGS_URL,
+  SIGN_IN_URL
+} from './pages/common';
 
-const mapStateToProps = ({ user, loader }: AppState) => ({
-  user,
-  loader
-});
-// TODO: figure correct type for dispatch param here
+const mapStateToProps = ({
+  loader,
+  user
+}: AppState): {
+  loader: LoaderState;
+  user: FBUser;
+} => ({ loader, user });
 const mapDispatchToProps = (dispatch: any) => ({
-  signInUser: () => dispatch(signInUser())
+  setUser: (user: FBUser) => dispatch(setUser(user))
 });
 const App = ({
-  signInUser,
-  loader: { isLoading }
-}: { signInUser: any } & Pick<AppState, 'loader'>) => {
-  const [user, setUser] = useState<FBUser | null>(
-    JSON.parse(String(sessionStorage.getItem('user'))) as FBUser
-  );
+  loader,
+  user,
+  setUser
+}: Partial<AppState> & { setUser: any }) => {
+  const isLoading: boolean = Boolean(loader?.isLoading);
+  const uid = String(user?.uid);
+  // @ts-ignore
+  const persist = JSON.parse(localStorage.getItem('persist:root'));
+  const localUser = JSON.parse(persist.user);
 
-  onAuthStateChanged(auth, (user) => {
-    const sessionUser = sessionStorage.getItem('user');
-    if (user && !sessionUser) {
-      sessionStorage.setItem('user', JSON.stringify(user));
-      setUser(user);
-    } else if (!user) {
-      sessionStorage.removeItem('user');
-      setUser(null);
+  onAuthStateChanged(auth, (fbUser) => {
+    if (fbUser?.uid && !uid && !localUser?.uid) {
+      setUser({ uid: fbUser.uid, phoneNumber: fbUser.phoneNumber });
+    } else if (!fbUser && uid) {
+      setUser();
     }
   });
 
-  const baseUrlContent = Boolean(user) ? (
-    <PortfolioPageRx />
-  ) : (
-    <SignInPageRx onSignIn={signInUser} />
-  );
-
   return (
-    <UserContext.Provider value={user}>
+    <>
       <Loader isLoading={isLoading} />
       <BrowserRouter>
         <LayoutRx>
           <Routes>
-            <Route path="/" element={baseUrlContent} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path={`/${PORTFOLIO_URL}`} element={<PortfolioPageRx />} />
             <Route path={`/${ADD_COIN_URL}`} element={<AddCoinPageRx />} />
             <Route path={`/${ADD_COIN_URL}/:id`} element={<AddCoinPageRx />} />
             <Route path={`/${SETTINGS_URL}`} element={<SettingsPageRx />} />
-            <Route path="*" element={baseUrlContent} />
+            <Route path={`/${SIGN_IN_URL}`} element={<SignInPageRx />} />
+            <Route path="*" element={<LandingPage />} />
           </Routes>
         </LayoutRx>
       </BrowserRouter>
-    </UserContext.Provider>
+    </>
   );
 };
 

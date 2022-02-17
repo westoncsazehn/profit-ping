@@ -8,3 +8,6 @@ export * from './display-alert';
 export * from './crypto-api';
 export * from './phone-number';
 export * from './delete-user';
+export * from './recaptcha';
+export * from './navigate';
+export * from './sign-out';

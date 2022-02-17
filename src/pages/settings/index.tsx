@@ -1,5 +1,5 @@
 // 3rd party
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Alert,
@@ -8,22 +8,12 @@ import {
   Button,
   Paper,
   styled,
-  Typography,
-  TextField
+  Typography
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
-import { signInWithPhoneNumber } from 'firebase/auth';
 // local
 import { DeleteItemConfirmModal } from '../common';
-import { AddPhoneNumberForm, PhoneVerificationField } from './components';
-import {
-  AppState,
-  FBUser,
-  addPhoneNumber,
-  getPhoneNumber,
-  deleteUser
-} from '../../store';
-import { auth, UserContext } from '../../api';
+import { FBUser, deleteUser, AppState } from '../../store';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: '1rem',
@@ -31,59 +21,20 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: '3rem'
   }
 }));
+const mapStateToProps = ({ user }: AppState) => ({ user });
 const mapDispatchToProps = (dispatch: any) => ({
-  getPhoneNumber: (uid: string) => dispatch(getPhoneNumber(uid)),
-  addPhoneNumber: (uid: string, phoneNumber: number) =>
-    dispatch(addPhoneNumber(uid, phoneNumber)),
   deleteUser: (uid: string) => dispatch(deleteUser(uid))
 });
-const mapStateToProps = ({ phoneNumber }: AppState) => phoneNumber;
 const SettingsPage = ({
-  phoneNumber,
-  getPhoneNumber,
-  addPhoneNumber,
+  user: { uid },
   deleteUser
 }: {
-  phoneNumber: number;
-  getPhoneNumber: any;
-  addPhoneNumber: any;
+  user: FBUser;
   deleteUser: any;
 }) => {
-  const { uid } = useContext<FBUser>(UserContext);
-  const hasPhoneNumber: boolean = Boolean(phoneNumber);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isPhoneInputDisabled, setIsPhoneInputDisabled] =
-    useState<boolean>(true);
-  const [captchaConfirmation, setCaptchaConfirmation] = useState<any>(null);
-  const phoneVerificationFieldRef = useRef();
 
-  useEffect(() => {
-    setIsPhoneInputDisabled(true);
-    if (!phoneNumber) {
-      getPhoneNumber(uid);
-    }
-  }, []);
-
-  useEffect(() => {
-    // @ts-ignore
-    if (Boolean(phoneVerificationFieldRef?.current.children?.length > 0)) {
-      setIsPhoneInputDisabled(true);
-    }
-  }, [phoneVerificationFieldRef]);
-
-  const onSubmitPhoneNumber = (newNumber: number, captchaVerifier: any) => {
-    signInWithPhoneNumber(auth, `+1${newNumber}`, captchaVerifier)
-      .then((confirmationResult) => {
-        console.log('confirmationResult', confirmationResult);
-        setCaptchaConfirmation(confirmationResult);
-      })
-      .catch((error) => {
-        console.log('error', error);
-      });
-  };
-  const onCancelPhoneNumberForm = () => {
-    setIsPhoneInputDisabled(true);
-  };
+  // handlers
   const onModalSubmit = () => {
     setIsModalOpen(false);
     deleteUser(uid);
@@ -91,15 +42,7 @@ const SettingsPage = ({
   const onModalClose = () => {
     setIsModalOpen(false);
   };
-  const onPhoneVerification = (e: any) => {
-    const value = e.target.value;
-    if (value && value.length === 6) {
-      captchaConfirmation.confirm(value).then(() => {
-        console.log('user successfully phone verified');
-        setIsPhoneInputDisabled(true);
-      });
-    }
-  };
+
   const description = (
     <>
       <span>Are you sure you wish to remove your account? </span>
@@ -111,29 +54,6 @@ const SettingsPage = ({
   return (
     <>
       <Container sx={{ p: 0 }}>
-        <Box component={StyledPaper}>
-          {!hasPhoneNumber ? (
-            <Alert severity="warning" sx={{ marginBottom: '25px' }}>
-              No phone number is registered. You cannot receive messages until
-              one is added.
-            </Alert>
-          ) : null}
-          <AddPhoneNumberForm
-            key={String(phoneNumber)}
-            phoneNumber={phoneNumber}
-            onSubmitPhoneNumber={onSubmitPhoneNumber}
-            onCancelPhoneNumber={onCancelPhoneNumberForm}
-            isDisabled={isPhoneInputDisabled}
-            setIsPhoneInputDisabled={setIsPhoneInputDisabled}
-          />
-          {/*// @ts-ignore*/}
-          <Box ref={phoneVerificationFieldRef}>
-            <PhoneVerificationField
-              onPhoneVerification={onPhoneVerification}
-              captchaConfirmation={Boolean(123) }
-            />
-          </Box>
-        </Box>
         <Box component={StyledPaper} sx={{ marginTop: 2 }}>
           <Alert
             severity="error"

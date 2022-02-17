@@ -1,7 +1,6 @@
 // 3rd party
 import React from 'react';
 import {
-  Avatar,
   Box,
   CardHeader,
   IconButton,
@@ -9,14 +8,13 @@ import {
   Menu,
   MenuItem
 } from '@mui/material';
-import { Logout, Settings } from '@mui/icons-material';
+import { Logout, Menu as MenuIcon, Settings } from '@mui/icons-material';
 // local
 import { AccountMenuProps } from '../../../store';
 import { getCardHeaderStyles, ToolbarMenuPaperProps } from './styles';
 
 export const AccountMenu = ({
   isLoggedIn,
-  user,
   handleClick,
   handleClose,
   menuElement,
@@ -28,15 +26,13 @@ export const AccountMenu = ({
     <Box sx={{ flexGrow: 0 }}>
       <CardHeader
         sx={getCardHeaderStyles(isLoggedIn)}
-        title={`Welcome${user ? ' ' + user.displayName : ''}!`}
         titleTypographyProps={{
           paddingRight: '10px'
         }}
         avatar={
           <IconButton onClick={handleClick}>
-            <Avatar
-              alt={user?.displayName || ''}
-              src={user?.photoURL || ''}
+            <MenuIcon
+              fontSize="large"
               sx={{
                 float: 'right'
               }}

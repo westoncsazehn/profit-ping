@@ -17,7 +17,7 @@ import {
   updateCoin
 } from '../../store';
 import { AddCoinForm } from './components';
-import { BASE_URL } from '../common';
+import { PORTFOLIO_URL } from '../common';
 
 const mapDispatchToProps = (dispatch: any) => ({
   setIsLoading: (isLoading?: boolean) => dispatch(setIsLoading(isLoading)),
@@ -29,9 +29,10 @@ const mapDispatchToProps = (dispatch: any) => ({
   getPortfolioCoin: (id: string, uid: string) =>
     dispatch(getPortfolioCoin(id, uid))
 });
-const mapStateToProps = ({ cryptoApi, addCoin }: AppState) => ({
+const mapStateToProps = ({ cryptoApi, addCoin, user }: AppState) => ({
   ...cryptoApi,
-  ...addCoin
+  ...addCoin,
+  user
 });
 export const AddCoinPage = ({
   cryptoList,
@@ -39,7 +40,8 @@ export const AddCoinPage = ({
   updateCoin,
   getList,
   getPortfolioCoin,
-  selectedCoin
+  selectedCoin,
+  user: { uid }
 }: {
   cryptoList: BasePortfolioCoin[];
   addCoin: any;
@@ -47,9 +49,9 @@ export const AddCoinPage = ({
   getList: any;
   getPortfolioCoin: any;
   selectedCoin: FirestoreCoin;
+  user: FBUser;
 }) => {
   const navigate = useNavigate();
-  const { uid } = useContext<FBUser>(UserContext);
   const { id = '' } = useParams();
 
   // get list of coins for add coin form
@@ -64,7 +66,7 @@ export const AddCoinPage = ({
       id ? updateCoin(coin, uid) : addCoin(coin, uid);
     }
   };
-  const onCancel = () => navigate(BASE_URL);
+  const onCancel = () => navigate(PORTFOLIO_URL);
 
   return (
     <>

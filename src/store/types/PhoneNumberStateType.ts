@@ -1,3 +1,3 @@
-export type PhoneNumberStateType = () => {
+export type PhoneNumberStateType = {
   phoneNumber: number;
 };

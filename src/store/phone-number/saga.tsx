@@ -1,25 +1,23 @@
 // 3rd party
 import { all, call, put, takeEvery } from 'redux-saga/effects';
 import { AlertColor } from '@mui/material';
-import { setDoc, doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 // local
 import { loadingActionTypes } from '../loading';
 import { phoneNumberActionTypes } from './actions';
 import { displayAlertActionTypes } from '../display-alert';
 import { db, PHONE_NUMBER_DB } from '../../api';
+import { addPhoneNumberFB } from './util';
 
 function* addPhoneNumberSaga({
   payload: { uid, phoneNumber }
 }: {
-  type: typeof phoneNumberActionTypes.ADD_PHONE_NUMBER;
   payload: { uid: string; phoneNumber: number };
 }): any {
   try {
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
     // @ts-ignore
-    yield call(setDoc, doc(db, PHONE_NUMBER_DB, uid), {
-      phoneNumber: Number(phoneNumber)
-    });
+    yield addPhoneNumberFB(uid, phoneNumber);
     yield put({
       type: phoneNumberActionTypes.GET_PHONE_NUMBER_SUCCESS,
       payload: phoneNumber

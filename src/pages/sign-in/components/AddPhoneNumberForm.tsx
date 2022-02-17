@@ -1,5 +1,5 @@
 // 3rd party
-import React, { createRef, useState } from 'react';
+import React, { createRef } from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import {
@@ -18,8 +18,8 @@ import { Edit, PhoneAndroid } from '@mui/icons-material';
 import isMobilePhone from 'validator/es/lib/isMobilePhone';
 // local
 import { Recaptcha } from './recaptcha';
+import { RecaptchaVerifierType } from '../../../store';
 
-const StyledFormControl = styled(FormControl)(({ theme }) => ({}));
 const phoneNumberError = 'A valid phone number is required';
 const validatePhoneNumber = (value: number | undefined) =>
   isMobilePhone(String(value), ['en-US']);
@@ -30,11 +30,14 @@ const AddPhoneNumberSchema = yup.object().shape({
     .required(phoneNumberError)
 });
 export type AddPhoneNumberFormProps = {
-  phoneNumber: number;
+  phoneNumber: number | null;
   onSubmitPhoneNumber: (phoneNumber: number, confirmationResult: any) => void;
   onCancelPhoneNumber: () => void;
-  setIsPhoneInputDisabled: (isDisabled: boolean) => void;
+  onPhoneEdit: () => void;
   isDisabled?: boolean;
+  recaptchaVerifier: RecaptchaVerifierType;
+  setCaptchaIdByRender: any;
+  setRecaptchaVerifier: any;
 };
 export const StyledPhoneActionButtons = styled(Button)(({ theme }) => ({
   height: '2.5rem',
@@ -55,21 +58,22 @@ export const AddPhoneNumberForm = ({
   phoneNumber,
   onSubmitPhoneNumber,
   onCancelPhoneNumber,
-  setIsPhoneInputDisabled,
-  isDisabled
+  onPhoneEdit,
+  isDisabled,
+  recaptchaVerifier,
+  setCaptchaIdByRender,
+  setRecaptchaVerifier
 }: AddPhoneNumberFormProps) => {
   const formRef = createRef<any>();
   const resetPhoneNumberForm = () => formRef.current.reset();
-  const [captchaVerifier, setCaptchaVerifier] = useState();
-  const [captchaId, setCaptchaId] = useState<number>(0);
 
   return (
     <>
       {!isDisabled ? (
         <Recaptcha
-          setCaptchaVerifier={setCaptchaVerifier}
-          captchaId={captchaId}
-          setCaptchaId={setCaptchaId}
+          setRecaptchaVerifier={setRecaptchaVerifier}
+          recaptchaVerifier={recaptchaVerifier}
+          setCaptchaIdByRender={setCaptchaIdByRender}
           hasRender={!isDisabled}
         />
       ) : null}
@@ -78,8 +82,8 @@ export const AddPhoneNumberForm = ({
         initialValues={{ phoneNumber }}
         validationSchema={AddPhoneNumberSchema}
         onSubmit={(values, formikHelpers) => {
-          if (captchaVerifier) {
-            onSubmitPhoneNumber(values.phoneNumber, captchaVerifier);
+          if (recaptchaVerifier && values.phoneNumber) {
+            onSubmitPhoneNumber(values.phoneNumber, recaptchaVerifier);
             formikHelpers.resetForm({
               values: { phoneNumber: values.phoneNumber }
             });
@@ -101,7 +105,7 @@ export const AddPhoneNumberForm = ({
               <Grid container>
                 <Grid>
                   <Stack direction="row">
-                    <StyledFormControl
+                    <FormControl
                       required
                       fullWidth
                       error={Boolean(phoneNumberErrors)}>
@@ -122,9 +126,10 @@ export const AddPhoneNumberForm = ({
                         name="phoneNumber"
                         id="phoneNumber"
                       />
-                    </StyledFormControl>
+                    </FormControl>
                     <IconButton
-                      onClick={() => setIsPhoneInputDisabled(false)}
+                      onClick={() => onPhoneEdit()}
+                      disabled={!isDisabled}
                       sx={{
                         display: 'inline-block',
                         height: 40,

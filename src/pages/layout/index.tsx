@@ -1,7 +1,6 @@
 // 3rd party
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { signOut } from 'firebase/auth';
 import {
   AppBar,
   Box,
@@ -12,9 +11,23 @@ import {
 } from '@mui/material';
 import { connect } from 'react-redux';
 // local
-import { auth, UserContext } from '../../api';
-import { AppState, DisplayAlertType, FBUser, initAlert } from '../../store';
-import { PROFIT_PING_LOGO_PATH, SETTINGS_URL } from '../common';
+import { UserContext } from '../../api';
+import {
+  AppState,
+  DisplayAlertType,
+  FBUser,
+  initAlert,
+  NavigateStateType,
+  signOut
+} from '../../store';
+import {
+  ADD_COIN_URL,
+  BASE_URL,
+  PORTFOLIO_URL,
+  PROFIT_PING_LOGO_PATH,
+  SETTINGS_URL,
+  SIGN_IN_URL
+} from '../common';
 import { DisplayAlert } from '../components';
 import {
   AccountMenu,
@@ -27,25 +40,41 @@ import { getPageTitle } from './util';
 
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => ({
-  initAlert: (alert: DisplayAlertType) => dispatch(initAlert(alert))
+  initAlert: (alert: DisplayAlertType) => dispatch(initAlert(alert)),
+  signOut: () => dispatch(signOut())
 });
-const mapStateToProps = ({ displayAlert }: AppState) => ({ displayAlert });
+const mapStateToProps = ({ displayAlert, navigate, user }: AppState) => ({
+  user,
+  displayAlert,
+  navigate
+});
 export const Layout = ({
   displayAlert: { open, message, severity },
   initAlert,
-  children
+  signOut,
+  children,
+  navigate: { path },
+  user
 }: {
   displayAlert: DisplayAlertType;
   initAlert: ({ open }: any) => void;
+  signOut: any;
   children: React.ReactNode;
+  navigate: NavigateStateType;
+  user: FBUser;
 }) => {
-  const user = useContext<FBUser>(UserContext);
+  const { uid } = user;
+  const navigate = useNavigate();
   const [page, setPage] = useState<string>('');
   const [menuElement, setMenuElement] = useState(null);
   const { pathname = '' } = useLocation();
-  const navigate = useNavigate();
-  const isLoggedIn: boolean = Boolean(user?.uid);
+  const isLoggedIn: boolean = Boolean(uid);
   const isMenuOpen = Boolean(menuElement);
+
+  // on path change request from navigate saga
+  useEffect(() => {
+    navigate(`/${path}`);
+  }, [path]);
 
   // if there is alert data available, then trigger initAlert()
   useEffect(() => {
@@ -70,7 +99,7 @@ export const Layout = ({
   const onSignOut = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     handleClose();
-    await signOut(auth);
+    signOut();
   };
   const onInitSettings = () => {
     setMenuElement(null);
