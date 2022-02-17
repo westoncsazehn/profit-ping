@@ -20,12 +20,6 @@ export const setCaptchaIdByRender = (
   type: recaptchaActionTypes.SET_RECAPTCHA_ID,
   payload: recaptchaVerifier
 });
-export const setRecaptchaVerifier = (
-  recaptchaVerifier: RecaptchaVerifierType
-) => ({
-  type: recaptchaActionTypes.SET_RECAPTCHA_VERIFIER,
-  payload: recaptchaVerifier
-});
 export const resetRecaptchaState = () => ({
   type: recaptchaActionTypes.DEFAULT
 });

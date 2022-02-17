@@ -1,18 +1,17 @@
 // 3rd party
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Box, Container, Paper, styled } from '@mui/material';
 // local
 import { AddPhoneNumberForm, PhoneVerificationField } from './components';
 import {
   AppState,
-  RecaptchaStateType,
-  setCaptchaIdByRender,
   RecaptchaVerifierType,
-  setRecaptchaVerifier,
-  resetRecaptchaState,
   verifyPhoneCode,
-  signInWithPhoneProv
+  signInWithPhoneProv,
+  setCaptchaIdByRender,
+  RecaptchaStateType,
+  resetRecaptchaState
 } from '../../store';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -22,8 +21,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   }
 }));
 const mapDispatchToProps = (dispatch: any) => ({
-  setRecaptchaVerifier: (rv: RecaptchaVerifierType) =>
-    dispatch(setRecaptchaVerifier(rv)),
   setCaptchaIdByRender: (recaptchaVerifier: RecaptchaVerifierType) =>
     dispatch(setCaptchaIdByRender(recaptchaVerifier)),
   resetRecaptchaState: () => dispatch(resetRecaptchaState()),
@@ -38,34 +35,27 @@ const mapStateToProps = ({ recaptcha }: AppState) => ({
   recaptcha
 });
 const SignInPage = ({
-  recaptcha: { recaptchaVerifier, confirmationResult },
-  setRecaptchaVerifier,
-  setCaptchaIdByRender,
-  resetRecaptchaState,
+  recaptcha: { confirmationResult },
   verifyPhoneCode,
-  signInWithPhoneProv
+  signInWithPhoneProv,
+  setCaptchaIdByRender,
 }: {
   recaptcha: RecaptchaStateType;
-  setRecaptchaVerifier: any;
-  setCaptchaIdByRender: any;
-  resetRecaptchaState: any;
   verifyPhoneCode: any;
   signInWithPhoneProv: any;
+  setCaptchaIdByRender: any;
 }) => {
   const [isPhoneInputDisabled, setIsPhoneInputDisabled] =
     useState<boolean>(true);
-  const phoneVerificationFieldRef = useRef();
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState<any>();
 
   // reset Recaptcha state
-  useEffect(() => resetRecaptchaState(), []);
-  useEffect(() => {
-    // @ts-ignore
-    if (Boolean(phoneVerificationFieldRef?.current.children?.length > 0)) {
-      setIsPhoneInputDisabled(true);
-    }
-  }, [phoneVerificationFieldRef]);
+  useEffect(() => setRecaptchaVerifier(null), []);
 
   // handlers
+  const onPhoneEdit = () => {
+    setIsPhoneInputDisabled(false);
+  };
   const onSubmitPhoneNumber = (newNumber: number) => {
     signInWithPhoneProv(newNumber, recaptchaVerifier);
   };
@@ -77,9 +67,6 @@ const SignInPage = ({
       verifyPhoneCode(confirmationResult, verificationCode);
       setIsPhoneInputDisabled(true);
     }
-  };
-  const onPhoneEdit = () => {
-    setIsPhoneInputDisabled(false);
   };
 
   return (
@@ -96,13 +83,15 @@ const SignInPage = ({
             setRecaptchaVerifier={setRecaptchaVerifier}
             setCaptchaIdByRender={setCaptchaIdByRender}
           />
-          {/*// @ts-ignore*/}
-          <Box ref={phoneVerificationFieldRef}>
-            <PhoneVerificationField
-              onPhoneVerification={onPhoneVerification}
-              captchaConfirmation={confirmationResult}
-            />
-          </Box>
+          {confirmationResult ? (
+            <Box>
+              <PhoneVerificationField
+                onPhoneVerification={onPhoneVerification}
+                captchaConfirmation={confirmationResult}
+                recaptchaVerifier={recaptchaVerifier}
+              />
+            </Box>
+          ) : null}
         </Box>
       </Container>
     </>

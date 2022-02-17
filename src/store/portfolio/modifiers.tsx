@@ -7,7 +7,7 @@ import {
   BasePortfolioCoin,
   GeckoCoinHistoryItem,
   FirestoreCoin,
-  PortfolioTableCoin,
+  PortfolioCoin,
   SortByType
 } from '../types';
 
@@ -36,65 +36,12 @@ const getCurrentGeckoCrypto = (
   return currentItem;
 };
 
-const StyledTypography = styled(Typography)(() => ({
-  display: 'inline-block'
-}));
-const StyledDividerTypography = styled('span')(() => ({
-  padding: '0 5px',
-  display: 'inline-block'
-}));
-const Divider = () => <StyledDividerTypography>/</StyledDividerTypography>;
-const getCompareTypography = (
-  value: number,
-  comparedTo: number,
-  isUSD?: boolean,
-  isX?: boolean,
-  isClosing?: boolean
-) => {
-  const displayValue: number = isClosing ? comparedTo : value;
-  const formattedValue: string =
-    isUSD || isX ? displayValue.toFixed(2) : String(displayValue);
-  return (
-    <StyledTypography
-      color={
-        isClosing
-          ? 'text.primary'
-          : value < comparedTo
-          ? 'text.primary'
-          : 'success.main'
-      }>
-      {isClosing ? <Divider /> : null}
-      {isUSD ? '$' : ''}
-      {formattedValue}
-      {isX ? 'x' : ''}
-    </StyledTypography>
-  );
-};
-const getGain = (value: number): ReactNode => (
-  <StyledTypography
-    color={value > 0 ? 'success.main' : value < 0 ? 'error' : 'text.primary'}>
-    {toUSD(value)}
-  </StyledTypography>
-);
-const getTarget = (
-  value: number,
-  comparedTo: number,
-  isUSD?: boolean,
-  isX?: boolean
-): ReactNode => (
-  <>
-    {getCompareTypography(value, comparedTo, isUSD, isX)}
-    {getCompareTypography(value, comparedTo, isUSD, isX, true)}
-  </>
-);
-const toUSD = (value: string | number): string =>
-  `$${Number(value).toFixed(2)}`;
 export const getFormattedUserCoinsList = (
   userCoinList: FirestoreCoin[],
   geckoCurrentList: BasePortfolioCoin[],
   geckoHistoryList: GeckoCoinHistoryItem[]
-): PortfolioTableCoin[] => {
-  const userCoinPortfolio: PortfolioTableCoin[] = [];
+): PortfolioCoin[] => {
+  const userCoinPortfolio: PortfolioCoin[] = [];
   userCoinList.forEach((coin: FirestoreCoin) => {
     const { initialDate, initialInvestment, targetMultiplier } = coin;
     const historyPrice = getHistoryPrice(coin?.coin, geckoHistoryList);
@@ -128,12 +75,16 @@ export const getFormattedUserCoinsList = (
       image,
       symbol: symbol.toUpperCase(),
       quantity: initialInvestment,
-      initialUSD: toUSD(initialPrice),
+      initialUSD: initialPrice,
       initialUSDSortValue: initialPrice,
-      target: getTarget(currentPriceInUSD, targetInUSD, true),
-      multiplier: getTarget(currentMultiplier, targetMultiplier, false, true),
+      currentPriceInUSD,
+      targetInUSD,
+      currentMultiplier,
+      targetMultiplier,
+      target: 0,
+      multiplier: 0,
+      gain: gainValue,
       multiplierSortValue: targetMultiplier,
-      gain: getGain(gainValue),
       gainSortValue: gainValue,
       initialDate: initialDateString,
       initialDateSortValue: dateSortValue,
@@ -145,15 +96,15 @@ export const getFormattedUserCoinsList = (
 
 type SortValueType = number | string | Date;
 export const sortCoins = (
-  coins: PortfolioTableCoin[],
+  coins: PortfolioCoin[],
   { sortKey, direction }: SortByType
-): PortfolioTableCoin[] => {
-  return coins.slice().sort((a: PortfolioTableCoin, b: PortfolioTableCoin) => {
+): PortfolioCoin[] => {
+  return coins.slice().sort((a: PortfolioCoin, b: PortfolioCoin) => {
     const aValue: SortValueType = a[
-      sortKey as keyof PortfolioTableCoin
+      sortKey as keyof PortfolioCoin
     ] as SortValueType;
     const bValue: SortValueType = b[
-      sortKey as keyof PortfolioTableCoin
+      sortKey as keyof PortfolioCoin
     ] as SortValueType;
     if (typeof aValue === 'number' && typeof bValue === 'number') {
       const difference: number = aValue - bValue;

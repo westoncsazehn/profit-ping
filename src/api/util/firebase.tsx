@@ -3,8 +3,8 @@ import { createContext } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import {
-  getFunctions,
   connectFunctionsEmulator,
+  getFunctions,
   httpsCallable
 } from 'firebase/functions';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
@@ -52,3 +52,5 @@ export const sendMessages = httpsCallable(
   functions,
   'messageProfitingCoinsToDevices'
 );
+export const getUser = auth?.currentUser;
+export const getUserUID = () => getUser?.uid;

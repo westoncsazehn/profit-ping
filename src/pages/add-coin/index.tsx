@@ -1,9 +1,8 @@
 // 3rd party
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 // local
-import { UserContext } from '../../api';
 import {
   addCoin,
   FBUser,
@@ -14,7 +13,8 @@ import {
   BasePortfolioCoin,
   FirestoreCoin,
   getPortfolioCoin,
-  updateCoin
+  updateCoin,
+  navigateTo
 } from '../../store';
 import { AddCoinForm } from './components';
 import { PORTFOLIO_URL } from '../common';
@@ -27,7 +27,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(updateCoin(coin, uid)),
   getList: (uid: string, id: string = '') => dispatch(getList(uid, id)),
   getPortfolioCoin: (id: string, uid: string) =>
-    dispatch(getPortfolioCoin(id, uid))
+    dispatch(getPortfolioCoin(id, uid)),
+  navigateTo: (path: string) => dispatch(navigateTo(path))
 });
 const mapStateToProps = ({ cryptoApi, addCoin, user }: AppState) => ({
   ...cryptoApi,
@@ -36,22 +37,23 @@ const mapStateToProps = ({ cryptoApi, addCoin, user }: AppState) => ({
 });
 export const AddCoinPage = ({
   cryptoList,
+  selectedCoin,
+  user: { uid },
   addCoin,
   updateCoin,
   getList,
   getPortfolioCoin,
-  selectedCoin,
-  user: { uid }
+  navigateTo
 }: {
   cryptoList: BasePortfolioCoin[];
+  selectedCoin: FirestoreCoin;
+  user: FBUser;
   addCoin: any;
   updateCoin: any;
   getList: any;
   getPortfolioCoin: any;
-  selectedCoin: FirestoreCoin;
-  user: FBUser;
+  navigateTo: any;
 }) => {
-  const navigate = useNavigate();
   const { id = '' } = useParams();
 
   // get list of coins for add coin form
@@ -66,7 +68,7 @@ export const AddCoinPage = ({
       id ? updateCoin(coin, uid) : addCoin(coin, uid);
     }
   };
-  const onCancel = () => navigate(PORTFOLIO_URL);
+  const onCancel = () => navigateTo(PORTFOLIO_URL);
 
   return (
     <>

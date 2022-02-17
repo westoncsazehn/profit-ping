@@ -33,14 +33,16 @@ const MAX_VERIFICATION_CODE_LENGTH: number = 6;
 
 export const PhoneVerificationField = ({
   onPhoneVerification,
-  captchaConfirmation
+  captchaConfirmation,
+  recaptchaVerifier
 }: {
   onPhoneVerification: any;
   captchaConfirmation: any;
+  recaptchaVerifier: any;
 }) => {
   const [isVerifyDisabled, setIsVerifyDisabled] = useState<boolean>(true);
   const [verifyCode, setVerifyCode] = useState<number | undefined>();
-  return captchaConfirmation ? (
+  return Boolean(captchaConfirmation && recaptchaVerifier) ? (
     <Grid container sx={{ paddingTop: '25px' }}>
       <Grid item xs={12} md={3}>
         <FormLabel htmlFor="verification-code">Verification Code</FormLabel>

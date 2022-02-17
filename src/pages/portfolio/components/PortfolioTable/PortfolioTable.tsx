@@ -1,5 +1,5 @@
 // 3rd party
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CardHeader,
@@ -19,10 +19,11 @@ import { AddCircle } from '@mui/icons-material';
 // local
 import {
   HeaderItem,
-  PortfolioTableCoin,
+  PortfolioCoin,
   SortByType,
   DEFAULT_SORT_DIRECTION,
-  DEFAULT_SORT_KEY
+  DEFAULT_SORT_KEY,
+  PortfolioTableCoin
 } from '../../../../store';
 import {
   getTableCellContent,

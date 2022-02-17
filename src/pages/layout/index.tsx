@@ -1,5 +1,5 @@
 // 3rd party
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import { connect } from 'react-redux';
 // local
-import { UserContext } from '../../api';
 import {
   AppState,
   DisplayAlertType,
@@ -21,7 +20,6 @@ import {
   signOut
 } from '../../store';
 import {
-  ADD_COIN_URL,
   BASE_URL,
   PORTFOLIO_URL,
   PROFIT_PING_LOGO_PATH,
@@ -70,10 +68,17 @@ export const Layout = ({
   const { pathname = '' } = useLocation();
   const isLoggedIn: boolean = Boolean(uid);
   const isMenuOpen = Boolean(menuElement);
+  const homeLink: string = uid ? PORTFOLIO_URL : BASE_URL;
 
   // on path change request from navigate saga
   useEffect(() => {
-    navigate(`/${path}`);
+    const newPath: string =
+      !uid && !path
+        ? `/${SIGN_IN_URL}`
+        : !path
+        ? `/${PORTFOLIO_URL}`
+        : `/${path}`;
+    navigate(newPath);
   }, [path]);
 
   // if there is alert data available, then trigger initAlert()
@@ -113,7 +118,7 @@ export const Layout = ({
           <StyledToolBar sx={{ p: 0 }}>
             <Box sx={{ flexGrow: 1 }}>
               <Button variant="text">
-                <StyledLink to="/">
+                <StyledLink to={homeLink}>
                   <StyledImageLogo
                     alt="Profit Ping Logo"
                     src={PROFIT_PING_LOGO_PATH}

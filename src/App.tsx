@@ -1,5 +1,5 @@
 // 3rd party
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { onAuthStateChanged } from 'firebase/auth';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -13,43 +13,47 @@ import {
   SettingsPageRx,
   LandingPage
 } from './pages';
-import { AppState, FBUser, LoaderState, setUser } from './store';
-import { auth } from './api';
+import {
+  AppState,
+  FBUser,
+  LoaderState,
+  NavigateStateType,
+  setUser
+} from './store';
 import {
   ADD_COIN_URL,
   PORTFOLIO_URL,
   SETTINGS_URL,
   SIGN_IN_URL
 } from './pages/common';
+import { auth } from './api';
 
 const mapStateToProps = ({
   loader,
-  user
+  navigate
 }: AppState): {
   loader: LoaderState;
-  user: FBUser;
-} => ({ loader, user });
+  navigate: NavigateStateType;
+} => ({ loader, navigate });
 const mapDispatchToProps = (dispatch: any) => ({
   setUser: (user: FBUser) => dispatch(setUser(user))
 });
 const App = ({
   loader,
-  user,
+  navigate: { path },
   setUser
-}: Partial<AppState> & { setUser: any }) => {
+}: {
+  loader: LoaderState;
+  navigate: NavigateStateType;
+  setUser: any;
+}) => {
   const isLoading: boolean = Boolean(loader?.isLoading);
-  const uid = String(user?.uid);
-  // @ts-ignore
-  const persist = JSON.parse(localStorage.getItem('persist:root'));
-  const localUser = JSON.parse(persist.user);
 
-  onAuthStateChanged(auth, (fbUser) => {
-    if (fbUser?.uid && !uid && !localUser?.uid) {
-      setUser({ uid: fbUser.uid, phoneNumber: fbUser.phoneNumber });
-    } else if (!fbUser && uid) {
-      setUser();
-    }
-  });
+  useEffect(() => {
+    return onAuthStateChanged(auth, (fbUser) =>
+      setUser({ uid: fbUser?.uid, phoneNumber: fbUser?.phoneNumber })
+    );
+  }, [path]);
 
   return (
     <>

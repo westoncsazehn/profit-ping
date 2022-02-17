@@ -51,3 +51,11 @@ export const StyledLabelContentSpan = styled('span')(() => ({
   width: 'max-content',
   display: 'flex'
 }));
+// table coin formatting styles
+export const StyledTypography = styled(Typography)(() => ({
+  display: 'inline-block'
+}));
+export const StyledDividerTypography = styled('span')(() => ({
+  padding: '0 5px',
+  display: 'inline-block'
+}));

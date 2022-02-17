@@ -1,7 +1,7 @@
 import { loadingActionTypes } from './actions';
 
 const loadingState = {
-  isLoading: false
+  isLoading: true
 };
 
 export const loadingReducer = (
@@ -15,6 +15,6 @@ export const loadingReducer = (
     case loadingActionTypes.SET_IS_LOADING:
       return { ...state, isLoading: Boolean(payload) };
     default:
-      return state;
+      return { ...state };
   }
 };

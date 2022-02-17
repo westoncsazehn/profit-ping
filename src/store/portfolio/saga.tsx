@@ -21,13 +21,12 @@ import {
   db,
   DEVICE_TOKEN_DB,
   getCryptoHistory,
-  getCryptoList,
+  getCryptoList, getUserUID,
   messaging
-} from '../../api';
-import { getUserUID } from '../user';
+} from "../../api";
 import { getFormattedUserCoinsList } from './modifiers';
 import { loadingActionTypes } from '../loading';
-import { CoinAction, FirestoreCoin, PortfolioTableCoin } from '../types';
+import { CoinAction, FirestoreCoin, PortfolioCoin } from '../types';
 import { getCoins } from './selectors';
 import { displayAlertActionTypes } from '../display-alert';
 import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_KEY } from './reducer';
@@ -163,8 +162,8 @@ function* getUsersCryptoListSaga({
         )
       )
     );
-    // get PortfolioTableCoin formatted data from all lists: user, gecko: current & history
-    const userCoinPortfolio: PortfolioTableCoin[] = getFormattedUserCoinsList(
+    // get PortfolioCoin formatted data from all lists: user, gecko: current & history
+    const userCoinPortfolio: PortfolioCoin[] = getFormattedUserCoinsList(
       userCryptoList,
       geckoCoinList,
       geckoCoinHistoryList
@@ -212,7 +211,7 @@ function* removeCoinSaga({ payload }: { payload: CoinAction }): any {
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
     const { id, user } = payload;
     yield deleteDocument(id, user);
-    const coins: PortfolioTableCoin[] = yield select(getCoins);
+    const coins: PortfolioCoin[] = yield select(getCoins);
     const filteredCoins = coins.filter((coin) => coin.id !== id);
     yield put({
       type: portfolioActionTypes.REMOVE_COIN_SUCCESS,

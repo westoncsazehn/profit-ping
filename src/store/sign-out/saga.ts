@@ -7,11 +7,16 @@ import { auth } from '../../api';
 import { loadingActionTypes } from '../loading';
 import { displayAlertActionTypes } from '../display-alert';
 import { AlertColor } from '@mui/material';
+import {
+  GREP_CATCHA_STORAGE_KEY,
+  REACT_PERSIST_STORAGE_KEY
+} from '../../values';
 
 function* signOutSaga(): any {
   try {
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
-    yield sessionStorage.removeItem('persist:root');
+    yield sessionStorage.removeItem(REACT_PERSIST_STORAGE_KEY);
+    yield localStorage.removeItem(GREP_CATCHA_STORAGE_KEY);
     yield call(signOut, auth);
     yield navigateTo(SIGN_IN_URL);
     yield put({

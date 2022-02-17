@@ -8,15 +8,15 @@ export type BasePortfolioCoin = {
   symbol: string;
   current_price?: number;
 };
-export type PortfolioTableCoin = BasePortfolioCoin & {
+export type PortfolioBase = {
   nameSortValue: string;
-  quantity: number; // amount of coins
-  initialUSD: ReactNode; // $initial amount (quantity * history price)
+  quantity: number;
   initialUSDSortValue: number;
-  target: ReactNode; // $current price / $target multi price
-  multiplier: ReactNode; // current multi / target multi
+  currentPriceInUSD: number;
+  targetInUSD: number;
+  currentMultiplier: number;
+  targetMultiplier: number;
   multiplierSortValue: number;
-  gain: ReactNode; // current price - history price
   gainSortValue: number;
   initialDate: string;
   initialDateSortValue: number;
@@ -24,9 +24,21 @@ export type PortfolioTableCoin = BasePortfolioCoin & {
   isMessageEnabled?: boolean;
   action?: ReactNode;
 };
+export type PortfolioCoin = BasePortfolioCoin & PortfolioBase & {
+  initialUSD: number;
+  target: number;
+  multiplier: number;
+  gain: number;
+};
+export type PortfolioTableCoin = BasePortfolioCoin & PortfolioBase & {
+  initialUSD: string;
+  target: ReactNode;
+  multiplier: ReactNode;
+  gain: ReactNode;
+}
 export type SortByType = { sortKey: string; direction: string };
 export type Portfolio = {
-  coins: PortfolioTableCoin[];
+  coins: PortfolioCoin[];
   sortBy: SortByType;
   userDeviceToken: string;
 };

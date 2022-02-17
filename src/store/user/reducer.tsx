@@ -12,11 +12,9 @@ export const userReducer = (
   { type, payload }: { type: keyof typeof userActionTypes; payload: FBUser }
 ) => {
   switch (type) {
-    case userActionTypes.SET_USER:
-    case userActionTypes.SIGN_IN_USER_SUCCESS:
-      return payload ? { ...payload } : { ...initialUserState };
-    case userActionTypes.SIGN_IN_USER_FAILED:
+    case userActionTypes.SET_USER_SUCCESS:
+      return { ...state, ...payload };
     default:
-      return { ...initialUserState };
+      return { ...state };
   }
 };

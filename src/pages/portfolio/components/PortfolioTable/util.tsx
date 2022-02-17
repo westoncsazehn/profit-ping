@@ -1,5 +1,5 @@
 // 3rd party
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   Box,
   CardHeader,
@@ -8,19 +8,22 @@ import {
   Typography,
   Avatar
 } from '@mui/material';
-import { AlarmOff, Edit } from '@mui/icons-material';
+import { Close, Edit } from '@mui/icons-material';
 // local
 import {
   CoinActionsType,
   HeaderItem,
+  PortfolioCoin,
   PortfolioTableCoin
 } from '../../../../store';
 import {
+  StyledDividerTypography,
   StyledLabelContentSpan,
   StyledRemoveCoinIconButton,
   StyledTableHeaderTitle,
   StyledTooltip,
   StyledTooltipIcon,
+  StyledTypography,
   StyledWarningTooltip,
   TOOLTIP_COMMON_PROPS
 } from './styles';
@@ -112,7 +115,7 @@ export const getCoinActionContent = (
             </Typography>
           }
           {...TOOLTIP_COMMON_PROPS}>
-          <AlarmOff />
+          <Close color="error" />
         </StyledWarningTooltip>
       </StyledRemoveCoinIconButton>
     </Box>
@@ -134,7 +137,6 @@ export const getTableCellContent = (
     );
   return <TableCell key={key + index} align="left" children={item} />;
 };
-
 export const getTableHeaderTitle = (header: HeaderItem) => {
   // @ts-ignore
   const title = (
@@ -153,3 +155,71 @@ export const getTableHeaderTitle = (header: HeaderItem) => {
     </StyledLabelContentSpan>
   );
 };
+
+// Portfolio > index > Formats coin values for PortfolioTable.tsx
+const toUSD = (value: string | number): string =>
+  `$${Number(value).toFixed(2)}`;
+const Divider = () => <StyledDividerTypography>/</StyledDividerTypography>;
+const getCompareTypography = (
+  value: number,
+  comparedTo: number,
+  isUSD?: boolean,
+  isX?: boolean,
+  isClosing?: boolean
+) => {
+  const displayValue: number = isClosing ? comparedTo : value;
+  const formattedValue: string =
+    isUSD || isX ? displayValue.toFixed(2) : String(displayValue);
+  return (
+    <StyledTypography
+      color={
+        isClosing
+          ? 'text.primary'
+          : value < comparedTo
+          ? 'text.primary'
+          : 'success.main'
+      }>
+      {isClosing ? <Divider /> : null}
+      {isUSD ? '$' : ''}
+      {formattedValue}
+      {isX ? 'x' : ''}
+    </StyledTypography>
+  );
+};
+const getGain = (value: number): ReactNode => (
+  <StyledTypography
+    color={value > 0 ? 'success.main' : value < 0 ? 'error' : 'text.primary'}>
+    {toUSD(value)}
+  </StyledTypography>
+);
+const getTarget = (
+  value: number,
+  comparedTo: number,
+  isUSD?: boolean,
+  isX?: boolean
+): ReactNode => (
+  <>
+    {getCompareTypography(value, comparedTo, isUSD, isX)}
+    {getCompareTypography(value, comparedTo, isUSD, isX, true)}
+  </>
+);
+export const formatCoinsForPortfolioTable = (
+  coins: PortfolioCoin[]
+): PortfolioTableCoin[] =>
+  coins?.slice()?.map((coin: PortfolioCoin) => {
+    const {
+      initialUSD,
+      currentPriceInUSD,
+      targetInUSD,
+      currentMultiplier,
+      targetMultiplier,
+      gain
+    } = coin;
+    return {
+      ...coin,
+      initialUSD: toUSD(initialUSD),
+      target: getTarget(currentPriceInUSD, targetInUSD, true),
+      multiplier: getTarget(currentMultiplier, targetMultiplier, false, true),
+      gain: getGain(gain)
+    };
+  });

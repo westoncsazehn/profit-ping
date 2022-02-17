@@ -4,4 +4,3 @@ export const SIGN_IN_URL: string = 'sign-in';
 export const SETTINGS_URL: string = 'settings';
 export const BASE_URL: string = '/';
 export const PROFIT_PING_LOGO_PATH: string = 'profit-ping-logo-small.png';
-export const SESSION_USER: string = 'user';

@@ -1,6 +1,4 @@
 import { navigationActionTypes } from './actions';
-import { auth } from '../../api';
-import { PORTFOLIO_URL, SIGN_IN_URL } from '../../pages/common';
 
 const initialNavigateState = {
   path: ''
@@ -15,9 +13,8 @@ export const navigateReducer = (
 ) => {
   switch (type) {
     case navigationActionTypes.NAVIGATE_TO:
-      return { path: payload };
+      return { ...state, path: payload };
     default:
-      const isUserSignedIn: boolean = Boolean(auth?.currentUser?.uid);
-      return { path: isUserSignedIn ? PORTFOLIO_URL : SIGN_IN_URL };
+      return { ...state };
   }
 };

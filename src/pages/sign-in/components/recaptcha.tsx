@@ -8,13 +8,13 @@ import { auth } from '../../../api';
 export const Recaptcha = ({
   hasRender,
   recaptchaVerifier,
-  setCaptchaIdByRender,
-  setRecaptchaVerifier
+  setRecaptchaVerifier,
+  setCaptchaIdByRender
 }: {
   hasRender: boolean;
   recaptchaVerifier: RecaptchaVerifierType;
-  setCaptchaIdByRender: any;
   setRecaptchaVerifier: any;
+  setCaptchaIdByRender: any;
 }) => {
   useEffect(() => {
     if (!recaptchaVerifier) {

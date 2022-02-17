@@ -1,23 +1,23 @@
 // 3rd party
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom';
 // local
-import { UserContext } from '../../api';
 import { DeleteItemConfirmModal, ADD_COIN_URL } from '../common';
 import {
   CoinAction,
-  PortfolioTableCoin,
+  PortfolioCoin,
   removeCoin,
   getUsersCryptoList,
   FBUser,
   Portfolio,
   AppState,
   sortCryptoList,
-  SortByType
+  SortByType,
+  PortfolioTableCoin
 } from '../../store';
-import { PortfolioTable } from './components';
+import { PortfolioTable, formatCoinsForPortfolioTable } from './components';
 
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => {
@@ -41,12 +41,10 @@ const PortfolioPage = ({
   removeCoin: any;
   sortCryptoList: any;
 } & AppState) => {
-  console.log('portfolio user', uid);
   const navigate = useNavigate();
   const { coins = [], sortBy } = portfolio;
-  const [coinToRemove, setCoinToRemove] = useState<
-    PortfolioTableCoin | undefined
-  >();
+  const [coinToRemove, setCoinToRemove] = useState<PortfolioCoin | undefined>();
+  const [tableCoins, setTableCoins] = useState<PortfolioTableCoin[]>([]);
 
   // get list of user's crypto with metadata
   useEffect(() => {
@@ -54,9 +52,14 @@ const PortfolioPage = ({
       getUsersCryptoList(uid);
     }
   }, []);
+  useEffect(() => {
+    if (coins?.length) {
+      setTableCoins(formatCoinsForPortfolioTable(coins));
+    }
+  }, [coins]);
 
   // handlers
-  const onRemoveCoin = (coin: PortfolioTableCoin) => {
+  const onRemoveCoin = (coin: PortfolioCoin) => {
     if (Boolean(coin)) setCoinToRemove(coin);
   };
   const closeModal = () => setCoinToRemove(undefined);
@@ -67,7 +70,7 @@ const PortfolioPage = ({
       closeModal();
     }
   };
-  const onEditCoin = (coin: PortfolioTableCoin) => {
+  const onEditCoin = (coin: PortfolioCoin) => {
     const { id = '' } = coin;
     if (id && uid) navigate(`/${ADD_COIN_URL}/${id}`);
   };
@@ -80,7 +83,7 @@ const PortfolioPage = ({
   return (
     <Container>
       <PortfolioTable
-        coins={coins}
+        coins={tableCoins}
         onRemoveCoin={onRemoveCoin}
         onEditCoin={onEditCoin}
         onSortBy={onSortBy}

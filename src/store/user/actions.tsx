@@ -2,10 +2,8 @@
 import { FBUser } from '../types';
 
 export const userActionTypes = {
-  SIGN_IN_USER: 'SIGN_IN_USER',
-  SIGN_IN_USER_SUCCESS: 'SIGN_IN_USER_SUCCESS',
-  SIGN_IN_USER_FAILED: 'SIGN_IN_USER_FAILED',
-  SET_USER: 'SIGN_IN_USER'
+  SET_USER: 'SET_USER',
+  SET_USER_SUCCESS: 'SET_USER_SUCCESS',
 };
 
 export const setUser = (user: FBUser) => ({

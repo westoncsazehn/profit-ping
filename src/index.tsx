@@ -10,8 +10,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { persistReducer, persistStore } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
 import { PersistGate } from 'redux-persist/integration/react';
+import sessionStorage from 'redux-persist/es/storage/session';
 // local
 import { AppPageRx } from './App';
 import {
@@ -32,10 +32,25 @@ import phoneNumberSagas from './store/phone-number/saga';
 import deleteUserSagas from './store/delete-user/saga';
 import recaptchaSagas from './store/recaptcha/saga';
 import signOutSagas from './store/sign-out/saga';
+import userSagas from './store/user/saga';
+import { PERSIST_KEY } from './values';
+
+// keeping this here for any possible future debugging
+// const SetTransform = createTransform(
+//   (inboundState, key) => {
+//     console.log("key", key);
+//     console.log("inboundState", inboundState);
+//     return inboundState;
+//   },
+//   (outboundState, key) => {
+//     return outboundState;
+//   },
+// );
 
 const persistConfig = {
-  key: 'root',
-  storage
+  key: PERSIST_KEY,
+  storage: sessionStorage
+  // ,transforms: [SetTransform]
 };
 // combine all reducers
 const rootReducer = combineReducers({
@@ -59,7 +74,8 @@ function* rootSaga() {
     fork(phoneNumberSagas),
     fork(deleteUserSagas),
     fork(recaptchaSagas),
-    fork(signOutSagas)
+    fork(signOutSagas),
+    fork(userSagas)
   ]);
 }
 // init store with saga/reducers

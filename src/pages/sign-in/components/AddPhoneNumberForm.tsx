@@ -36,8 +36,8 @@ export type AddPhoneNumberFormProps = {
   onPhoneEdit: () => void;
   isDisabled?: boolean;
   recaptchaVerifier: RecaptchaVerifierType;
-  setCaptchaIdByRender: any;
   setRecaptchaVerifier: any;
+  setCaptchaIdByRender: any;
 };
 export const StyledPhoneActionButtons = styled(Button)(({ theme }) => ({
   height: '2.5rem',
@@ -61,8 +61,8 @@ export const AddPhoneNumberForm = ({
   onPhoneEdit,
   isDisabled,
   recaptchaVerifier,
-  setCaptchaIdByRender,
-  setRecaptchaVerifier
+  setRecaptchaVerifier,
+  setCaptchaIdByRender
 }: AddPhoneNumberFormProps) => {
   const formRef = createRef<any>();
   const resetPhoneNumberForm = () => formRef.current.reset();
@@ -72,8 +72,8 @@ export const AddPhoneNumberForm = ({
       {!isDisabled ? (
         <Recaptcha
           setRecaptchaVerifier={setRecaptchaVerifier}
-          recaptchaVerifier={recaptchaVerifier}
           setCaptchaIdByRender={setCaptchaIdByRender}
+          recaptchaVerifier={recaptchaVerifier}
           hasRender={!isDisabled}
         />
       ) : null}
