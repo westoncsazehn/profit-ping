@@ -1,7 +1,7 @@
 import { phoneNumberActionTypes } from './actions';
 
 const initialPhoneNumberState = {
-  phoneNumber: 0
+  phoneNumber: null
 };
 
 export const phoneNumberReducer = (
@@ -15,6 +15,8 @@ export const phoneNumberReducer = (
     case phoneNumberActionTypes.ADD_PHONE_NUMBER_SUCCESS:
     case phoneNumberActionTypes.GET_PHONE_NUMBER_SUCCESS:
       return { phoneNumber: payload };
+    case phoneNumberActionTypes.RESET:
+      return { ...state, phoneNumber: null };
     case phoneNumberActionTypes.ADD_PHONE_NUMBER_FAILED:
     case phoneNumberActionTypes.GET_PHONE_NUMBER_FAILED:
     default:

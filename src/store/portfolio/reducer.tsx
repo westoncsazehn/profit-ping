@@ -7,8 +7,7 @@ export const DEFAULT_SORT_KEY: string = 'multiplierSortValue';
 export const DEFAULT_SORT_DIRECTION: string = 'desc';
 const initialPortfolioState: Portfolio = {
   coins: [],
-  sortBy: { sortKey: DEFAULT_SORT_KEY, direction: 'desc' },
-  userDeviceToken: ''
+  sortBy: { sortKey: DEFAULT_SORT_KEY, direction: 'desc' }
 };
 
 export const portfolioReducer = (
@@ -16,17 +15,16 @@ export const portfolioReducer = (
   { type, payload }: { type: keyof typeof portfolioActionTypes; payload: any }
 ) => {
   switch (type) {
-    case portfolioActionTypes.ADD_GET_DEVICE_TOKEN_SUCCESS:
-    case portfolioActionTypes.GET_DEVICE_TOKEN_SUCCESS:
-      return { ...state, userDeviceToken: payload };
     case portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS:
-      return { ...state, coins: payload };
     case portfolioActionTypes.REMOVE_COIN_SUCCESS:
     case portfolioActionTypes.TAKE_PROFIT_SUCCESS:
-      return { ...state, coins: payload };
+      return { ...state, coins: [...payload] };
     case portfolioActionTypes.SORT_CRYPTO_LIST:
-      return { ...state, coins: sortCoins(state.coins || [], payload), sortBy: payload };
-    case portfolioActionTypes.GET_DEVICE_TOKEN_FAILED:
+      return {
+        ...state,
+        coins: sortCoins(state.coins || [], payload),
+        sortBy: payload
+      };
     default:
       return state;
   }

@@ -34,6 +34,7 @@ import recaptchaSagas from './store/recaptcha/saga';
 import signOutSagas from './store/sign-out/saga';
 import userSagas from './store/user/saga';
 import { PERSIST_KEY } from './values';
+import displayAlertSagas from './store/display-alert/saga';
 
 // keeping this here for any possible future debugging
 // const SetTransform = createTransform(
@@ -75,7 +76,8 @@ function* rootSaga() {
     fork(deleteUserSagas),
     fork(recaptchaSagas),
     fork(signOutSagas),
-    fork(userSagas)
+    fork(userSagas),
+    fork(displayAlertSagas)
   ]);
 }
 // init store with saga/reducers

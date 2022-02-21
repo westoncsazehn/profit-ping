@@ -3,7 +3,7 @@ import { recaptchaActionTypes } from './actions';
 
 const initialRecaptchaState: RecaptchaStateType = {
   captchaId: 0,
-  confirmationResult: 0
+  confirmationResult: null
 };
 
 export const recaptchaReducer = (
@@ -17,6 +17,8 @@ export const recaptchaReducer = (
       };
     case recaptchaActionTypes.SIGN_IN_WITH_PHONE_SUCCESS:
       return { ...state, confirmationResult: payload };
+    case recaptchaActionTypes.RESET:
+      return { ...state, captchaId: null, confirmationResult: null };
     case recaptchaActionTypes.DEFAULT:
     case recaptchaActionTypes.SET_RECAPTCHA_ID_FAILED:
     case recaptchaActionTypes.SET_RECAPTCHA_VERIFIER_FAILED:

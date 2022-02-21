@@ -53,9 +53,7 @@ const PortfolioPage = ({
     }
   }, []);
   useEffect(() => {
-    if (coins?.length) {
-      setTableCoins(formatCoinsForPortfolioTable(coins));
-    }
+    setTableCoins(formatCoinsForPortfolioTable(coins));
   }, [coins]);
 
   // handlers

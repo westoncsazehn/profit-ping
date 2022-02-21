@@ -1,12 +1,9 @@
 // 3rd party
 import React from 'react';
 import { Formik } from 'formik';
-import * as yup from 'yup';
 import {
   Box,
-  Button,
   Container,
-  FormControl,
   Select,
   MenuItem,
   Avatar,
@@ -14,93 +11,27 @@ import {
   ListItemText,
   ListItemAvatar,
   TextField,
-  Paper,
   FormLabel,
   Slider,
   Stack,
-  Typography,
-  styled
+  Typography
 } from '@mui/material';
-import {
-  getMonth,
-  getYear,
-  getDate,
-  isExists,
-  isBefore,
-  addDays
-} from 'date-fns';
-import { HelpOutline } from '@mui/icons-material';
 // local
 import {
   FirestoreAddCoin,
   BasePortfolioCoin,
-  FirestoreCoin
+  FirestoreCoin,
+  AddCoinSchema
 } from '../../../store';
 import { DatePicker } from './DatePicker';
-import { StyledTooltip } from '../../portfolio/components/PortfolioTable/styles';
-
-const coinError: string = 'A coin must be selected';
-const initialDateError: string =
-  'Initial date is required and must follow format `mm/dd/yyyy`.';
-const initialInvestmentError: string =
-  'Initial investment is required and must be greater than 0.';
-const targetMultiplierError: string =
-  'Multiplier value is required and must be 1.5 or greater.';
-// TODO: once gecko api call limit vs # of end-user requests,
-// then limit min date based on currently selected coin's first price date
-const validateDate = (value: Date | undefined): boolean => {
-  if (!value) return false;
-  const year: number = getYear(value);
-  return (
-    isExists(year, getMonth(value), getDate(value)) &&
-    year >= 2000 &&
-    isBefore(value, addDays(new Date(), 1))
-  );
-};
-const AddCoinSchema = yup.object().shape({
-  coin: yup.string().required(coinError),
-  initialDate: yup
-    .date()
-    .test(initialDateError, initialDateError, validateDate)
-    .typeError(initialDateError),
-  initialInvestment: yup
-    .number()
-    .min(1, initialInvestmentError)
-    .required(initialInvestmentError),
-  targetMultiplier: yup
-    .number()
-    .min(1.5, targetMultiplierError)
-    .required(targetMultiplierError)
-});
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: '1rem',
-  [theme.breakpoints.up('md')]: {
-    padding: '3rem'
-  }
-}));
-const StyledFormTitleDescription = styled(Typography)(({ theme }) => ({
-  margin: '15px 0',
-  [theme.breakpoints.up('md')]: { marginBottom: '50px' }
-}));
-const StyledFormControl = styled(FormControl)(({ theme }) => ({
-  paddingBottom: '1.25rem',
-  [theme.breakpoints.up('md')]: {
-    paddingBottom: '3rem'
-  }
-}));
-export const StyledHelpOutline = styled(HelpOutline)(() => ({
-  fontSize: '0.75rem',
-  display: 'inline-block',
-  cursor: 'pointer',
-  marginLeft: '2px !important',
-  marginTop: '3px !important'
-}));
-export const StyledFormButtons = styled(Button)(({ theme }) => ({
-  height: '2.5rem',
-  width: '100px',
-  float: 'right',
-  marginTop: '15px'
-}));
+import { StyledTooltip } from '../../common';
+import {
+  StyledFormButtons,
+  StyledFormControl,
+  StyledFormTitleDescription,
+  StyledHelpOutline,
+  StyledPaper
+} from './styles';
 
 export const AddCoinForm = ({
   coins,
@@ -112,8 +43,8 @@ export const AddCoinForm = ({
   addCoin: (coin: FirestoreAddCoin) => void;
   selectedCoin: FirestoreCoin;
   onCancel: () => void;
-}) => {
-  return coins?.length ? (
+}) =>
+  coins?.length ? (
     <Container>
       <Box component={StyledPaper}>
         <StyledFormTitleDescription>
@@ -301,4 +232,3 @@ export const AddCoinForm = ({
       </Box>
     </Container>
   ) : null;
-};

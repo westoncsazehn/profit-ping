@@ -1,2 +1,3 @@
 export * from './AddPhoneNumberForm';
-export * from './PhoneVerificationField';
+export * from './PhoneCodeVerificationField';
+export * from './styles';

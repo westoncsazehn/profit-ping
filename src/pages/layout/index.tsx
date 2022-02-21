@@ -13,10 +13,11 @@ import { connect } from 'react-redux';
 // local
 import {
   AppState,
+  DISPLAY_ALERT_TIMEOUT,
   DisplayAlertType,
   FBUser,
-  initAlert,
   NavigateStateType,
+  resetAlert,
   signOut
 } from '../../store';
 import {
@@ -38,8 +39,8 @@ import { getPageTitle } from './util';
 
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => ({
-  initAlert: (alert: DisplayAlertType) => dispatch(initAlert(alert)),
-  signOut: () => dispatch(signOut())
+  signOut: () => dispatch(signOut()),
+  resetAlert: () => dispatch(resetAlert())
 });
 const mapStateToProps = ({ displayAlert, navigate, user }: AppState) => ({
   user,
@@ -48,15 +49,15 @@ const mapStateToProps = ({ displayAlert, navigate, user }: AppState) => ({
 });
 export const Layout = ({
   displayAlert: { open, message, severity },
-  initAlert,
   signOut,
   children,
   navigate: { path },
-  user
+  user,
+  resetAlert
 }: {
   displayAlert: DisplayAlertType;
-  initAlert: ({ open }: any) => void;
   signOut: any;
+  resetAlert: any;
   children: React.ReactNode;
   navigate: NavigateStateType;
   user: FBUser;
@@ -80,13 +81,12 @@ export const Layout = ({
         : `/${path}`;
     navigate(newPath);
   }, [path]);
-
   // if there is alert data available, then trigger initAlert()
   useEffect(() => {
     if (open) {
       setTimeout(() => {
-        initAlert({ open: false });
-      }, 5000);
+        resetAlert({ open: false, message: '', severity: undefined });
+      }, DISPLAY_ALERT_TIMEOUT);
     }
   }, [open]);
   // on page change, get path, then set page title
@@ -148,7 +148,9 @@ export const Layout = ({
           </Box>
         </Toolbar>
       </Container>
-      <DisplayAlert {...{ open, message, severity }} />
+      {open && message && severity ? (
+        <DisplayAlert {...{ open, message, severity }} />
+      ) : null}
       {children}
     </>
   );

@@ -1,37 +1,11 @@
-import {
-  Button,
-  FormLabel,
-  styled,
-  TextField,
-  Tooltip,
-  Grid,
-  Typography
-} from '@mui/material';
+import { Button, FormLabel, TextField, Grid, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { TOOLTIP_COMMON_PROPS } from '../../portfolio/components/PortfolioTable/styles';
-import { HelpOutline } from '@mui/icons-material';
-import { tooltipClasses, TooltipProps } from '@mui/material/Tooltip';
+import { StyledHelpOutline, StyledTooltip } from './styles';
 
-export const StyledHelpOutline = styled(HelpOutline)(() => ({
-  fontSize: '0.75rem',
-  display: 'inline-block',
-  cursor: 'pointer',
-  marginLeft: '2px !important',
-  marginTop: '3px !important'
-}));
-export const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.arrow}`]: {
-    color: theme.palette.common.black
-  },
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.common.black
-  }
-}));
 const MAX_VERIFICATION_CODE_LENGTH: number = 6;
 
-export const PhoneVerificationField = ({
+export const PhoneCodeVerificationField = ({
   onPhoneVerification,
   captchaConfirmation,
   recaptchaVerifier
@@ -57,6 +31,7 @@ export const PhoneVerificationField = ({
         </StyledTooltip>
         <TextField
           id="verification-code"
+          inputProps={{ maxLength: 6 }}
           onChange={(e) => {
             setIsVerifyDisabled(
               e.target.value.length < MAX_VERIFICATION_CODE_LENGTH

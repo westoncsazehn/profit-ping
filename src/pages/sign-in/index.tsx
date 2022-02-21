@@ -1,9 +1,13 @@
 // 3rd party
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Box, Container, Paper, styled } from '@mui/material';
+import { AlertColor, Box, Container } from '@mui/material';
 // local
-import { AddPhoneNumberForm, PhoneVerificationField } from './components';
+import {
+  AddPhoneNumberForm,
+  PhoneCodeVerificationField,
+  StyledPaper
+} from './components';
 import {
   AppState,
   RecaptchaVerifierType,
@@ -11,15 +15,10 @@ import {
   signInWithPhoneProv,
   setCaptchaIdByRender,
   RecaptchaStateType,
-  resetRecaptchaState
+  resetRecaptchaState,
+  DisplayAlertType
 } from '../../store';
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: '1rem',
-  [theme.breakpoints.up('md')]: {
-    padding: '3rem'
-  }
-}));
 const mapDispatchToProps = (dispatch: any) => ({
   setCaptchaIdByRender: (recaptchaVerifier: RecaptchaVerifierType) =>
     dispatch(setCaptchaIdByRender(recaptchaVerifier)),
@@ -31,15 +30,18 @@ const mapDispatchToProps = (dispatch: any) => ({
     recaptchaVerifier: RecaptchaVerifierType
   ) => dispatch(signInWithPhoneProv(phoneNumber, recaptchaVerifier))
 });
-const mapStateToProps = ({ recaptcha }: AppState) => ({
+const mapStateToProps = ({ displayAlert, recaptcha }: AppState) => ({
+  displayAlert,
   recaptcha
 });
 const SignInPage = ({
+  displayAlert: { severity },
   recaptcha: { confirmationResult },
   verifyPhoneCode,
   signInWithPhoneProv,
-  setCaptchaIdByRender,
+  setCaptchaIdByRender
 }: {
+  displayAlert: DisplayAlertType;
   recaptcha: RecaptchaStateType;
   verifyPhoneCode: any;
   signInWithPhoneProv: any;
@@ -51,6 +53,12 @@ const SignInPage = ({
 
   // reset Recaptcha state
   useEffect(() => setRecaptchaVerifier(null), []);
+  // if error during phone sign-in, reset captcha
+  useEffect(() => {
+    if (('error' as AlertColor) === severity) {
+      setRecaptchaVerifier(null);
+    }
+  }, [severity]);
 
   // handlers
   const onPhoneEdit = () => {
@@ -74,7 +82,7 @@ const SignInPage = ({
       <Container sx={{ p: 0 }}>
         <Box component={StyledPaper}>
           <AddPhoneNumberForm
-            phoneNumber={0}
+            phoneNumber={null}
             onSubmitPhoneNumber={onSubmitPhoneNumber}
             onCancelPhoneNumber={onCancelPhoneNumberForm}
             isDisabled={isPhoneInputDisabled}
@@ -85,7 +93,7 @@ const SignInPage = ({
           />
           {confirmationResult ? (
             <Box>
-              <PhoneVerificationField
+              <PhoneCodeVerificationField
                 onPhoneVerification={onPhoneVerification}
                 captchaConfirmation={confirmationResult}
                 recaptchaVerifier={recaptchaVerifier}

@@ -43,7 +43,6 @@ export const UserContext = createContext<FBUser>();
 
 // databases
 export const COIN_DB: string = 'coin';
-export const DEVICE_TOKEN_DB: string = 'deviceToken';
 export const PHONE_NUMBER_DB: string = 'phone';
 
 // delete user cloud function
@@ -53,4 +52,3 @@ export const sendMessages = httpsCallable(
   'messageProfitingCoinsToDevices'
 );
 export const getUser = auth?.currentUser;
-export const getUserUID = () => getUser?.uid;

@@ -1,7 +1,6 @@
 // 3rd party
 import { all, call, put, takeEvery, select } from 'redux-saga/effects';
 import {
-  addDoc,
   collection,
   getDocs,
   query,
@@ -10,28 +9,18 @@ import {
   doc,
   deleteDoc
 } from 'firebase/firestore';
-import { getToken } from 'firebase/messaging';
 import { QueryDocumentSnapshot } from '@firebase/firestore';
 import { format } from 'date-fns';
 import { AlertColor } from '@mui/material';
 // local
 import { portfolioActionTypes } from './actions';
-import {
-  COIN_DB,
-  db,
-  DEVICE_TOKEN_DB,
-  getCryptoHistory,
-  getCryptoList, getUserUID,
-  messaging
-} from "../../api";
+import { COIN_DB, db, getCryptoHistory, getCryptoList } from '../../api';
 import { getFormattedUserCoinsList } from './modifiers';
 import { loadingActionTypes } from '../loading';
 import { CoinAction, FirestoreCoin, PortfolioCoin } from '../types';
 import { getCoins } from './selectors';
 import { displayAlertActionTypes } from '../display-alert';
 import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_KEY } from './reducer';
-
-const deviceTokenCollection = collection(db, DEVICE_TOKEN_DB);
 
 export function* getCoinByID(
   id: string,
@@ -66,56 +55,6 @@ export function* getCoinIDSFromPortfolio(uid: string): any {
     coinIDList.push(doc?.data()?.coin)
   );
   return coinIDList;
-}
-
-function* getDeviceTokenSaga({ payload: uid }: { payload: string }): any {
-  yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
-  try {
-    let userDeviceToken: string = '';
-    const userDeviceTokenQuery = query(
-      deviceTokenCollection,
-      where('user', '==', uid)
-    );
-    const deviceTokenDocRef = yield call(getDocs, userDeviceTokenQuery);
-    deviceTokenDocRef.forEach((doc: any) => {
-      const { deviceToken } = doc.data();
-      userDeviceToken = deviceToken;
-    });
-    yield put({ type: 'GET_DEVICE_TOKEN_SUCCESS', payload: userDeviceToken });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    // TODO: add alert for error
-    // @ts-ignore
-  } catch (e: any) {
-    yield put({ type: 'GET_DEVICE_TOKEN_FAILED', message: e.message });
-  }
-}
-
-function* addDeviceTokenSaga(): any {
-  yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
-  try {
-    const uid: string = yield select(getUserUID);
-    // TODO: set vapidKey to env config
-    const deviceToken: string = yield call(getToken, messaging, {
-      vapidKey:
-        'BJ3e6D7j6AJtJ8D0SyREVCz7r-LcfoTod7U5jpHHzkZazg1S78lmpoxuQjrPduB9BDcoEYEXlgObcc786u4U_fs'
-    });
-    const newDeviceToken = yield call(addDoc, collection(db, DEVICE_TOKEN_DB), {
-      deviceToken,
-      user: uid
-    });
-    yield put({
-      type: portfolioActionTypes.ADD_GET_DEVICE_TOKEN_SUCCESS,
-      payload: newDeviceToken
-    });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    // TODO: add alert for error
-    // @ts-ignore
-  } catch (e: any) {
-    yield put({
-      type: portfolioActionTypes.ADD_GET_DEVICE_TOKEN_FAILED,
-      payload: e.toString()
-    });
-  }
 }
 
 const defaultResponse = {
@@ -241,10 +180,6 @@ function* removeCoinSaga({ payload }: { payload: CoinAction }): any {
 
 function* portfolioSagas() {
   yield all([
-    // @ts-ignore
-    takeEvery(portfolioActionTypes.GET_DEVICE_TOKEN, getDeviceTokenSaga),
-    // @ts-ignore
-    takeEvery(portfolioActionTypes.ADD_GET_DEVICE_TOKEN, addDeviceTokenSaga),
     takeEvery(
       // @ts-ignore
       portfolioActionTypes.GET_USERS_CRYPTO_LIST,

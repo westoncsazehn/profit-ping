@@ -8,8 +8,8 @@ import { RecaptchaVerifierType } from '../types';
 import { loadingActionTypes } from '../loading';
 import { displayAlertActionTypes } from '../display-alert';
 import { auth } from '../../api';
-import { addPhoneNumberFB } from '../phone-number';
-import { PORTFOLIO_URL, SIGN_IN_URL } from '../../pages/common';
+import { addPhoneNumberFB, phoneNumberActionTypes } from '../phone-number';
+import { PORTFOLIO_URL, RELOAD, SIGN_IN_URL } from '../../pages/common';
 import { navigateTo, navigationActionTypes } from '../navigate';
 
 function* setRecaptchaVerifierSaga({
@@ -82,7 +82,7 @@ function* verifyPhoneCodeSaga({
       type: recaptchaActionTypes.DEFAULT
     });
   } catch (e) {
-    yield window?.location?.reload();
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
     yield put({
       type: displayAlertActionTypes.INIT_ALERT,
       payload: {
@@ -117,10 +117,6 @@ function* signInWithPhoneSaga({
   } catch (e) {
     yield put({
       type: recaptchaActionTypes.DEFAULT
-    });
-    yield put({
-      type: navigationActionTypes.NAVIGATE_TO,
-      payload: SIGN_IN_URL
     });
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
     yield put({

@@ -1,5 +1,6 @@
 export const PORTFOLIO_URL: string = 'portfolio';
 export const ADD_COIN_URL: string = 'add-coin';
+export const RELOAD: string = 'reload';
 export const SIGN_IN_URL: string = 'sign-in';
 export const SETTINGS_URL: string = 'settings';
 export const BASE_URL: string = '/';

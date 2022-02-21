@@ -1,7 +1,7 @@
 // 3rd party
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // local
 import {
   addCoin,
@@ -55,6 +55,7 @@ export const AddCoinPage = ({
   navigateTo: any;
 }) => {
   const { id = '' } = useParams();
+  const navigate = useNavigate();
 
   // get list of coins for add coin form
   useEffect(() => getList(uid, id), []);
@@ -63,12 +64,13 @@ export const AddCoinPage = ({
     if (uid) getPortfolioCoin(id, uid);
   }, []);
 
+  // handlers
   const onAddCoin = (coin: FirestoreAddCoin) => {
     if (uid && coin) {
       id ? updateCoin(coin, uid) : addCoin(coin, uid);
     }
   };
-  const onCancel = () => navigateTo(PORTFOLIO_URL);
+  const onCancel = () => navigate(`/${PORTFOLIO_URL}`);
 
   return (
     <>

@@ -40,7 +40,6 @@ export type SortByType = { sortKey: string; direction: string };
 export type Portfolio = {
   coins: PortfolioCoin[];
   sortBy: SortByType;
-  userDeviceToken: string;
 };
 // used to remove & take profits for a coin
 export type CoinAction = {
