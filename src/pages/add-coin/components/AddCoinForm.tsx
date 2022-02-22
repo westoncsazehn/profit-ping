@@ -211,7 +211,7 @@ export const AddCoinForm = ({
                       'button:last-child': { marginRight: '10px' }
                     }}>
                     <StyledFormButtons
-                      variant="contained"
+                      variant="outlined"
                       color="inherit"
                       type="button"
                       onClick={onCancel}>

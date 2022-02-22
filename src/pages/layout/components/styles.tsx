@@ -36,14 +36,18 @@ export const ToolbarMenuPaperProps = {
     }
   }
 };
-export const menuStyle = {
-  backgroundColor: 'white',
-  border: 'solid 1px black',
+export const getMenuStyle = (themeMode: string, theme: Theme) => ({
+  border: `solid 1px ${theme.palette.grey["500"]}`,
   borderRight: 'none',
   borderLeft: 'none',
   boxShadow: 'none',
-  color: 'black'
-};
+  color: 'black',
+  backgroundColor: `${
+    themeMode === 'dark'
+      ? theme.palette.common.black
+      : theme.palette.common.white
+  }`
+});
 export const StyledImageLogo = styled('img')(() => ({
   width: '100px',
   verticalAlign: 'middle'

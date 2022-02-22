@@ -1,7 +1,12 @@
-import { Button, FormLabel, TextField, Grid, Typography } from '@mui/material';
+import { FormLabel, Grid, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { TOOLTIP_COMMON_PROPS } from '../../portfolio/components/PortfolioTable/styles';
-import { StyledHelpOutline, StyledTooltip } from './styles';
+import {
+  StyledHelpOutline,
+  StyledTooltip,
+  StyledVerifyButton,
+  StyledVerifyTextField
+} from './styles';
 
 const MAX_VERIFICATION_CODE_LENGTH: number = 6;
 
@@ -29,7 +34,7 @@ export const PhoneCodeVerificationField = ({
           {...TOOLTIP_COMMON_PROPS}>
           <StyledHelpOutline />
         </StyledTooltip>
-        <TextField
+        <StyledVerifyTextField
           id="verification-code"
           inputProps={{ maxLength: 6 }}
           onChange={(e) => {
@@ -38,18 +43,16 @@ export const PhoneCodeVerificationField = ({
             );
             setVerifyCode(Number(e.target.value));
           }}
-          sx={{ display: 'block' }}
         />
       </Grid>
       <Grid item xs={12} md={9}>
-        <Button
+        <StyledVerifyButton
           onClick={() => onPhoneVerification(verifyCode)}
           disabled={isVerifyDisabled}
           variant="contained"
-          color="primary"
-          sx={{ height: '56px', marginTop: '23px' }}>
+          color="primary">
           Verify
-        </Button>
+        </StyledVerifyButton>
       </Grid>
     </Grid>
   ) : null;

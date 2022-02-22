@@ -22,14 +22,18 @@ export const StyledWarningTooltip = styled(
   ({ className, ...props }: TooltipProps) => (
     <Tooltip {...props} classes={{ popper: className }} />
   )
-)(({ theme }) => ({
-  [`& .${tooltipClasses.arrow}`]: {
-    color: 'red'
-  },
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: 'red'
-  }
-}));
+)(({ theme }) => {
+  const mode = theme.palette.mode;
+  const color = theme.palette.error[mode];
+  return {
+    [`& .${tooltipClasses.arrow}`]: {
+      color
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: color
+    }
+  };
+});
 export const StyledRemoveCoinIconButton = styled(IconButton)(() => ({
   '&:hover': {
     color: 'red'

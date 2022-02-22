@@ -1,6 +1,6 @@
 // 3rd party
 import React, { ReactNode } from 'react';
-import { Box, Typography, Modal, Button, Stack } from '@mui/material';
+import { Box, Typography, Modal, Button, Stack, useTheme } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export type RemoveCoinModalProps = {
@@ -17,6 +17,7 @@ export const DeleteItemConfirmModal = ({
   title,
   description
 }: RemoveCoinModalProps) => {
+  const theme = useTheme();
   return (
     <Modal
       open={open}
@@ -28,12 +29,17 @@ export const DeleteItemConfirmModal = ({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          backgroundColor: 'white',
           boxShadow: 24,
+          backgroundColor: `${
+            theme.palette.mode === 'dark' ? 'black' : 'white'
+          }`,
           p: 4,
           width: 'auto',
           height: 'fit-content',
-          color: 'primary'
+          color: 'primary',
+          border: `1px solid ${
+            theme.palette.mode === 'dark' ? 'white' : 'black'
+          }`
         }}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
           {title}
@@ -52,7 +58,7 @@ export const DeleteItemConfirmModal = ({
             startIcon={<DeleteIcon />}>
             Remove
           </Button>
-          <Button onClick={closeModal} color="inherit" variant="contained">
+          <Button onClick={closeModal} variant="outlined">
             Cancel
           </Button>
         </Stack>

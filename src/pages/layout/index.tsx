@@ -7,7 +7,8 @@ import {
   Button,
   Container,
   Toolbar,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material';
 import { connect } from 'react-redux';
 // local
@@ -23,14 +24,16 @@ import {
 import {
   BASE_URL,
   PORTFOLIO_URL,
-  PROFIT_PING_LOGO_PATH,
+  PROFIT_PING_LOGO_PATH_DARK_MODE,
+  PROFIT_PING_LOGO_PATH_LIGHT_MODE,
   SETTINGS_URL,
   SIGN_IN_URL
 } from '../common';
 import { DisplayAlert } from '../components';
 import {
   AccountMenu,
-  menuStyle,
+  DarkLightModeButton,
+  getMenuStyle,
   StyledToolBar,
   StyledLink,
   StyledImageLogo
@@ -63,6 +66,7 @@ export const Layout = ({
   user: FBUser;
 }) => {
   const { uid } = user;
+  const theme = useTheme();
   const navigate = useNavigate();
   const [page, setPage] = useState<string>('');
   const [menuElement, setMenuElement] = useState(null);
@@ -70,6 +74,11 @@ export const Layout = ({
   const isLoggedIn: boolean = Boolean(uid);
   const isMenuOpen = Boolean(menuElement);
   const homeLink: string = uid ? PORTFOLIO_URL : BASE_URL;
+  const themeMode = theme.palette.mode;
+  const appBarLogoImg: string =
+    themeMode === 'light'
+      ? PROFIT_PING_LOGO_PATH_LIGHT_MODE
+      : PROFIT_PING_LOGO_PATH_DARK_MODE;
 
   // on path change request from navigate saga
   useEffect(() => {
@@ -95,6 +104,7 @@ export const Layout = ({
     [isLoggedIn, pathname]
   );
 
+  // handlers
   const handleClick = (event: any) => {
     setMenuElement(event.currentTarget);
   };
@@ -113,16 +123,13 @@ export const Layout = ({
 
   return (
     <>
-      <AppBar position="static" sx={menuStyle}>
+      <AppBar position="static" sx={getMenuStyle(themeMode, theme)}>
         <Container maxWidth="xl" sx={{ p: 0 }}>
           <StyledToolBar sx={{ p: 0 }}>
             <Box sx={{ flexGrow: 1 }}>
               <Button variant="text">
                 <StyledLink to={homeLink}>
-                  <StyledImageLogo
-                    alt="Profit Ping Logo"
-                    src={PROFIT_PING_LOGO_PATH}
-                  />
+                  <StyledImageLogo alt="Profit Ping Logo" src={appBarLogoImg} />
                 </StyledLink>
               </Button>
             </Box>
@@ -146,6 +153,7 @@ export const Layout = ({
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="h6">{page}</Typography>
           </Box>
+          <DarkLightModeButton />
         </Toolbar>
       </Container>
       {open && message && severity ? (

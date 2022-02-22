@@ -33,7 +33,6 @@ const SettingsPage = ({
   deleteUser: any;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
   // handlers
   const onModalSubmit = () => {
     setIsModalOpen(false);
@@ -42,7 +41,7 @@ const SettingsPage = ({
   const onModalClose = () => {
     setIsModalOpen(false);
   };
-
+  // page text
   const description = (
     <>
       <span>Are you sure you wish to remove your account? </span>
@@ -60,7 +59,7 @@ const SettingsPage = ({
             sx={{
               '.MuiAlert-icon': { p: 0, m: 'auto 0', height: 'fit-content' }
             }}>
-            <Button color="inherit" onClick={() => setIsModalOpen(true)}>
+            <Button color="inherit" sx={{m: 1}} onClick={() => setIsModalOpen(true)}>
               <Delete />
               <Typography>Delete Profile</Typography>
             </Button>

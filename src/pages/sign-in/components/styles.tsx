@@ -1,7 +1,14 @@
-import { Button, Paper, Stack, styled, Tooltip } from "@mui/material";
-import { HelpOutline } from "@mui/icons-material";
-import { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
-import React from "react";
+// 3rd party
+import React from 'react';
+import {
+  Button, IconButton,
+  Paper,
+  styled,
+  TextField,
+  Tooltip
+} from "@mui/material";
+import { HelpOutline } from '@mui/icons-material';
+import { tooltipClasses, TooltipProps } from '@mui/material/Tooltip';
 
 export const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: '1rem',
@@ -10,18 +17,22 @@ export const StyledPaper = styled(Paper)(({ theme }) => ({
   }
 }));
 export const StyledPhoneActionButtons = styled(Button)(({ theme }) => ({
-  height: '2.5rem',
   width: '100px',
-  float: 'right'
-}));
-export const StyledActionButtonsStack = styled(Stack)(({ theme }) => ({
-  'button:last-child': { marginRight: '10px' },
-  padding: '25px 0 0 0 ',
+  float: 'right',
+  height: '50px',
   [theme.breakpoints.up('md')]: {
-    transform: 'translateY(75%)',
-    padding: 'unset',
-    paddingLeft: '50px'
+    transform: 'translateY(27px)',
+    marginLeft: ' 13px'
   }
+}));
+export const StyledEditIconButton = styled(IconButton)(() => ({
+  display: 'inline-block',
+  height: 40,
+  width: 40,
+  flexDirection: 'column',
+  alignSelf: 'center',
+  marginTop: '10px',
+  marginLeft: '10px'
 }));
 export const StyledHelpOutline = styled(HelpOutline)(() => ({
   fontSize: '0.75rem',
@@ -38,5 +49,20 @@ export const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: theme.palette.common.black
+  }
+}));
+export const StyledVerifyTextField = styled(TextField)(({ theme }) => ({
+  display: 'block',
+  width: '225px',
+  paddingBottom: '15px',
+  [theme.breakpoints.up('md')]: {
+    paddingBottom: 'unset'
+  }
+}));
+export const StyledVerifyButton = styled(Button)(({ theme }) => ({
+  height: '50px',
+  [theme.breakpoints.up('md')]: {
+    marginTop: '27px',
+    marginLeft: '27px'
   }
 }));

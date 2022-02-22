@@ -2,13 +2,13 @@
 import React from 'react';
 import { Formik } from 'formik';
 import {
+  Card,
   FormControl,
   FormLabel,
   Grid,
   TextField,
   InputAdornment,
   Typography,
-  IconButton,
   Stack,
   List,
   ListItem,
@@ -18,7 +18,7 @@ import { Edit, PhoneAndroid } from '@mui/icons-material';
 // local
 import { Recaptcha } from './Recaptcha';
 import { AddPhoneNumberFormProps, AddPhoneNumberSchema } from '../../../store';
-import { StyledActionButtonsStack, StyledPhoneActionButtons } from './styles';
+import { StyledEditIconButton, StyledPhoneActionButtons } from './styles';
 
 export const AddPhoneNumberForm = ({
   phoneNumber,
@@ -30,9 +30,11 @@ export const AddPhoneNumberForm = ({
   setCaptchaIdByRender
 }: AddPhoneNumberFormProps) => (
   <>
-    <Stack sx={{ paddingBottom: '25px' }}>
-      <Typography color="inherit">To Sign-In:</Typography>
-      <List>
+    <Card variant="outlined" sx={{ p: 2, marginBottom: '25px' }}>
+      <Typography color="inherit" sx={{ fontWeight: 'bold !important' }}>
+        To Sign-In:
+      </Typography>
+      <List dense>
         <ListItem>
           <ListItemText primary="1. Click on edit icon to enable phone number field." />
         </ListItem>
@@ -46,7 +48,7 @@ export const AddPhoneNumberForm = ({
           <ListItemText primary="4. Enter verification code into verification code input field." />
         </ListItem>
       </List>
-    </Stack>
+    </Card>
     {!isDisabled ? (
       <Recaptcha
         setRecaptchaVerifier={setRecaptchaVerifier}
@@ -101,24 +103,18 @@ export const AddPhoneNumberForm = ({
                           </>
                         )
                       }}
+                      sx={{ paddingBottom: '15px' }}
                       id="phoneNumber"
                       name="phoneNumber"
                       placeholder="1234567890"
                     />
                   </FormControl>
-                  <IconButton
+                  <StyledEditIconButton
                     onClick={() => onPhoneEdit()}
                     disabled={!isDisabled}
-                    sx={{
-                      display: 'inline-block',
-                      height: 40,
-                      width: 40,
-                      flexDirection: 'column',
-                      alignSelf: 'center',
-                      marginTop: '23px'
-                    }}>
+                    color="primary">
                     <Edit />
-                  </IconButton>
+                  </StyledEditIconButton>
                 </Stack>
                 <Typography color="error" component="p">
                   {errors.phoneNumber}
@@ -126,19 +122,17 @@ export const AddPhoneNumberForm = ({
               </Grid>
               <Grid>
                 {!isDisabled ? (
-                  <StyledActionButtonsStack direction="row" spacing={1}>
-                    <StyledPhoneActionButtons
-                      variant="contained"
-                      type="submit"
-                      disabled={
-                        isSubmitting ||
-                        !isValid ||
-                        !initialTouched ||
-                        values.phoneNumber === phoneNumber
-                      }>
-                      Submit
-                    </StyledPhoneActionButtons>
-                  </StyledActionButtonsStack>
+                  <StyledPhoneActionButtons
+                    variant="contained"
+                    type="submit"
+                    disabled={
+                      isSubmitting ||
+                      !isValid ||
+                      !initialTouched ||
+                      values.phoneNumber === phoneNumber
+                    }>
+                    Submit
+                  </StyledPhoneActionButtons>
                 ) : null}
               </Grid>
             </Grid>
