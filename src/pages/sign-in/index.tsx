@@ -3,11 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AlertColor, Box, Container } from '@mui/material';
 // local
-import {
-  AddPhoneNumberForm,
-  PhoneCodeVerificationField,
-  StyledPaper
-} from './components';
+import { AddPhoneNumberForm, PhoneCodeVerificationField } from './components';
 import {
   AppState,
   RecaptchaVerifierType,
@@ -18,6 +14,7 @@ import {
   resetRecaptchaState,
   DisplayAlertType
 } from '../../store';
+import { StyledPaper } from '../common';
 
 const mapDispatchToProps = (dispatch: any) => ({
   setCaptchaIdByRender: (recaptchaVerifier: RecaptchaVerifierType) =>

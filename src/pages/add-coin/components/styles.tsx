@@ -1,12 +1,6 @@
 import { Button, FormControl, Paper, styled, Typography } from '@mui/material';
 import { HelpOutline } from '@mui/icons-material';
 
-export const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: '1rem',
-  [theme.breakpoints.up('md')]: {
-    padding: '3rem'
-  }
-}));
 export const StyledFormTitleDescription = styled(Typography)(({ theme }) => ({
   margin: '15px 0',
   [theme.breakpoints.up('md')]: { marginBottom: '50px' }

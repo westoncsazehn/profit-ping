@@ -13,8 +13,7 @@ import {
   BasePortfolioCoin,
   FirestoreCoin,
   getPortfolioCoin,
-  updateCoin,
-  navigateTo
+  updateCoin
 } from '../../store';
 import { AddCoinForm } from './components';
 import { PORTFOLIO_URL } from '../common';
@@ -27,8 +26,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(updateCoin(coin, uid)),
   getList: (uid: string, id: string = '') => dispatch(getList(uid, id)),
   getPortfolioCoin: (id: string, uid: string) =>
-    dispatch(getPortfolioCoin(id, uid)),
-  navigateTo: (path: string) => dispatch(navigateTo(path))
+    dispatch(getPortfolioCoin(id, uid))
 });
 const mapStateToProps = ({ cryptoApi, addCoin, user }: AppState) => ({
   ...cryptoApi,
@@ -42,8 +40,7 @@ export const AddCoinPage = ({
   addCoin,
   updateCoin,
   getList,
-  getPortfolioCoin,
-  navigateTo
+  getPortfolioCoin
 }: {
   cryptoList: BasePortfolioCoin[];
   selectedCoin: FirestoreCoin;
@@ -52,7 +49,6 @@ export const AddCoinPage = ({
   updateCoin: any;
   getList: any;
   getPortfolioCoin: any;
-  navigateTo: any;
 }) => {
   const { id = '' } = useParams();
   const navigate = useNavigate();

@@ -12,15 +12,9 @@ import {
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 // local
-import { DeleteItemConfirmModal } from '../common';
+import { DeleteItemConfirmModal, StyledPaper } from "../common";
 import { FBUser, deleteUser, AppState } from '../../store';
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: '1rem',
-  [theme.breakpoints.up('md')]: {
-    padding: '3rem'
-  }
-}));
 const mapStateToProps = ({ user }: AppState) => ({ user });
 const mapDispatchToProps = (dispatch: any) => ({
   deleteUser: (uid: string) => dispatch(deleteUser(uid))

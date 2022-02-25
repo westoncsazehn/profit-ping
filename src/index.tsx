@@ -16,7 +16,6 @@ import { persist, store } from './redux-setup';
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => {}
 });
-
 const COLOR_MODE_SESSION_STORAGE: string = 'colorMode';
 
 const App = () => {

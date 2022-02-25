@@ -24,13 +24,12 @@ import {
   AddCoinSchema
 } from '../../../store';
 import { DatePicker } from './DatePicker';
-import { StyledTooltip } from '../../common';
+import { StyledPaper, StyledTooltip } from '../../common';
 import {
   StyledFormButtons,
   StyledFormControl,
   StyledFormTitleDescription,
-  StyledHelpOutline,
-  StyledPaper
+  StyledHelpOutline
 } from './styles';
 
 export const AddCoinForm = ({
@@ -93,13 +92,21 @@ export const AddCoinForm = ({
                         inputProps={{
                           name: 'coin',
                           id: 'coin'
+                        }}
+                        sx={{
+                          '.MuiSelect-select': values.coin
+                            ? {
+                                padding: '6px 10px !important'
+                              }
+                            : {}
                         }}>
                         {coins.slice().map((coin) => (
                           <MenuItem value={coin.id} key={coin.id}>
                             <ListItemAvatar
                               sx={{
                                 maxWidth: '57px',
-                                display: 'inline-block'
+                                display: 'inline-block',
+                                verticalAlign: 'sub'
                               }}>
                               <Avatar
                                 alt={coin?.name || ''}

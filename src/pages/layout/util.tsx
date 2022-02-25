@@ -17,7 +17,7 @@ export const getPageTitle = (pathname: string = '', isLoggedIn: boolean): string
             currenPath = 'PORTFOLIO';
             break;
         default:
-            currenPath = isLoggedIn ? 'PORTFOLIO' : 'LANDING';
+            currenPath = isLoggedIn ? 'PORTFOLIO' : '';
             break;
     }
     return currenPath;

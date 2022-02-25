@@ -1,21 +1,9 @@
 // 3rd party
 import React from 'react';
-import {
-  Button, IconButton,
-  Paper,
-  styled,
-  TextField,
-  Tooltip
-} from "@mui/material";
+import { Button, IconButton, styled, TextField, Tooltip } from '@mui/material';
 import { HelpOutline } from '@mui/icons-material';
 import { tooltipClasses, TooltipProps } from '@mui/material/Tooltip';
 
-export const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: '1rem',
-  [theme.breakpoints.up('md')]: {
-    padding: '3rem'
-  }
-}));
 export const StyledPhoneActionButtons = styled(Button)(({ theme }) => ({
   width: '100px',
   float: 'right',
