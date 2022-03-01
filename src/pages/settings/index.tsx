@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 // local
-import { DeleteItemConfirmModal, StyledPaper } from "../common";
+import { DeleteItemConfirmModal, MIN_BOX_PAGE, StyledPaper } from "../common";
 import { FBUser, deleteUser, AppState } from '../../store';
 
 const mapStateToProps = ({ user }: AppState) => ({ user });
@@ -47,7 +47,7 @@ const SettingsPage = ({
   return (
     <>
       <Container sx={{ p: 0 }}>
-        <Box component={StyledPaper} sx={{ marginTop: 2 }}>
+        <Box component={StyledPaper} sx={{ ...MIN_BOX_PAGE, marginTop: 2 }}>
           <Alert
             severity="error"
             sx={{

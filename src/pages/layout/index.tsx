@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Container,
+  Stack,
   Toolbar,
   Typography,
   useTheme
@@ -18,11 +19,13 @@ import {
   DisplayAlertType,
   FBUser,
   NavigateStateType,
+  navigateTo,
   resetAlert,
   signOut
 } from '../../store';
 import {
   BASE_URL,
+  FAQ_URL,
   PORTFOLIO_URL,
   PROFIT_PING_LOGO_PATH_DARK_MODE,
   PROFIT_PING_LOGO_PATH_LIGHT_MODE,
@@ -36,7 +39,9 @@ import {
   getMenuStyle,
   StyledToolBar,
   StyledLink,
-  StyledImageLogo
+  StyledImageLogo,
+  StyledFooter,
+  StyledSpacerDiv
 } from './components';
 import { getPageTitle } from './util';
 
@@ -88,8 +93,8 @@ export const Layout = ({
         : !path
         ? `/${PORTFOLIO_URL}`
         : `/${path}`;
-    navigate(newPath);
-  }, [path]);
+    setTimeout(() => navigate(newPath), 2000);
+  }, [`/${path}`]);
   // if there is alert data available, then trigger initAlert()
   useEffect(() => {
     if (open) {
@@ -120,6 +125,7 @@ export const Layout = ({
     setMenuElement(null);
     navigate(SETTINGS_URL);
   };
+  const onFAQClick = () => navigate(FAQ_URL);
 
   return (
     <>
@@ -149,17 +155,30 @@ export const Layout = ({
         </Container>
       </AppBar>
       <Container>
-        <Toolbar sx={{ padding: '0px !important' }}>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="h6">{page}</Typography>
-          </Box>
-          <DarkLightModeButton />
-        </Toolbar>
+        {page ? (
+          <Toolbar sx={{ padding: '0px !important' }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="h6">{page}</Typography>
+            </Box>
+            {isLoggedIn ? <DarkLightModeButton /> : null}
+          </Toolbar>
+        ) : null}
       </Container>
       {open && message && severity ? (
         <DisplayAlert {...{ open, message, severity }} />
       ) : null}
       {children}
+      <StyledSpacerDiv />
+      <StyledFooter>
+        <Container>
+          <Stack
+            direction="row"
+            sx={{ margin: '0 auto', width: 'fit-content' }}>
+            <Button>About Us</Button>
+            <Button onClick={onFAQClick}>FAQ</Button>
+          </Stack>
+        </Container>
+      </StyledFooter>
     </>
   );
 };

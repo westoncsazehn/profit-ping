@@ -1,8 +1,6 @@
 // 3rd party
 import React from 'react';
-import { Box, Card, CardMedia, Container } from '@mui/material';
-// local
-import { StyledPaper } from '../../common';
+import { Box, Card, CardMedia, Container, Paper } from '@mui/material';
 
 export const ImageSlideShow = ({
   images,
@@ -12,7 +10,7 @@ export const ImageSlideShow = ({
   activeImage: string;
 }) => (
   <Container sx={{ p: '16px' }}>
-    <Box component={StyledPaper}>
+    <Box component={Paper} sx={{ p: 2 }}>
       {images &&
         images.map((imageSource: string, index: number) => {
           return (

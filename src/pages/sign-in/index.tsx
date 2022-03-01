@@ -14,7 +14,7 @@ import {
   resetRecaptchaState,
   DisplayAlertType
 } from '../../store';
-import { StyledPaper } from '../common';
+import { MIN_BOX_PAGE, StyledPaper } from "../common";
 
 const mapDispatchToProps = (dispatch: any) => ({
   setCaptchaIdByRender: (recaptchaVerifier: RecaptchaVerifierType) =>
@@ -77,7 +77,7 @@ const SignInPage = ({
   return (
     <>
       <Container sx={{ p: 0 }}>
-        <Box component={StyledPaper}>
+        <Box component={StyledPaper} sx={MIN_BOX_PAGE}>
           <AddPhoneNumberForm
             phoneNumber={null}
             onSubmitPhoneNumber={onSubmitPhoneNumber}

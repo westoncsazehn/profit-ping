@@ -1,9 +1,9 @@
 // 3rd party
 import React from 'react';
-import { Box, Button, Card, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, Container, Grid, Paper, Typography } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 // local
-import { SIGN_IN_URL, StyledPaper } from '../../common';
+import { SIGN_IN_URL } from '../../common';
 import { PROFIT_PING_CHART } from './values';
 import {
   StyledImage,
@@ -15,7 +15,7 @@ export const IntroductoryContent = () => {
   const navigate = useNavigate();
   return (
     <Container sx={{ p: 2 }}>
-      <Box component={StyledPaper} sx={{ marginTop: 2 }}>
+      <Box component={Paper} sx={{p: 2}}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={5}>
             <Card variant="outlined" sx={{ p: 2, height: '100%' }}>

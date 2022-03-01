@@ -43,11 +43,13 @@ export const StyledVerifyTextField = styled(TextField)(({ theme }) => ({
   display: 'block',
   width: '225px',
   paddingBottom: '15px',
+  '.MuiOutlinedInput-root': {width: '100%'},
   [theme.breakpoints.up('md')]: {
     paddingBottom: 'unset'
   }
 }));
 export const StyledVerifyButton = styled(Button)(({ theme }) => ({
+  width: '100px',
   height: '50px',
   [theme.breakpoints.up('md')]: {
     marginTop: '27px',

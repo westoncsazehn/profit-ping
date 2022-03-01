@@ -14,3 +14,4 @@ export * from './RecaptchaStateType';
 export * from './NavigateStateType';
 export * from './AddPhoneNumberFormProps';
 export * from './InstructionsListType';
+export * from './FAQPointType';

@@ -31,7 +31,7 @@ import {
   headerItems,
   rowKeys
 } from './util';
-import { ADD_COIN_URL } from '../../../common';
+import { ADD_COIN_URL, MIN_BOX_PAGE } from "../../../common";
 
 const StyledCaption = styled('caption')(() => ({ padding: '0' }));
 export const PortfolioTable = ({
@@ -89,7 +89,7 @@ export const PortfolioTable = ({
   ));
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={MIN_BOX_PAGE}>
       <Table>
         <TableHead>
           <TableRow>{headers}</TableRow>

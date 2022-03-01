@@ -11,7 +11,8 @@ import {
   PortfolioPageRx,
   SignInPageRx,
   SettingsPageRx,
-  LandingPage
+  LandingPage,
+  FAQPage
 } from './pages';
 import {
   AppState,
@@ -22,6 +23,7 @@ import {
 } from './store';
 import {
   ADD_COIN_URL,
+  FAQ_URL,
   PORTFOLIO_URL,
   SETTINGS_URL,
   SIGN_IN_URL
@@ -67,6 +69,7 @@ const App = ({
             <Route path={`/${ADD_COIN_URL}/:id`} element={<AddCoinPageRx />} />
             <Route path={`/${SETTINGS_URL}`} element={<SettingsPageRx />} />
             <Route path={`/${SIGN_IN_URL}`} element={<SignInPageRx />} />
+            <Route path={`/${FAQ_URL}`} element={<FAQPage />} />
             <Route path="*" element={<LandingPage />} />
           </Routes>
         </LayoutRx>

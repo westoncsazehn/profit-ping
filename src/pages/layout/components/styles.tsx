@@ -37,7 +37,7 @@ export const ToolbarMenuPaperProps = {
   }
 };
 export const getMenuStyle = (themeMode: string, theme: Theme) => ({
-  border: `solid 1px ${theme.palette.grey["500"]}`,
+  border: `solid 1px ${theme.palette.grey['500']}`,
   borderRight: 'none',
   borderLeft: 'none',
   boxShadow: 'none',
@@ -58,4 +58,15 @@ export const StyledLink = styled(Link)(() => ({
 }));
 export const StyledToolBar = styled(Toolbar)(({ theme }) => ({
   padding: '0'
+}));
+export const StyledFooter = styled('div')(({ theme }) => ({
+  ...getMenuStyle(theme.palette.mode, theme),
+  position: 'fixed',
+  bottom: 0,
+  width: '100%',
+  height: 'fit-content',
+  padding: 2,
+}));
+export const StyledSpacerDiv = styled('div')(() => ({
+  height: '100px'
 }));

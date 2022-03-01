@@ -6,9 +6,15 @@ import { InstructionsListType } from '../../../../store';
 import { InstructionsListItem } from './InstructionsListItem';
 import { StyledFAQButton, StyledStack } from '../styles';
 
-const FAQItem = ({ index }: { index: number }) => {
+const FAQItem = ({
+  index,
+  onFAQClick
+}: {
+  index: number;
+  onFAQClick: () => void;
+}) => {
   const component = (
-    <StyledFAQButton color="primary" variant="contained">
+    <StyledFAQButton color="primary" variant="contained" onClick={onFAQClick}>
       Learn More
     </StyledFAQButton>
   );
@@ -28,7 +34,8 @@ const FAQItem = ({ index }: { index: number }) => {
 const getInstructionListColumn = (
   instructions: InstructionsListType[],
   maxColumns: number,
-  maxItemsPerColumn: number
+  maxItemsPerColumn: number,
+  onFAQClick: () => void
 ) => {
   const columns: ReactNode[] = [];
   let columnItems: ReactNode[] = [];
@@ -40,7 +47,9 @@ const getInstructionListColumn = (
           mx: theme.breakpoints.down('md') ? '16px' : '0'
         })}>
         {items}
-        {isLastItem ? <FAQItem index={instructions?.length} /> : null}
+        {isLastItem ? (
+          <FAQItem index={instructions?.length} onFAQClick={onFAQClick} />
+        ) : null}
       </StyledStack>
     );
     columnItems = [];
@@ -64,10 +73,12 @@ const getInstructionListColumn = (
 
 export const InstructionListSection = ({
   instructions,
-  maxColumns = 2
+  maxColumns = 2,
+  onFAQClick
 }: {
   instructions: InstructionsListType[];
   maxColumns?: number;
+  onFAQClick: () => void;
 }) => {
   const maxItemsPerColumn: number = useMemo(
     () => Math.round(instructions?.length / maxColumns),
@@ -80,7 +91,8 @@ export const InstructionListSection = ({
   const instructionListColumns = getInstructionListColumn(
     instructions,
     maxColumns,
-    maxItemsPerColumn
+    maxItemsPerColumn,
+    onFAQClick
   );
 
   return (

@@ -24,7 +24,7 @@ import {
   AddCoinSchema
 } from '../../../store';
 import { DatePicker } from './DatePicker';
-import { StyledPaper, StyledTooltip } from '../../common';
+import { MIN_BOX_PAGE, StyledPaper, StyledTooltip } from '../../common';
 import {
   StyledFormButtons,
   StyledFormControl,
@@ -45,7 +45,7 @@ export const AddCoinForm = ({
 }) =>
   coins?.length ? (
     <Container>
-      <Box component={StyledPaper}>
+      <Box component={StyledPaper} sx={MIN_BOX_PAGE}>
         <StyledFormTitleDescription>
           Add a coin to track and set a multiplier. When the multiplier is hit,
           we will notify you.

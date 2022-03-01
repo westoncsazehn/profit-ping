@@ -1,5 +1,6 @@
 // 3rd party
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // local
 import {
   ImageSlideShow,
@@ -9,6 +10,7 @@ import {
   IntroductoryContent
 } from './components';
 import { InstructionsListType } from '../../store';
+import { FAQ_URL } from '../common';
 
 const IMAGE_TIMER_COUNT: number = 5000;
 
@@ -16,6 +18,7 @@ export const LandingPage = () => {
   const [instructions] = useState<InstructionsListType[]>(INSTRUCTIONS_LIST);
   const [slideshowImages] = useState<string[]>(SLIDESHOW_IMAGES);
   const [activeImage, setActiveImage] = useState<string>(slideshowImages[0]);
+  const navigate = useNavigate();
   // calculate next image to display
   const goToNextImage = () => {
     const activeImageIndex: number = slideshowImages.indexOf(activeImage);
@@ -29,13 +32,24 @@ export const LandingPage = () => {
   };
   // cycle through images by setting active image
   useEffect(() => {
-    setTimeout(goToNextImage, IMAGE_TIMER_COUNT);
+    const timeout = setTimeout(goToNextImage, IMAGE_TIMER_COUNT);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [activeImage]);
+  // handlers
+  const onFAQClick = () => {
+    setActiveImage('');
+    navigate(FAQ_URL);
+  };
 
   return (
     <>
       <IntroductoryContent />
-      <InstructionListSection instructions={instructions} />
+      <InstructionListSection
+        instructions={instructions}
+        onFAQClick={onFAQClick}
+      />
       {slideshowImages ? (
         <ImageSlideShow images={slideshowImages} activeImage={activeImage} />
       ) : null}
