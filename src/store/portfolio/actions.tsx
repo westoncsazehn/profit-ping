@@ -10,13 +10,16 @@ export const portfolioActionTypes = {
   TAKE_PROFIT: 'TAKE_PROFIT',
   TAKE_PROFIT_SUCCESS: 'TAKE_PROFIT_SUCCESS',
   TAKE_PROFIT_FAILED: 'TAKE_PROFIT_FAILED',
-  SORT_CRYPTO_LIST: 'SORT_CRYPTO_LIST'
+  SORT_CRYPTO_LIST: 'SORT_CRYPTO_LIST',
+  RESET: 'RESET'
 };
 
-export const getUsersCryptoList = (uid: string) => ({
-  type: portfolioActionTypes.GET_USERS_CRYPTO_LIST,
-  payload: uid
-});
+export const getUsersCryptoList = (uid: string) => {
+  return {
+    type: portfolioActionTypes.GET_USERS_CRYPTO_LIST,
+    payload: uid
+  };
+};
 export const removeCoin = (coinAction: CoinAction) => ({
   type: portfolioActionTypes.REMOVE_COIN,
   payload: coinAction

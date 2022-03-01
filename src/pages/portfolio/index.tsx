@@ -15,7 +15,9 @@ import {
   AppState,
   sortCryptoList,
   SortByType,
-  PortfolioTableCoin
+  PortfolioTableCoin,
+  getList,
+  CryptoApiStateType
 } from '../../store';
 import { PortfolioTable, formatCoinsForPortfolioTable } from './components';
 
@@ -24,23 +26,29 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     getUsersCryptoList: (uid: string) => dispatch(getUsersCryptoList(uid)),
     removeCoin: (coinAction: CoinAction) => dispatch(removeCoin(coinAction)),
-    sortCryptoList: (sortBy: SortByType) => dispatch(sortCryptoList(sortBy))
+    sortCryptoList: (sortBy: SortByType) => dispatch(sortCryptoList(sortBy)),
+    getList: () => dispatch(getList())
   };
 };
 const mapStateToProps = (state: AppState) => state;
 const PortfolioPage = ({
   portfolio,
+  cryptoApi,
   user: { uid },
   getUsersCryptoList,
   removeCoin,
-  sortCryptoList
+  sortCryptoList,
+  getList
 }: {
   portfolio: Portfolio;
+  cryptoApi: CryptoApiStateType;
   user: FBUser;
   getUsersCryptoList: any;
   removeCoin: any;
   sortCryptoList: any;
+  getList: any;
 } & AppState) => {
+  const { cryptoList } = cryptoApi;
   const navigate = useNavigate();
   const { coins = [], sortBy } = portfolio;
   const [coinToRemove, setCoinToRemove] = useState<PortfolioCoin | undefined>();
@@ -48,13 +56,19 @@ const PortfolioPage = ({
 
   // get list of user's crypto with metadata
   useEffect(() => {
-    if (uid) {
+    if (uid && !coins?.length) {
       getUsersCryptoList(uid);
     }
-  }, []);
+  }, [uid]);
+  // format table cells to display styling
   useEffect(() => {
     setTableCoins(formatCoinsForPortfolioTable(coins));
   }, [coins]);
+  // get list of coins for add coin form
+  // called here to limit number of calls to 1
+  useEffect(() => {
+    if (!cryptoList?.length) getList();
+  }, []);
 
   // handlers
   const onRemoveCoin = (coin: PortfolioCoin) => {

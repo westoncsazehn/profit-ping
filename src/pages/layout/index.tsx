@@ -93,7 +93,7 @@ export const Layout = ({
         : !path
         ? `/${PORTFOLIO_URL}`
         : `/${path}`;
-    setTimeout(() => navigate(newPath), 2000);
+    navigate(newPath)
   }, [`/${path}`]);
   // if there is alert data available, then trigger initAlert()
   useEffect(() => {

@@ -1,60 +1,77 @@
 // 3rd party
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 // local
 import {
   addCoin,
   FBUser,
-  getList,
-  setIsLoading,
   FirestoreAddCoin,
   AppState,
   BasePortfolioCoin,
   FirestoreCoin,
   getPortfolioCoin,
-  updateCoin
+  updateCoin,
+  Portfolio,
+  PortfolioCoin
 } from '../../store';
 import { AddCoinForm } from './components';
 import { PORTFOLIO_URL } from '../common';
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setIsLoading: (isLoading?: boolean) => dispatch(setIsLoading(isLoading)),
   addCoin: (coin: FirestoreAddCoin, uid: string) =>
     dispatch(addCoin(coin, uid)),
   updateCoin: (coin: FirestoreAddCoin, uid: string) =>
     dispatch(updateCoin(coin, uid)),
-  getList: (uid: string, id: string = '') => dispatch(getList(uid, id)),
   getPortfolioCoin: (id: string, uid: string) =>
     dispatch(getPortfolioCoin(id, uid))
 });
-const mapStateToProps = ({ cryptoApi, addCoin, user }: AppState) => ({
+const mapStateToProps = ({
+  cryptoApi,
+  addCoin,
+  user,
+  portfolio
+}: AppState) => ({
   ...cryptoApi,
   ...addCoin,
+  portfolio,
   user
 });
 export const AddCoinPage = ({
   cryptoList,
   selectedCoin,
   user: { uid },
+  portfolio,
   addCoin,
   updateCoin,
-  getList,
   getPortfolioCoin
 }: {
   cryptoList: BasePortfolioCoin[];
   selectedCoin: FirestoreCoin;
   user: FBUser;
+  portfolio: Portfolio;
   addCoin: any;
   updateCoin: any;
-  getList: any;
   getPortfolioCoin: any;
 }) => {
   const { id = '' } = useParams();
   const navigate = useNavigate();
+  const coinIDList: string[] = portfolio?.coins
+    .slice()
+    .map((coin: PortfolioCoin) => coin.id);
+  const [addCoinCryptoList, setAddCoinCryptoList] =
+    useState<BasePortfolioCoin[]>(cryptoList);
 
-  // get list of coins for add coin form
-  useEffect(() => getList(uid, id), []);
+  // if editing coin, filter cryptoList to show only that coin
+  // if adding coin, display cryptoList without coins in portfolio
+  useEffect(() => {
+    const filteredCryptoList = cryptoList
+      .slice()
+      .filter((crypto: BasePortfolioCoin) =>
+        id ? crypto.id === id : !coinIDList.includes(crypto.id)
+      );
+    setAddCoinCryptoList(filteredCryptoList);
+  }, [id]);
   // if param id, get user's portfolio coin data
   useEffect(() => {
     if (uid) getPortfolioCoin(id, uid);
@@ -71,7 +88,7 @@ export const AddCoinPage = ({
   return (
     <>
       <AddCoinForm
-        coins={cryptoList}
+        coins={addCoinCryptoList}
         addCoin={onAddCoin}
         selectedCoin={selectedCoin}
         onCancel={onCancel}

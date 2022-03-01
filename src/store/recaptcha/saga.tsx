@@ -8,9 +8,9 @@ import { RecaptchaVerifierType } from '../types';
 import { loadingActionTypes } from '../loading';
 import { displayAlertActionTypes } from '../display-alert';
 import { auth } from '../../api';
-import { addPhoneNumberFB, phoneNumberActionTypes } from '../phone-number';
-import { PORTFOLIO_URL, RELOAD, SIGN_IN_URL } from '../../pages/common';
-import { navigateTo, navigationActionTypes } from '../navigate';
+import { addPhoneNumberFB } from '../phone-number';
+import { PORTFOLIO_URL } from '../../pages/common';
+import { navigateTo } from '../navigate';
 
 function* setRecaptchaVerifierSaga({
   payload

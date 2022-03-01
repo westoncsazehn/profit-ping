@@ -18,11 +18,12 @@ export const addCoinReducer = (
     payload
   }: { type: keyof typeof addCoinActionTypes; payload: FirestoreCoin }
 ) => {
-  if (addCoinActionTypes.SET_SELECTED_COIN === type) {
+  switch(type) {
+    case addCoinActionTypes.SET_SELECTED_COIN:
     return { ...state, selectedCoin: { ...state.selectedCoin, ...payload } };
-  } else if (addCoinActionTypes.SET_DEFAULT_SELECTED_COIN === type) {
+    case addCoinActionTypes.SET_DEFAULT_SELECTED_COIN:
     return initialAddCoinState;
-  } else {
-    return state;
+    default:
+      return state;
   }
 };

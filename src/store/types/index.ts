@@ -9,7 +9,6 @@ export * from './CryptoApiStateType';
 export * from './AddCoinStateType';
 export * from './CoinActionsType';
 export * from './AccountMenuProps';
-export * from './PhoneNumberStateType';
 export * from './RecaptchaStateType';
 export * from './NavigateStateType';
 export * from './AddPhoneNumberFormProps';

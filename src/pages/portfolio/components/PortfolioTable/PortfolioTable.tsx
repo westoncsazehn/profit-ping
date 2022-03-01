@@ -1,5 +1,5 @@
 // 3rd party
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CardHeader,
@@ -19,7 +19,6 @@ import { AddCircle } from '@mui/icons-material';
 // local
 import {
   HeaderItem,
-  PortfolioCoin,
   SortByType,
   DEFAULT_SORT_DIRECTION,
   DEFAULT_SORT_KEY,
@@ -49,7 +48,7 @@ export const PortfolioTable = ({
 }) => {
   const navigate = useNavigate();
   const { sortKey, direction = 'desc' } = sortBy;
-
+  // handlers
   const onSortHandler = (header: HeaderItem) => {
     let newDirection: string = 'desc';
     const headerKey: string = String(header.sortKey);
@@ -61,6 +60,7 @@ export const PortfolioTable = ({
       direction: newDirection
     });
   };
+  // ui elements
   const headers = headerItems?.map((header: HeaderItem) => (
     <TableCell key={JSON.stringify(header)}>
       {header?.sortKey ? (

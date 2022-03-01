@@ -6,7 +6,6 @@ import {
   FBUser,
   LoaderState,
   Portfolio,
-  PhoneNumberStateType,
   RecaptchaStateType,
   NavigateStateType
 } from './types';
@@ -18,7 +17,6 @@ export type AppState = {
   displayAlert: DisplayAlertType;
   cryptoApi: CryptoApiStateType;
   addCoin: AddCoinStateType;
-  phoneNumber: PhoneNumberStateType;
   recaptcha: RecaptchaStateType;
   navigate: NavigateStateType;
 };

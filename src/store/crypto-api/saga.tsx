@@ -7,26 +7,14 @@ import { loadingActionTypes } from '../loading';
 import { BasePortfolioCoin } from '../types';
 import { cryptoAPIActionTypes } from './actions';
 import { displayAlertActionTypes } from '../display-alert';
-import { getCoinIDSFromPortfolio } from '../portfolio';
 
-function* getListSaga({
-  payload
-}: {
-  type: typeof cryptoAPIActionTypes.SET_LIST;
-  payload: { uid: string; id?: string };
-}): any {
+function* getListSaga(): any {
   try {
-    const { id = '', uid } = payload;
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
-    const coinIDList = yield call(getCoinIDSFromPortfolio, uid) || [];
     const { data }: { data: BasePortfolioCoin[] } = yield call(getCryptoList);
-    const filteredCoinData =
-      data?.filter((coin: BasePortfolioCoin) =>
-        Boolean(id) ? coin.id === id : !coinIDList.includes(coin.id)
-      ) || [];
     yield put({
       type: cryptoAPIActionTypes.SET_LIST,
-      payload: filteredCoinData
+      payload: data || []
     });
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
   } catch (e: any) {

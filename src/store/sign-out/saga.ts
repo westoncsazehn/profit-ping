@@ -1,4 +1,7 @@
+// 3rd party
 import { all, call, put, takeEvery } from 'redux-saga/effects';
+import { AlertColor } from '@mui/material';
+// local
 import { signOutActions } from './actions';
 import { navigateTo } from '../navigate';
 import { SIGN_IN_URL } from '../../pages/common';
@@ -6,16 +9,20 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../../api';
 import { loadingActionTypes } from '../loading';
 import { displayAlertActionTypes } from '../display-alert';
-import { AlertColor } from '@mui/material';
-import {
-  GREP_CATCHA_STORAGE_KEY,
-  REACT_PERSIST_STORAGE_KEY
-} from '../../values';
+import { GREP_CATCHA_STORAGE_KEY } from '../../values';
+import { portfolioActionTypes } from '../portfolio';
+import { addCoinActionTypes } from '../add-coin';
+import { cryptoAPIActionTypes } from '../crypto-api';
+
+function* resetAppState(): any {
+  yield put({ type: portfolioActionTypes.RESET });
+  yield put({ type: addCoinActionTypes.SET_DEFAULT_SELECTED_COIN });
+  yield put({ type: cryptoAPIActionTypes.RESET });
+}
 
 function* signOutSaga(): any {
   try {
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
-    yield sessionStorage.removeItem(REACT_PERSIST_STORAGE_KEY);
     yield localStorage.removeItem(GREP_CATCHA_STORAGE_KEY);
     yield call(signOut, auth);
     yield navigateTo(SIGN_IN_URL);
@@ -27,6 +34,7 @@ function* signOutSaga(): any {
         severity: 'success' as AlertColor
       }
     });
+    yield resetAppState();
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
   } catch (e) {
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
