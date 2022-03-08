@@ -1,7 +1,7 @@
 // 3rd party
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 // local
 import {
   addCoin,
@@ -13,7 +13,8 @@ import {
   getPortfolioCoin,
   updateCoin,
   Portfolio,
-  PortfolioCoin
+  PortfolioCoin,
+  navigateTo
 } from '../../store';
 import { AddCoinForm } from './components';
 import { PORTFOLIO_URL } from '../common';
@@ -24,7 +25,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   updateCoin: (coin: FirestoreAddCoin, uid: string) =>
     dispatch(updateCoin(coin, uid)),
   getPortfolioCoin: (id: string, uid: string) =>
-    dispatch(getPortfolioCoin(id, uid))
+    dispatch(getPortfolioCoin(id, uid)),
+  navigateTo: (path: string) => dispatch(navigateTo(path))
 });
 const mapStateToProps = ({
   cryptoApi,
@@ -44,7 +46,8 @@ export const AddCoinPage = ({
   portfolio,
   addCoin,
   updateCoin,
-  getPortfolioCoin
+  getPortfolioCoin,
+  navigateTo
 }: {
   cryptoList: BasePortfolioCoin[];
   selectedCoin: FirestoreCoin;
@@ -53,9 +56,9 @@ export const AddCoinPage = ({
   addCoin: any;
   updateCoin: any;
   getPortfolioCoin: any;
+  navigateTo: any;
 }) => {
   const { id = '' } = useParams();
-  const navigate = useNavigate();
   const coinIDList: string[] = portfolio?.coins
     .slice()
     .map((coin: PortfolioCoin) => coin.id);
@@ -83,7 +86,9 @@ export const AddCoinPage = ({
       id ? updateCoin(coin, uid) : addCoin(coin, uid);
     }
   };
-  const onCancel = () => navigate(`/${PORTFOLIO_URL}`);
+  const onCancel = () => {
+    navigateTo(PORTFOLIO_URL);
+  }
 
   return (
     <>
@@ -97,7 +102,5 @@ export const AddCoinPage = ({
   );
 };
 
-export const AddCoinPageRx = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AddCoinPage);
+const AddCoinPageRx = connect(mapStateToProps, mapDispatchToProps)(AddCoinPage);
+export default AddCoinPageRx;

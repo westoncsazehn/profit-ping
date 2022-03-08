@@ -17,7 +17,7 @@ export const recaptchaReducer = (
       };
     case recaptchaActionTypes.SIGN_IN_WITH_PHONE_SUCCESS:
       return { ...state, confirmationResult: payload };
-    case recaptchaActionTypes.RESET:
+    case recaptchaActionTypes.RESET_RECAPTCHA:
       return { ...state, captchaId: null, confirmationResult: null };
     case recaptchaActionTypes.DEFAULT:
     case recaptchaActionTypes.SET_RECAPTCHA_ID_FAILED:

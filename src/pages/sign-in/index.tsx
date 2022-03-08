@@ -103,7 +103,8 @@ const SignInPage = ({
   );
 };
 
-export const SignInPageRx = connect(
+const SignInPageRx = connect(
   mapStateToProps,
   mapDispatchToProps
 )(SignInPage);
+export default SignInPageRx;

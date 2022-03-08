@@ -3,10 +3,8 @@ import React from 'react';
 import { Formik } from 'formik';
 import {
   Card,
-  FormControl,
   FormLabel,
   Grid,
-  TextField,
   InputAdornment,
   Typography,
   Stack,
@@ -18,7 +16,12 @@ import { Edit, PhoneAndroid } from '@mui/icons-material';
 // local
 import { Recaptcha } from './Recaptcha';
 import { AddPhoneNumberFormProps, AddPhoneNumberSchema } from '../../../store';
-import { StyledEditIconButton, StyledPhoneActionButtons } from './styles';
+import {
+  StyledEditIconButton,
+  StyledPhoneActionButtons,
+  StyledPhoneFormControl,
+  StyledPhoneInputField
+} from './styles';
 
 export const AddPhoneNumberForm = ({
   phoneNumber,
@@ -83,14 +86,14 @@ export const AddPhoneNumberForm = ({
         return (
           <form onSubmit={handleSubmit}>
             <Grid container>
-              <Grid>
+              <Grid item xs={12} md={3}>
                 <Stack direction="row">
-                  <FormControl
+                  <StyledPhoneFormControl
                     required
                     fullWidth
                     error={Boolean(phoneNumberErrors)}>
                     <FormLabel htmlFor="phoneNumber">Phone Number</FormLabel>
-                    <TextField
+                    <StyledPhoneInputField
                       disabled={isDisabled}
                       defaultValue={values.phoneNumber}
                       onChange={handleChange}
@@ -103,12 +106,11 @@ export const AddPhoneNumberForm = ({
                           </>
                         )
                       }}
-                      sx={{ paddingBottom: '15px' }}
                       id="phoneNumber"
                       name="phoneNumber"
                       placeholder="1234567890"
                     />
-                  </FormControl>
+                  </StyledPhoneFormControl>
                   <StyledEditIconButton
                     onClick={() => onPhoneEdit()}
                     disabled={!isDisabled}
@@ -120,7 +122,7 @@ export const AddPhoneNumberForm = ({
                   {errors.phoneNumber}
                 </Typography>
               </Grid>
-              <Grid>
+              <Grid item xs={12} md={9}>
                 {!isDisabled ? (
                   <StyledPhoneActionButtons
                     variant="contained"

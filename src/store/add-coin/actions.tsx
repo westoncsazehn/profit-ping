@@ -6,7 +6,6 @@ export const addCoinActionTypes = {
   GET_PORTFOLIO_COIN: 'GET_PORTFOLIO_COIN',
   SET_SELECTED_COIN: 'SET_SELECTED_COIN',
   SET_DEFAULT_SELECTED_COIN: 'SET_DEFAULT_SELECTED_COIN',
-  RESET: 'RESET'
 };
 
 export const addCoin = (coin: FirestoreAddCoin, uid: string) => ({

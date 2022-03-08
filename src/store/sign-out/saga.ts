@@ -15,9 +15,9 @@ import { addCoinActionTypes } from '../add-coin';
 import { cryptoAPIActionTypes } from '../crypto-api';
 
 function* resetAppState(): any {
-  yield put({ type: portfolioActionTypes.RESET });
+  yield put({ type: portfolioActionTypes.RESET_PORTFOLIO });
   yield put({ type: addCoinActionTypes.SET_DEFAULT_SELECTED_COIN });
-  yield put({ type: cryptoAPIActionTypes.RESET });
+  yield put({ type: cryptoAPIActionTypes.RESET_CRYPTO_API });
 }
 
 function* signOutSaga(): any {

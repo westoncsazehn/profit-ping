@@ -1,6 +1,5 @@
 // 3rd party
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   CardHeader,
   IconButton,
@@ -30,7 +29,7 @@ import {
   headerItems,
   rowKeys
 } from './util';
-import { ADD_COIN_URL, MIN_BOX_PAGE } from "../../../common";
+import { ADD_COIN_URL, MIN_BOX_PAGE } from '../../../common';
 
 const StyledCaption = styled('caption')(() => ({ padding: '0' }));
 export const PortfolioTable = ({
@@ -38,15 +37,16 @@ export const PortfolioTable = ({
   onRemoveCoin,
   onEditCoin,
   onSortBy,
-  sortBy = { sortKey: DEFAULT_SORT_KEY, direction: DEFAULT_SORT_DIRECTION }
+  sortBy = { sortKey: DEFAULT_SORT_KEY, direction: DEFAULT_SORT_DIRECTION },
+  navigateTo
 }: {
   coins: PortfolioTableCoin[];
   onRemoveCoin: any;
   onEditCoin: any;
   onSortBy: (sortBy: SortByType) => void;
   sortBy: SortByType;
+  navigateTo: any;
 }) => {
-  const navigate = useNavigate();
   const { sortKey, direction = 'desc' } = sortBy;
   // handlers
   const onSortHandler = (header: HeaderItem) => {
@@ -101,7 +101,7 @@ export const PortfolioTable = ({
             avatar={
               <IconButton
                 color="default"
-                onClick={() => navigate(`/${ADD_COIN_URL}`)}>
+                onClick={() => navigateTo(ADD_COIN_URL)}>
                 <AddCircle fontSize="medium" />
               </IconButton>
             }

@@ -16,6 +16,8 @@ import { loadingActionTypes } from '../loading';
 import { BasePortfolioCoin, FirestoreAddCoin, FirestoreCoin } from '../types';
 import { displayAlertActionTypes } from '../display-alert';
 import { getCoinByID } from '../portfolio';
+import { navigateTo } from '../navigate';
+import { PORTFOLIO_URL } from '../../pages/common';
 
 function* getCurrentPriceByCoinID(coin: string): any {
   const { data } = yield call(getCryptoList, coin);
@@ -69,13 +71,13 @@ function* addCoinSaga({
       targetMultiplier
     );
     if (inProfitMessage) {
+      yield put({ type: loadingActionTypes.SET_IS_LOADING });
       yield put({
         type: addCoinActionTypes.SET_SELECTED_COIN,
         payload: {
           error: inProfitMessage
         }
       });
-      yield put({ type: loadingActionTypes.SET_IS_LOADING });
     } else {
       yield call(addDoc, collection(db, COIN_DB), {
         user: uid,
@@ -86,7 +88,8 @@ function* addCoinSaga({
         initialPricePerCoin,
         isMessageEnabled: true
       });
-      yield window?.history?.back();
+      yield put(navigateTo(PORTFOLIO_URL));
+      yield put({ type: loadingActionTypes.SET_IS_LOADING });
       yield put({
         type: displayAlertActionTypes.INIT_ALERT,
         payload: {
@@ -97,12 +100,13 @@ function* addCoinSaga({
       });
     }
   } catch (error: any) {
+    yield put(navigateTo(PORTFOLIO_URL));
     yield put({ type: loadingActionTypes.SET_IS_LOADING });
     yield put({
       type: displayAlertActionTypes.INIT_ALERT,
       payload: {
         open: true,
-        message: error.toString(),
+        message: String(error),
         severity: 'error' as AlertColor
       }
     });
@@ -124,32 +128,58 @@ function* updateCoinSaga({
     } = payloadCoin;
     const { id = '' } = yield getCoinByID(coin, uid, true);
     if (!id) throw new Error('no coin id found in portfolio');
-    // @ts-ignore
-    yield call(updateDoc, doc(db, COIN_DB, id), {
-      user: uid,
-      coin,
-      initialDate: Timestamp.fromDate(new Date(initialDate)),
-      initialInvestment,
-      targetMultiplier,
-      initialPricePerCoin,
-      isMessageEnabled: true
-    });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    yield window?.history?.back();
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
-        open: true,
-        message: `Successfully updated coin: ${coin} in portfolio.`,
-        severity: 'success' as AlertColor
+    const date: Date = new Date(initialDate);
+    const stringDate: string = format(date, 'dd-MM-yyyy');
+    const historyItem = yield call(getCryptoHistory, coin, stringDate);
+    const {
+      market_data: {
+        current_price: { usd: initialPriceUSD }
       }
-    });
+    } = historyItem?.data;
+    const inProfitMessage: boolean = yield checkIfInProfit(
+      coin,
+      initialPriceUSD,
+      initialInvestment,
+      targetMultiplier
+    );
+    if (inProfitMessage) {
+      yield put({ type: loadingActionTypes.SET_IS_LOADING });
+      yield put({
+        type: addCoinActionTypes.SET_SELECTED_COIN,
+        payload: {
+          error: inProfitMessage
+        }
+      });
+    } else {
+      // @ts-ignore
+      yield call(updateDoc, doc(db, COIN_DB, id), {
+        user: uid,
+        coin,
+        initialDate: Timestamp.fromDate(new Date(initialDate)),
+        initialInvestment,
+        targetMultiplier,
+        initialPricePerCoin,
+        isMessageEnabled: true
+      });
+      yield put(navigateTo(PORTFOLIO_URL));
+      yield put({ type: loadingActionTypes.SET_IS_LOADING });
+      yield put({
+        type: displayAlertActionTypes.INIT_ALERT,
+        payload: {
+          open: true,
+          message: `Successfully updated coin: ${coin} in portfolio.`,
+          severity: 'success' as AlertColor
+        }
+      });
+    }
   } catch (error: any) {
+    yield put(navigateTo(PORTFOLIO_URL));
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
     yield put({
       type: displayAlertActionTypes.INIT_ALERT,
       payload: {
         open: true,
-        message: `Error updating coin in portfolio.`,
+        message: String(error),
         severity: 'error' as AlertColor
       }
     });
@@ -165,16 +195,20 @@ function* getPortfolioCoinSaga({
   };
 }): any {
   try {
+    yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
     if (!id) {
       yield put({
         type: addCoinActionTypes.SET_DEFAULT_SELECTED_COIN
       });
+      yield put({ type: loadingActionTypes.SET_IS_LOADING });
     } else {
       const payload = yield getCoinByID(id, uid);
       payload.initialDate = payload.initialDate.toDate();
       yield put({ type: addCoinActionTypes.SET_SELECTED_COIN, payload });
+      yield put({ type: loadingActionTypes.SET_IS_LOADING });
     }
   } catch (e: any) {
+    yield put({ type: loadingActionTypes.SET_IS_LOADING });
     yield put({
       type: displayAlertActionTypes.INIT_ALERT,
       payload: {

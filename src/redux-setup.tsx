@@ -1,3 +1,4 @@
+// 3rd party
 import { PERSIST_KEY } from './values';
 import sessionStorage from 'redux-persist/es/storage/session';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
@@ -14,6 +15,8 @@ import {
 } from './store';
 import { persistReducer, persistStore } from 'redux-persist';
 import { all, fork } from 'redux-saga/effects';
+import logger from 'redux-logger'
+// local
 import portfolioSagas from './store/portfolio/saga';
 import addCoinSagas from './store/add-coin/saga';
 import cryptApiSagas from './store/crypto-api/saga';
@@ -71,7 +74,7 @@ function* rootSaga() {
 const sagaMiddleware = createSagaMiddleware();
 export const store = createStore(
   persistedReducer,
-  applyMiddleware(sagaMiddleware)
+  applyMiddleware(sagaMiddleware, logger)
 );
 // @ts-ignore
 export const persist = persistStore(store);

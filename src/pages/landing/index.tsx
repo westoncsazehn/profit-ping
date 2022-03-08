@@ -14,7 +14,7 @@ import { FAQ_URL } from '../common';
 
 const IMAGE_TIMER_COUNT: number = 5000;
 
-export const LandingPage = () => {
+const LandingPage = () => {
   const [instructions] = useState<InstructionsListType[]>(INSTRUCTIONS_LIST);
   const [slideshowImages] = useState<string[]>(SLIDESHOW_IMAGES);
   const [activeImage, setActiveImage] = useState<string>(slideshowImages[0]);
@@ -56,3 +56,4 @@ export const LandingPage = () => {
     </>
   );
 };
+export default LandingPage;

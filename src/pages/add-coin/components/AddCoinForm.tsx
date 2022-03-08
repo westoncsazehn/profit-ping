@@ -26,6 +26,7 @@ import {
 import { DatePicker } from './DatePicker';
 import { MIN_BOX_PAGE, StyledPaper, StyledTooltip } from '../../common';
 import {
+  StyledAlert,
   StyledFormButtons,
   StyledFormControl,
   StyledFormTitleDescription,
@@ -51,9 +52,7 @@ export const AddCoinForm = ({
           we will notify you.
         </StyledFormTitleDescription>
         {selectedCoin?.error ? (
-          <Typography align="center" color="error">
-            {selectedCoin?.error}
-          </Typography>
+          <StyledAlert severity="error">{selectedCoin?.error}</StyledAlert>
         ) : null}
         <Formik
           enableReinitialize

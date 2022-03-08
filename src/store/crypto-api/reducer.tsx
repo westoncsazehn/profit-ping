@@ -11,7 +11,7 @@ export const cryptoApiReducer = (
   switch (type) {
     case cryptoAPIActionTypes.SET_LIST:
       return { ...state, cryptoList: payload };
-    case cryptoAPIActionTypes.RESET:
+    case cryptoAPIActionTypes.RESET_CRYPTO_API:
       return { ...state, ...initialCryptoApiState };
     default:
       return state;

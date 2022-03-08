@@ -6,7 +6,7 @@ import { MIN_BOX_PAGE, StyledPaper } from '../common';
 import { FAQPointType } from '../../store';
 import { faqs } from "./values";
 
-export const FAQPage = () => (
+const FAQPage = () => (
   <Container>
     <Box component={StyledPaper} sx={MIN_BOX_PAGE}>
       {faqs?.map(({ title, text }: FAQPointType) => (
@@ -20,3 +20,4 @@ export const FAQPage = () => (
     </Box>
   </Container>
 );
+export default FAQPage;

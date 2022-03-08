@@ -47,8 +47,8 @@ export const PHONE_NUMBER_DB: string = 'phone';
 
 // delete user cloud function
 export const deleteUser = httpsCallable(functions, 'deleteUser');
-export const sendMessages = httpsCallable(
-  functions,
-  'messageProfitingCoinsToDevices'
-);
+// export const sendMessages = httpsCallable(
+//   functions,
+//   'messageProfitingCoinsToDevices'
+// );
 export const getUser = auth?.currentUser;

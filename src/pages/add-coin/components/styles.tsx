@@ -1,9 +1,9 @@
-import { Button, FormControl, Paper, styled, Typography } from '@mui/material';
+import { Alert, Button, FormControl, styled, Typography } from '@mui/material';
 import { HelpOutline } from '@mui/icons-material';
 
 export const StyledFormTitleDescription = styled(Typography)(({ theme }) => ({
   margin: '15px 0',
-  [theme.breakpoints.up('md')]: { marginBottom: '50px' }
+  marginBottom: '25px'
 }));
 export const StyledFormControl = styled(FormControl)(({ theme }) => ({
   paddingBottom: '1.25rem',
@@ -23,4 +23,7 @@ export const StyledFormButtons = styled(Button)(({ theme }) => ({
   width: '100px',
   float: 'right',
   marginTop: '15px'
+}));
+export const StyledAlert = styled(Alert)(({ theme }) => ({
+  marginBottom: '25px'
 }));

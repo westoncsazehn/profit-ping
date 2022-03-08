@@ -20,7 +20,7 @@ export const displayAlertReducer = (
         message: payload?.message || '',
         severity: payload?.severity
       };
-    case displayAlertActionTypes.RESET:
+    case displayAlertActionTypes.RESET_ALERT:
       return {
         open: false,
         message: '',

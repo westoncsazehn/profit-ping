@@ -10,7 +10,7 @@ function* triggerDisplayMessageSaga({
   yield put({ type: displayAlertActionTypes.SET_ALERT, payload });
   yield delay(DISPLAY_ALERT_TIMEOUT);
   yield put({
-    type: displayAlertActionTypes.RESET
+    type: displayAlertActionTypes.RESET_ALERT
   });
 }
 

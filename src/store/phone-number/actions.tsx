@@ -5,7 +5,7 @@ export const phoneNumberActionTypes = {
   ADD_PHONE_NUMBER: 'ADD_PHONE_NUMBER',
   ADD_PHONE_NUMBER_SUCCESS: 'ADD_PHONE_NUMBER_SUCCESS',
   ADD_PHONE_NUMBER_FAILED: 'ADD_PHONE_NUMBER_FAILED',
-  RESET: 'RESET'
+  RESET_PHONE_NUMBER: 'RESET_PHONE_NUMBER'
 };
 
 export const getPhoneNumber = (uid: string) => ({

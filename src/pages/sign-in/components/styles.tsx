@@ -1,16 +1,24 @@
 // 3rd party
 import React from 'react';
-import { Button, IconButton, styled, TextField, Tooltip } from '@mui/material';
+import {
+  Button,
+  FormControl,
+  IconButton,
+  styled,
+  TextField,
+  Tooltip
+} from '@mui/material';
 import { HelpOutline } from '@mui/icons-material';
 import { tooltipClasses, TooltipProps } from '@mui/material/Tooltip';
 
 export const StyledPhoneActionButtons = styled(Button)(({ theme }) => ({
-  width: '100px',
-  float: 'right',
+  width: '100%',
   height: '50px',
   [theme.breakpoints.up('md')]: {
+    width: '100px',
     transform: 'translateY(27px)',
-    marginLeft: ' 13px'
+    marginLeft: ' 13px',
+    float: 'left'
   }
 }));
 export const StyledEditIconButton = styled(IconButton)(() => ({
@@ -41,18 +49,30 @@ export const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
 }));
 export const StyledVerifyTextField = styled(TextField)(({ theme }) => ({
   display: 'block',
-  width: '225px',
+  width: '100%',
   paddingBottom: '15px',
-  '.MuiOutlinedInput-root': {width: '100%'},
+  '.MuiOutlinedInput-root': { width: '100%' },
   [theme.breakpoints.up('md')]: {
     paddingBottom: 'unset'
   }
 }));
 export const StyledVerifyButton = styled(Button)(({ theme }) => ({
-  width: '100px',
+  width: '100%',
   height: '50px',
   [theme.breakpoints.up('md')]: {
+    width: 'unset',
     marginTop: '27px',
-    marginLeft: '27px'
+    marginLeft: '13px'
+  }
+}));
+export const StyledPhoneFormControl = styled(FormControl)(({ theme }) => ({
+  width: '100%',
+  paddingBottom: '15px',
+  [theme.breakpoints.up('md')]: {
+    width: 'unset'
+  }
+}));
+export const StyledPhoneInputField = styled(TextField)(({ theme }) => ({
+  input: {
   }
 }));

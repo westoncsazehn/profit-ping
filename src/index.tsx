@@ -22,6 +22,7 @@ const App = () => {
   const storageMode: PaletteMode = (sessionStorage.getItem(
     COLOR_MODE_SESSION_STORAGE
   ) || 'light') as PaletteMode;
+  const baseTheme = createTheme();
   const [mode, setMode] = useState<PaletteMode | undefined>(storageMode);
   const colorMode = useMemo(
     () => ({
@@ -35,7 +36,29 @@ const App = () => {
     }),
     []
   );
-  const theme = React.useMemo(() => createTheme({ palette: { mode } }), [mode]);
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: { mode },
+        components: {
+          MuiOutlinedInput: {
+            styleOverrides: {
+              root: {
+                '& .MuiOutlinedInput-input:-webkit-autofill': {
+                  boxShadow: `0 0 0 100px ${
+                    mode === 'dark'
+                      ? baseTheme.palette.grey[900]
+                      : baseTheme.palette.common.white
+                  } inset`,
+                  borderRadius: '0 5px 5px 0'
+                }
+              }
+            }
+          }
+        }
+      }),
+    [mode]
+  );
 
   return (
     <React.StrictMode>

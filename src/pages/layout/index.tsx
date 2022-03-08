@@ -1,5 +1,5 @@
 // 3rd party
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -38,7 +38,7 @@ import {
   DarkLightModeButton,
   getMenuStyle,
   StyledToolBar,
-  StyledLink,
+  StyledLogoButton,
   StyledImageLogo,
   StyledFooter,
   StyledSpacerDiv
@@ -48,7 +48,8 @@ import { getPageTitle } from './util';
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => ({
   signOut: () => dispatch(signOut()),
-  resetAlert: () => dispatch(resetAlert())
+  resetAlert: () => dispatch(resetAlert()),
+  navigateTo: (path: string) => dispatch(navigateTo(path))
 });
 const mapStateToProps = ({ displayAlert, navigate, user }: AppState) => ({
   user,
@@ -61,11 +62,13 @@ export const Layout = ({
   children,
   navigate: { path },
   user,
-  resetAlert
+  resetAlert,
+  navigateTo
 }: {
   displayAlert: DisplayAlertType;
   signOut: any;
   resetAlert: any;
+  navigateTo: any;
   children: React.ReactNode;
   navigate: NavigateStateType;
   user: FBUser;
@@ -87,14 +90,8 @@ export const Layout = ({
 
   // on path change request from navigate saga
   useEffect(() => {
-    const newPath: string =
-      !uid && !path
-        ? `/${SIGN_IN_URL}`
-        : !path
-        ? `/${PORTFOLIO_URL}`
-        : `/${path}`;
-    navigate(newPath)
-  }, [`/${path}`]);
+    navigate(`/${path}`);
+  }, [navigate, path]);
   // if there is alert data available, then trigger initAlert()
   useEffect(() => {
     if (open) {
@@ -123,9 +120,9 @@ export const Layout = ({
   };
   const onInitSettings = () => {
     setMenuElement(null);
-    navigate(SETTINGS_URL);
+    navigateTo(SETTINGS_URL);
   };
-  const onFAQClick = () => navigate(FAQ_URL);
+  const onFAQClick = () => navigateTo(FAQ_URL);
 
   return (
     <>
@@ -134,9 +131,9 @@ export const Layout = ({
           <StyledToolBar sx={{ p: 0 }}>
             <Box sx={{ flexGrow: 1 }}>
               <Button variant="text">
-                <StyledLink to={homeLink}>
+                <StyledLogoButton onClick={() => navigateTo(homeLink)}>
                   <StyledImageLogo alt="Profit Ping Logo" src={appBarLogoImg} />
-                </StyledLink>
+                </StyledLogoButton>
               </Button>
             </Box>
             <AccountMenu
@@ -174,7 +171,6 @@ export const Layout = ({
           <Stack
             direction="row"
             sx={{ margin: '0 auto', width: 'fit-content' }}>
-            <Button>About Us</Button>
             <Button onClick={onFAQClick}>FAQ</Button>
           </Stack>
         </Container>

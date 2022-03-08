@@ -1,6 +1,5 @@
 // 3rd party
-import { styled, SxProps, Theme, Toolbar } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Button, styled, SxProps, Theme, Toolbar } from "@mui/material";
 
 export const getCardHeaderStyles = (
   isLoggedIn: boolean
@@ -52,7 +51,7 @@ export const StyledImageLogo = styled('img')(() => ({
   width: '100px',
   verticalAlign: 'middle'
 }));
-export const StyledLink = styled(Link)(() => ({
+export const StyledLogoButton = styled(Button)(() => ({
   textDecoration: 'none',
   color: 'black'
 }));

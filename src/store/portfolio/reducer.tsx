@@ -17,15 +17,14 @@ export const portfolioReducer = (
   switch (type) {
     case portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS:
     case portfolioActionTypes.REMOVE_COIN_SUCCESS:
-    case portfolioActionTypes.TAKE_PROFIT_SUCCESS:
-      return { ...state, coins: payload };
+      return { ...state, coins: [...payload] };
     case portfolioActionTypes.SORT_CRYPTO_LIST:
       return {
         ...state,
         coins: sortCoins(state.coins || [], payload),
         sortBy: payload
       };
-    case portfolioActionTypes.RESET:
+    case portfolioActionTypes.RESET_PORTFOLIO:
       return { ...state, ...initialPortfolioState };
     default:
       return state;

@@ -70,7 +70,9 @@ function* getUsersCryptoListSaga({
 }): any {
   yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
   try {
-    if (!uid) yield put(defaultResponse);
+    if (!uid) {
+      yield put(defaultResponse);
+    }
     const coinDbRef = collection(db, COIN_DB);
     const coinsQuery = query(coinDbRef, where('user', '==', uid));
     // get list from `coin` collection of user's coins from firebase/firestore
@@ -145,10 +147,10 @@ function* deleteDocument(id: string, user: string): any {
   if (docID) yield deleteDoc(doc(db, `${COIN_DB}/${docID}`));
 }
 
-function* removeCoinSaga({ payload }: { payload: CoinAction }): any {
+function* removeCoinSaga({ payload: userData }: { payload: CoinAction }): any {
   try {
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
-    const { id, user } = payload;
+    const { id, user } = userData;
     yield deleteDocument(id, user);
     const coins: PortfolioCoin[] = yield select(getCoins);
     const filteredCoins = coins.filter((coin) => coin.id !== id);

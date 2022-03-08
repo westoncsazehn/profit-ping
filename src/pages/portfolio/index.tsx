@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Container from '@mui/material/Container';
-import { useNavigate } from 'react-router-dom';
 // local
 import { DeleteItemConfirmModal, ADD_COIN_URL } from '../common';
 import {
@@ -17,7 +16,8 @@ import {
   SortByType,
   PortfolioTableCoin,
   getList,
-  CryptoApiStateType
+  CryptoApiStateType,
+  navigateTo
 } from '../../store';
 import { PortfolioTable, formatCoinsForPortfolioTable } from './components';
 
@@ -27,7 +27,8 @@ const mapDispatchToProps = (dispatch: any) => {
     getUsersCryptoList: (uid: string) => dispatch(getUsersCryptoList(uid)),
     removeCoin: (coinAction: CoinAction) => dispatch(removeCoin(coinAction)),
     sortCryptoList: (sortBy: SortByType) => dispatch(sortCryptoList(sortBy)),
-    getList: () => dispatch(getList())
+    getList: () => dispatch(getList()),
+    navigateTo: (path: string) => dispatch(navigateTo(path))
   };
 };
 const mapStateToProps = (state: AppState) => state;
@@ -35,6 +36,7 @@ const PortfolioPage = ({
   portfolio,
   cryptoApi,
   user: { uid },
+  navigateTo,
   getUsersCryptoList,
   removeCoin,
   sortCryptoList,
@@ -47,16 +49,16 @@ const PortfolioPage = ({
   removeCoin: any;
   sortCryptoList: any;
   getList: any;
+  navigateTo: any;
 } & AppState) => {
   const { cryptoList } = cryptoApi;
-  const navigate = useNavigate();
   const { coins = [], sortBy } = portfolio;
   const [coinToRemove, setCoinToRemove] = useState<PortfolioCoin | undefined>();
   const [tableCoins, setTableCoins] = useState<PortfolioTableCoin[]>([]);
 
   // get list of user's crypto with metadata
   useEffect(() => {
-    if (uid && !coins?.length) {
+    if (uid) {
       getUsersCryptoList(uid);
     }
   }, [uid]);
@@ -67,7 +69,9 @@ const PortfolioPage = ({
   // get list of coins for add coin form
   // called here to limit number of calls to 1
   useEffect(() => {
-    if (!cryptoList?.length) getList();
+    if (!cryptoList?.length) {
+      getList();
+    }
   }, []);
 
   // handlers
@@ -84,7 +88,7 @@ const PortfolioPage = ({
   };
   const onEditCoin = (coin: PortfolioCoin) => {
     const { id = '' } = coin;
-    if (id && uid) navigate(`/${ADD_COIN_URL}/${id}`);
+    if (id && uid) navigateTo(`${ADD_COIN_URL}/${id}`);
   };
   const onSortBy = (sortBy: SortByType) => {
     if (sortBy?.sortKey && sortBy?.direction) {
@@ -100,6 +104,7 @@ const PortfolioPage = ({
         onEditCoin={onEditCoin}
         onSortBy={onSortBy}
         sortBy={sortBy}
+        navigateTo={navigateTo}
       />
       <DeleteItemConfirmModal
         open={Boolean(coinToRemove)}
@@ -113,7 +118,8 @@ const PortfolioPage = ({
     </Container>
   );
 };
-export const PortfolioPageRx = connect(
+const PortfolioPageRx = connect(
   mapStateToProps,
   mapDispatchToProps
 )(PortfolioPage);
+export default PortfolioPageRx;

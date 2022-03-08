@@ -1,18 +1,10 @@
 // 3rd party
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import {
-  Alert,
-  Box,
-  Container,
-  Button,
-  Paper,
-  styled,
-  Typography
-} from '@mui/material';
+import { Alert, Box, Container, Button, Typography } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 // local
-import { DeleteItemConfirmModal, MIN_BOX_PAGE, StyledPaper } from "../common";
+import { DeleteItemConfirmModal, MIN_BOX_PAGE, StyledPaper } from '../common';
 import { FBUser, deleteUser, AppState } from '../../store';
 
 const mapStateToProps = ({ user }: AppState) => ({ user });
@@ -53,7 +45,10 @@ const SettingsPage = ({
             sx={{
               '.MuiAlert-icon': { p: 0, m: 'auto 0', height: 'fit-content' }
             }}>
-            <Button color="inherit" sx={{m: 1}} onClick={() => setIsModalOpen(true)}>
+            <Button
+              color="inherit"
+              sx={{ m: 1 }}
+              onClick={() => setIsModalOpen(true)}>
               <Delete />
               <Typography>Delete Profile</Typography>
             </Button>
@@ -70,7 +65,8 @@ const SettingsPage = ({
     </>
   );
 };
-export const SettingsPageRx = connect(
+const SettingsPageRx = connect(
   mapStateToProps,
   mapDispatchToProps
 )(SettingsPage);
+export default SettingsPageRx;

@@ -1,19 +1,10 @@
 // 3rd party
-import React, { useEffect } from 'react';
+import React, { lazy, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { onAuthStateChanged } from 'firebase/auth';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // local imports
-import {
-  AddCoinPageRx,
-  LayoutRx,
-  Loader,
-  PortfolioPageRx,
-  SignInPageRx,
-  SettingsPageRx,
-  LandingPage,
-  FAQPage
-} from './pages';
+import { LayoutRx, Loader } from './pages';
 import {
   AppState,
   FBUser,
@@ -40,6 +31,12 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: any) => ({
   setUser: (user: FBUser) => dispatch(setUser(user))
 });
+const PortfolioPage = lazy(() => import('./pages/portfolio/index'));
+const AddCoinPage = lazy(() => import('./pages/add-coin/index'));
+const SettingsPage = lazy(() => import('./pages/settings/index'));
+const SignInPage = lazy(() => import('./pages/sign-in/index'));
+const LandingPage = lazy(() => import('./pages/landing/index'));
+const FAQPage = lazy(() => import('./pages/faq/index'));
 const App = ({
   loader,
   navigate: { path },
@@ -63,14 +60,70 @@ const App = ({
       <BrowserRouter>
         <LayoutRx>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path={`/${PORTFOLIO_URL}`} element={<PortfolioPageRx />} />
-            <Route path={`/${ADD_COIN_URL}`} element={<AddCoinPageRx />} />
-            <Route path={`/${ADD_COIN_URL}/:id`} element={<AddCoinPageRx />} />
-            <Route path={`/${SETTINGS_URL}`} element={<SettingsPageRx />} />
-            <Route path={`/${SIGN_IN_URL}`} element={<SignInPageRx />} />
-            <Route path={`/${FAQ_URL}`} element={<FAQPage />} />
-            <Route path="*" element={<LandingPage />} />
+            <Route
+              path="/"
+              element={
+                <React.Suspense fallback={<Loader isLoading />}>
+                  <LandingPage />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path={`/${PORTFOLIO_URL}`}
+              element={
+                <React.Suspense fallback={<Loader isLoading />}>
+                  <PortfolioPage />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path={`/${ADD_COIN_URL}`}
+              element={
+                <React.Suspense fallback={<Loader isLoading />}>
+                  <AddCoinPage />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path={`/${ADD_COIN_URL}/:id`}
+              element={
+                <React.Suspense fallback={<Loader isLoading />}>
+                  <AddCoinPage />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path={`/${SETTINGS_URL}`}
+              element={
+                <React.Suspense fallback={<Loader isLoading />}>
+                  <SettingsPage />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path={`/${SIGN_IN_URL}`}
+              element={
+                <React.Suspense fallback={<Loader isLoading />}>
+                  <SignInPage />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path={`/${FAQ_URL}`}
+              element={
+                <React.Suspense fallback={<Loader isLoading />}>
+                  <FAQPage />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <React.Suspense fallback={<Loader isLoading />}>
+                  <LandingPage />
+                </React.Suspense>
+              }
+            />
           </Routes>
         </LayoutRx>
       </BrowserRouter>

@@ -15,7 +15,7 @@ export const phoneNumberReducer = (
     case phoneNumberActionTypes.ADD_PHONE_NUMBER_SUCCESS:
     case phoneNumberActionTypes.GET_PHONE_NUMBER_SUCCESS:
       return { phoneNumber: payload };
-    case phoneNumberActionTypes.RESET:
+    case phoneNumberActionTypes.RESET_PHONE_NUMBER:
       return { ...state, phoneNumber: null };
     case phoneNumberActionTypes.ADD_PHONE_NUMBER_FAILED:
     case phoneNumberActionTypes.GET_PHONE_NUMBER_FAILED:
