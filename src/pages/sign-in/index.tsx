@@ -14,7 +14,7 @@ import {
   resetRecaptchaState,
   DisplayAlertType
 } from '../../store';
-import { MIN_BOX_PAGE, StyledPaper } from "../common";
+import { MIN_BOX_PAGE, StyledPaper } from '../common';
 
 const mapDispatchToProps = (dispatch: any) => ({
   setCaptchaIdByRender: (recaptchaVerifier: RecaptchaVerifierType) =>
@@ -61,9 +61,8 @@ const SignInPage = ({
   const onPhoneEdit = () => {
     setIsPhoneInputDisabled(false);
   };
-  const onSubmitPhoneNumber = (newNumber: number) => {
+  const onSubmitPhoneNumber = (newNumber: number) =>
     signInWithPhoneProv(newNumber, recaptchaVerifier);
-  };
   const onCancelPhoneNumberForm = () => {
     setIsPhoneInputDisabled(true);
   };
@@ -103,8 +102,5 @@ const SignInPage = ({
   );
 };
 
-const SignInPageRx = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SignInPage);
+const SignInPageRx = connect(mapStateToProps, mapDispatchToProps)(SignInPage);
 export default SignInPageRx;

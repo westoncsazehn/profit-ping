@@ -1,17 +1,22 @@
+// 3rd party
 import { all, takeEvery, put, delay } from 'redux-saga/effects';
-import { DISPLAY_ALERT_TIMEOUT, displayAlertActionTypes } from './actions';
+// local
 import { DisplayAlertType } from '../types';
+import {
+  DISPLAY_ALERT_TIMEOUT,
+  displayAlertActionTypes,
+  resetAlert,
+  setAlert
+} from './actions';
 
 function* triggerDisplayMessageSaga({
   payload
 }: {
   payload: DisplayAlertType;
 }) {
-  yield put({ type: displayAlertActionTypes.SET_ALERT, payload });
+  yield put(setAlert(payload));
   yield delay(DISPLAY_ALERT_TIMEOUT);
-  yield put({
-    type: displayAlertActionTypes.RESET_ALERT
-  });
+  yield put(resetAlert());
 }
 
 function* displayAlertSagas() {

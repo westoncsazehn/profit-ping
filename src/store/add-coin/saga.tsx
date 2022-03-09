@@ -1,5 +1,6 @@
 // 3rd party
 import { all, call, put, takeEvery } from 'redux-saga/effects';
+import { AlertColor } from '@mui/material';
 import { format } from 'date-fns';
 import {
   addDoc,
@@ -8,16 +9,19 @@ import {
   updateDoc,
   doc
 } from 'firebase/firestore';
-import { AlertColor } from '@mui/material';
 // local
-import { addCoinActionTypes, resetSelectedCoin } from "./actions";
 import { COIN_DB, db, getCryptoHistory, getCryptoList } from '../../api';
-import { loadingActionTypes } from '../loading';
 import { BasePortfolioCoin, FirestoreAddCoin, FirestoreCoin } from '../types';
-import { displayAlertActionTypes } from '../display-alert';
-import { getCoinByID } from '../portfolio';
-import { navigateTo } from '../navigate';
+import { displayAlertActionTypes, initAlert } from '../display-alert';
 import { PORTFOLIO_URL } from '../../pages/common';
+import { getCoinByID } from '../portfolio';
+import { setIsLoading } from '../loading';
+import { navigateTo } from '../navigate';
+import {
+  addCoinActionTypes,
+  resetSelectedCoin,
+  setSelectedCoin
+} from './actions';
 
 function* getCurrentPriceByCoinID(coin: string): any {
   const { data } = yield call(getCryptoList, coin);
@@ -55,7 +59,7 @@ function* addCoinSaga({
   payload: { coin: FirestoreAddCoin; uid: string };
 }): any {
   try {
-    yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
+    yield put(setIsLoading(true));
     const { initialDate, coin, initialInvestment, targetMultiplier } =
       payloadCoin;
     const date: Date = new Date(initialDate);
@@ -76,13 +80,12 @@ function* addCoinSaga({
       name
     );
     if (inProfitMessage) {
-      yield put({ type: loadingActionTypes.SET_IS_LOADING });
-      yield put({
-        type: addCoinActionTypes.SET_SELECTED_COIN,
-        payload: {
-          error: inProfitMessage
-        }
-      });
+      yield put(setIsLoading());
+      yield put(
+        setSelectedCoin({
+          error: String(inProfitMessage)
+        })
+      );
     } else {
       yield call(addDoc, collection(db, COIN_DB), {
         user: uid,
@@ -95,24 +98,23 @@ function* addCoinSaga({
       });
       yield put(resetSelectedCoin());
       yield put(navigateTo(PORTFOLIO_URL));
-      yield put({ type: loadingActionTypes.SET_IS_LOADING });
-      yield put({
-        type: displayAlertActionTypes.INIT_ALERT,
-        payload: {
+      yield put(setIsLoading());
+      yield put(
+        initAlert({
           open: true,
           message: `Successfully added ${name || coin} to portfolio.`,
           severity: 'success' as AlertColor
-        }
-      });
+        })
+      );
     }
-  } catch (error: any) {
+  } catch (_: any) {
     yield put(navigateTo(PORTFOLIO_URL));
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
+    yield put(setIsLoading());
     yield put({
       type: displayAlertActionTypes.INIT_ALERT,
       payload: {
         open: true,
-        message: String(error),
+        message: 'Unable to add coin at this time. Please try again later.',
         severity: 'error' as AlertColor
       }
     });
@@ -124,7 +126,7 @@ function* updateCoinSaga({
   payload: { coin: FirestoreCoin; uid: string };
 }): any {
   try {
-    yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
+    yield put(setIsLoading(true));
     const {
       initialDate,
       coin,
@@ -151,13 +153,12 @@ function* updateCoinSaga({
       name
     );
     if (inProfitMessage) {
-      yield put({ type: loadingActionTypes.SET_IS_LOADING });
-      yield put({
-        type: addCoinActionTypes.SET_SELECTED_COIN,
-        payload: {
-          error: inProfitMessage
-        }
-      });
+      yield put(setIsLoading());
+      yield put(
+        setSelectedCoin({
+          error: String(inProfitMessage)
+        })
+      );
     } else {
       // @ts-ignore
       yield call(updateDoc, doc(db, COIN_DB, id), {
@@ -171,27 +172,25 @@ function* updateCoinSaga({
       });
       yield put(resetSelectedCoin());
       yield put(navigateTo(PORTFOLIO_URL));
-      yield put({ type: loadingActionTypes.SET_IS_LOADING });
-      yield put({
-        type: displayAlertActionTypes.INIT_ALERT,
-        payload: {
+      yield put(setIsLoading());
+      yield put(
+        initAlert({
           open: true,
           message: `Successfully updated ${name || coin} in portfolio.`,
           severity: 'success' as AlertColor
-        }
-      });
+        })
+      );
     }
   } catch (error: any) {
     yield put(navigateTo(PORTFOLIO_URL));
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
+    yield put(setIsLoading());
+    yield put(
+      initAlert({
         open: true,
         message: String(error),
         severity: 'error' as AlertColor
-      }
-    });
+      })
+    );
   }
 }
 
@@ -204,20 +203,18 @@ function* getPortfolioCoinSaga({
   };
 }): any {
   try {
-    yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
+    yield put(setIsLoading(true));
     if (!id) {
-      yield put({
-        type: addCoinActionTypes.RESET_SELECTED_COIN
-      });
-      yield put({ type: loadingActionTypes.SET_IS_LOADING });
+      yield put(resetSelectedCoin());
+      yield put(setIsLoading());
     } else {
-      const payload = yield getCoinByID(id, uid);
-      payload.initialDate = payload.initialDate.toDate();
-      yield put({ type: addCoinActionTypes.SET_SELECTED_COIN, payload });
-      yield put({ type: loadingActionTypes.SET_IS_LOADING });
+      const coin = yield getCoinByID(id, uid);
+      coin.initialDate = coin.initialDate.toDate();
+      yield put(setSelectedCoin(coin));
+      yield put(setIsLoading());
     }
-  } catch (e: any) {
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
+  } catch (_: any) {
+    yield put(setIsLoading());
     yield put({
       type: displayAlertActionTypes.INIT_ALERT,
       payload: {
@@ -239,5 +236,4 @@ function* addCoinSagas() {
     takeEvery(addCoinActionTypes.GET_PORTFOLIO_COIN, getPortfolioCoinSaga)
   ]);
 }
-
 export default addCoinSagas;

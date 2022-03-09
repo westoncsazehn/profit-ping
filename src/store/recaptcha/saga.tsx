@@ -1,36 +1,24 @@
 // 3rd party
 import { all, takeEvery, put, call } from 'redux-saga/effects';
-import { AlertColor } from '@mui/material';
 import { signInWithPhoneNumber } from 'firebase/auth';
+import { AlertColor } from '@mui/material';
 // local
-import { recaptchaActionTypes } from './actions';
-import { RecaptchaVerifierType } from '../types';
-import { loadingActionTypes } from '../loading';
-import { displayAlertActionTypes } from '../display-alert';
-import { auth } from '../../api';
-import { addPhoneNumberFB } from '../phone-number';
+import { initAlert } from '../display-alert';
 import { PORTFOLIO_URL } from '../../pages/common';
+import { addPhoneNumberFB } from '../phone-number';
+import { RecaptchaVerifierType } from '../types';
+import { setIsLoading } from '../loading';
 import { navigateTo } from '../navigate';
+import { auth } from '../../api';
+import {
+  recaptchaActionTypes,
+  resetRecaptchaState,
+  setRecaptchaIDFailed,
+  setRecaptchaIDSuccess,
+  signInWithPhoneSuccess
+} from './actions';
 
-function* setRecaptchaVerifierSaga({
-  payload
-}: {
-  payload: {
-    recaptchaVerifier: RecaptchaVerifierType;
-  };
-}) {
-  try {
-    yield put({
-      type: recaptchaActionTypes.SET_RECAPTCHA_VERIFIER_SUCCESS,
-      // @ts-ignore
-      payload
-    });
-  } catch (e) {
-    yield put({
-      type: recaptchaActionTypes.SET_RECAPTCHA_VERIFIER_FAILED
-    });
-  }
-}
+// STEP 1: render captcha input on page and set captcha id
 function* setCaptchaIdByRenderSaga({
   payload: { recaptchaVerifier }
 }: {
@@ -44,29 +32,53 @@ function* setCaptchaIdByRenderSaga({
     if (newCaptchaId && recaptchaVerifier) {
       yield call(recaptchaVerifier.verify);
     }
-    yield put({
-      type: recaptchaActionTypes.SET_RECAPTCHA_ID_SUCCESS,
-      payload: {
-        captchaId: newCaptchaId
-      }
-    });
+    yield put(setRecaptchaIDSuccess(newCaptchaId));
   } catch (e) {
-    yield put({
-      type: recaptchaActionTypes.SET_RECAPTCHA_ID_FAILED
-    });
+    yield put(setRecaptchaIDFailed());
   }
 }
 
+// STEP 2: Register phone number with Firebase's phone provider
+function* signInWithPhoneSaga({
+  payload: { phoneNumber, recaptchaVerifier }
+}: {
+  payload: { phoneNumber: number; recaptchaVerifier: RecaptchaVerifierType };
+}): any {
+  yield put(setIsLoading(true));
+  try {
+    const confirmationResult = yield call(
+      // @ts-ignore
+      signInWithPhoneNumber,
+      auth,
+      `+1${phoneNumber}`,
+      recaptchaVerifier
+    );
+    yield put(signInWithPhoneSuccess(confirmationResult));
+    yield put(setIsLoading());
+  } catch (e) {
+    yield put(resetRecaptchaState());
+    yield put(setIsLoading());
+    yield put(
+      initAlert({
+        open: true,
+        message: String(e),
+        severity: 'error' as AlertColor
+      })
+    );
+  }
+}
+
+// STEP 3: Confirm validate code from sms, sign-in user, then navigate to
+// Portfolio page
 function* submitPhoneVerificationCode(confirmation: any, code: number): any {
   return yield confirmation.confirm(code);
 }
-
 function* verifyPhoneCodeSaga({
   payload: { captchaConfirmation, value }
 }: {
   payload: { captchaConfirmation: any; value: number };
 }): any {
-  yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
+  yield put(setIsLoading(true));
   try {
     const response = yield submitPhoneVerificationCode(
       captchaConfirmation,
@@ -77,66 +89,23 @@ function* verifyPhoneCodeSaga({
     if (phoneNumber && uid) {
       yield addPhoneNumberFB(uid, phoneNumber);
     }
+    yield put(resetRecaptchaState());
     yield put(navigateTo(PORTFOLIO_URL));
-    yield put({
-      type: recaptchaActionTypes.DEFAULT
-    });
+    yield put(setIsLoading());
   } catch (e) {
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
+    yield put(setIsLoading());
+    yield put(
+      initAlert({
         open: true,
         message: `Incorrect validation code.`,
         severity: 'error' as AlertColor
-      }
-    });
-  }
-}
-
-function* signInWithPhoneSaga({
-  payload: { phoneNumber, recaptchaVerifier }
-}: {
-  payload: { phoneNumber: number; recaptchaVerifier: RecaptchaVerifierType };
-}): any {
-  yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
-  try {
-    const confirmationResult = yield call(
-      // @ts-ignore
-      signInWithPhoneNumber,
-      auth,
-      `+1${phoneNumber}`,
-      recaptchaVerifier
+      })
     );
-    yield navigateTo(PORTFOLIO_URL);
-    yield put({
-      type: recaptchaActionTypes.SIGN_IN_WITH_PHONE_SUCCESS,
-      payload: confirmationResult
-    });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-  } catch (e) {
-    yield put({
-      type: recaptchaActionTypes.DEFAULT
-    });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
-        open: true,
-        message: String(e),
-        severity: 'error' as AlertColor
-      }
-    });
   }
 }
 
 function* recaptchaSagas() {
   yield all([
-    takeEvery(
-      // @ts-ignore
-      recaptchaActionTypes.SET_RECAPTCHA_VERIFIER,
-      setRecaptchaVerifierSaga
-    ),
     takeEvery(
       // @ts-ignore
       recaptchaActionTypes.SET_RECAPTCHA_ID,
@@ -154,5 +123,4 @@ function* recaptchaSagas() {
     )
   ]);
 }
-
 export default recaptchaSagas;

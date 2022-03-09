@@ -8,7 +8,6 @@ import {
   displayAlertReducer,
   loadingReducer,
   navigateReducer,
-  phoneNumberReducer,
   portfolioReducer,
   recaptchaReducer,
   userReducer
@@ -16,18 +15,17 @@ import {
 import { persistReducer, persistStore } from 'redux-persist';
 import { all, fork } from 'redux-saga/effects';
 // for debugging redux > state/store
-// import logger from 'redux-logger'
+// import logger from 'redux-logger';
 // local
-import portfolioSagas from './store/portfolio/saga';
-import addCoinSagas from './store/add-coin/saga';
-import cryptApiSagas from './store/crypto-api/saga';
-import phoneNumberSagas from './store/phone-number/saga';
-import deleteUserSagas from './store/delete-user/saga';
-import recaptchaSagas from './store/recaptcha/saga';
-import signOutSagas from './store/sign-out/saga';
-import userSagas from './store/user/saga';
 import displayAlertSagas from './store/display-alert/saga';
+import deleteUserSagas from './store/delete-user/saga';
+import portfolioSagas from './store/portfolio/saga';
+import cryptApiSagas from './store/crypto-api/saga';
+import recaptchaSagas from './store/recaptcha/saga';
+import addCoinSagas from './store/add-coin/saga';
+import signOutSagas from './store/sign-out/saga';
 import createSagaMiddleware from 'redux-saga';
+import userSagas from './store/user/saga';
 
 // keeping this here for any possible future debugging
 // const SetTransform = createTransform(
@@ -52,7 +50,6 @@ const rootReducer = combineReducers({
   displayAlert: displayAlertReducer,
   cryptoApi: cryptoApiReducer,
   addCoin: addCoinReducer,
-  phoneNumber: phoneNumberReducer,
   recaptcha: recaptchaReducer,
   navigate: navigateReducer
 });
@@ -63,7 +60,6 @@ function* rootSaga() {
     fork(portfolioSagas),
     fork(addCoinSagas),
     fork(cryptApiSagas),
-    fork(phoneNumberSagas),
     fork(deleteUserSagas),
     fork(recaptchaSagas),
     fork(signOutSagas),

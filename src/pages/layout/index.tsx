@@ -1,18 +1,32 @@
 // 3rd party
+import { useLocation, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AppBar,
   Box,
   Button,
   Container,
+  Link,
   Stack,
   Toolbar,
   Typography,
   useTheme
 } from '@mui/material';
 // local
+import { DisplayAlert } from '../components';
+import { getPageTitle } from './util';
+import {
+  AccountMenu,
+  DarkLightModeButton,
+  getMenuStyle,
+  StyledToolBar,
+  StyledLogoButton,
+  StyledImageLogo,
+  StyledFooter,
+  StyledSpacerDiv,
+  StyledBrainfishLink
+} from './components';
 import {
   AppState,
   DISPLAY_ALERT_TIMEOUT,
@@ -31,20 +45,8 @@ import {
   PROFIT_PING_LOGO_PATH_LIGHT_MODE,
   SETTINGS_URL
 } from '../common';
-import { DisplayAlert } from '../components';
-import {
-  AccountMenu,
-  DarkLightModeButton,
-  getMenuStyle,
-  StyledToolBar,
-  StyledLogoButton,
-  StyledImageLogo,
-  StyledFooter,
-  StyledSpacerDiv
-} from './components';
-import { getPageTitle } from './util';
 
-// TODO: figure correct type for dispatch param here
+const BRAINFISH_LINK: string = 'https://brainfish.io';
 const mapDispatchToProps = (dispatch: any) => ({
   signOut: () => dispatch(signOut()),
   resetAlert: () => dispatch(resetAlert()),
@@ -148,6 +150,9 @@ export const Layout = ({
             />
           </StyledToolBar>
         </Container>
+        {open && message && severity ? (
+          <DisplayAlert {...{ open, message, severity }} />
+        ) : null}
       </AppBar>
       <Container>
         {page ? (
@@ -159,9 +164,6 @@ export const Layout = ({
           </Toolbar>
         ) : null}
       </Container>
-      {open && message && severity ? (
-        <DisplayAlert {...{ open, message, severity }} />
-      ) : null}
       {children}
       <StyledSpacerDiv />
       <StyledFooter>
@@ -170,6 +172,12 @@ export const Layout = ({
             direction="row"
             sx={{ margin: '0 auto', width: 'fit-content' }}>
             <Button onClick={onFAQClick}>FAQ</Button>
+            <StyledBrainfishLink
+              href={BRAINFISH_LINK}
+              target="_blank"
+              rel="noreferrer">
+              Brainfish LLC
+            </StyledBrainfishLink>
           </Stack>
         </Container>
       </StyledFooter>

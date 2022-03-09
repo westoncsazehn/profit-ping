@@ -1,6 +1,6 @@
 // 3rd party
-import React from 'react';
 import { Alert, Snackbar } from '@mui/material';
+import React from 'react';
 // local
 import { DisplayAlertType } from '../../store';
 
@@ -13,7 +13,7 @@ export const DisplayAlert = ({ open, message, severity }: DisplayAlertType) => {
         vertical: 'top',
         horizontal: 'center'
       }}
-      sx={{ top: '17px !important' }}>
+      sx={{ top: '10px !important' }}>
       <Alert severity={severity} sx={{ width: '100%' }}>
         {message}
       </Alert>

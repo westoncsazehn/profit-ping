@@ -2,33 +2,33 @@
 import { all, takeEvery, put, select } from 'redux-saga/effects';
 import { AlertColor } from '@mui/material';
 // local
-import { userActionTypes } from './actions';
-import { loadingActionTypes } from '../loading';
-import { displayAlertActionTypes } from '../display-alert';
-import { BASE_URL, PORTFOLIO_URL } from "../../pages/common";
+import { BASE_URL, PORTFOLIO_URL } from '../../pages/common';
+import { setUserSuccess, userActionTypes } from './actions';
 import { getNavigatePath, navigateTo } from '../navigate';
+import { initAlert } from '../display-alert';
 import { FBUser } from '../types';
+import { setIsLoading } from '../loading';
 
 function* setUserSaga({ payload }: { payload: FBUser }): any {
-  yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
   try {
     const currentPath: string = yield select(getNavigatePath);
     const signedInPath: string = currentPath || PORTFOLIO_URL;
     const guestPath: string = currentPath || BASE_URL;
     const newPath: string = payload?.uid ? signedInPath : guestPath;
     yield put(navigateTo(newPath));
-    yield put({ type: userActionTypes.SET_USER_SUCCESS, payload: payload });
-  } catch (e) {
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
+    yield put(setUserSuccess(payload));
+    if (!Boolean(payload?.uid)) {
+      yield put(setIsLoading());
+    }
+  } catch (_: any) {
+    yield put(
+      initAlert({
         open: true,
-        message: String(e),
+        message: 'Unable to sign-in/sign-up user. Please try again later.',
         severity: 'error' as AlertColor
-      }
-    });
+      })
+    );
   }
-  yield put({ type: loadingActionTypes.SET_IS_LOADING });
 }
 
 function* userSagas() {

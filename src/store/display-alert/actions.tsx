@@ -6,6 +6,10 @@ export const displayAlertActionTypes = {
   SET_ALERT: 'SET_ALERT',
   RESET_ALERT: 'RESET_ALERT'
 };
+export const setAlert = (displayAlert?: DisplayAlertType) => ({
+  type: displayAlertActionTypes.SET_ALERT,
+  payload: displayAlert
+});
 export const initAlert = (displayAlert?: DisplayAlertType) => ({
   type: displayAlertActionTypes.INIT_ALERT,
   payload: displayAlert

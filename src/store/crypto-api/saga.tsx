@@ -2,31 +2,27 @@
 import { all, call, put, takeEvery } from 'redux-saga/effects';
 import { AlertColor } from '@mui/material';
 // local
-import { getCryptoList } from '../../api';
-import { loadingActionTypes } from '../loading';
+import { cryptoAPIActionTypes, setList } from './actions';
+import { initAlert } from '../display-alert';
 import { BasePortfolioCoin } from '../types';
-import { cryptoAPIActionTypes } from './actions';
-import { displayAlertActionTypes } from '../display-alert';
+import { setIsLoading } from '../loading';
+import { getCryptoList } from '../../api';
 
 function* getListSaga(): any {
   try {
-    yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
+    yield put(setIsLoading(true));
     const { data }: { data: BasePortfolioCoin[] } = yield call(getCryptoList);
-    yield put({
-      type: cryptoAPIActionTypes.SET_LIST,
-      payload: data || []
-    });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-  } catch (e: any) {
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
+    yield put(setList(data || []));
+    yield put(setIsLoading());
+  } catch (_: any) {
+    yield put(
+      initAlert({
         open: true,
-        message: `Error retrieving coin list from api.`,
+        message: `Error retrieving coin list data from api.`,
         severity: 'error' as AlertColor
-      }
-    });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
+      })
+    );
+    yield put(setIsLoading());
   }
 }
 

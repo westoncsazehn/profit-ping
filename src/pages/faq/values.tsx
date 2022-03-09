@@ -1,23 +1,25 @@
 // 3rd party
-import React from 'react';
-import { Link, styled } from '@mui/material';
+import React, { ReactNode } from "react";
+import { Link, styled, Typography } from '@mui/material';
 // local
 import { FAQPointType } from '../../store';
 
 const StyledLink = styled(Link)(() => ({ marginLeft: '5px' }));
+const PROFIT_PING_CONTACT_EMAIL: ReactNode = <>admin&nbsp;@&nbsp;brainfish.io</>;
+
 export const faqs: FAQPointType[] = [
   {
     title: `What's the purpose of Profit Ping?`,
-    text: `Profit Ping servers as a tool to help remind you to take profits
+    text: `Profit Ping serves as a tool to help remind you to take profits
      when a multiplier you set has been hit. For example, if you set a 2x
       multiplier for a crypto asset that's value is 1, then you will receive
-       a text once the asset has hit 2.It is not financial advice and what you
-        do with the message is entirely of your own volition.`
+       a text once the asset's value has hit 2. It is not financial advice and
+        what you do with the message is entirely of your own volition.`
   },
   {
     title: 'Where does your crypto data come from?',
-    text: (
-      <>
+    component: (
+      <Typography variant="body2">
         We use CoinGecko's API. You can learn more about them
         <StyledLink
           href="https://www.coingecko.com/"
@@ -26,7 +28,7 @@ export const faqs: FAQPointType[] = [
           here
         </StyledLink>
         .
-      </>
+      </Typography>
     )
   },
   {
@@ -49,8 +51,8 @@ export const faqs: FAQPointType[] = [
   },
   {
     title: `How do you send Profit Ping text messages?`,
-    text: (
-      <>
+    component: (
+      <Typography variant="body2">
         We use a third-party service called Twilio. You can learn more about
         them
         <StyledLink
@@ -60,13 +62,13 @@ export const faqs: FAQPointType[] = [
           here
         </StyledLink>
         .
-      </>
+      </Typography>
     )
   },
   {
     title: `How do you store my data?`,
-    text: (
-      <>
+    component: (
+      <Typography variant="body2">
         We use a third-party service called Firebase. You can learn more about
         them
         <StyledLink
@@ -77,7 +79,7 @@ export const faqs: FAQPointType[] = [
         </StyledLink>
         . We only store your phone number and crypto data that you enter via our
         Add Coin page.
-      </>
+      </Typography>
     )
   },
   {
@@ -89,9 +91,21 @@ export const faqs: FAQPointType[] = [
         multiplier has been hit.`
   },
   {
-    title: `What decides the coins in the Add Coin list?`,
+    title: `What decides which coins are in the Add Coin list?`,
     text: `We display the top 100 coins by market cap in descending order based
      on Coin Gecko's Api data. If you do not see your coin, then it may have
       moved out of this top 100 range.`
+  },
+  {
+    title: `How can I contact you?`,
+    component: (
+      <>
+        <ol>
+          <li>Via Email: {PROFIT_PING_CONTACT_EMAIL}</li>
+          <li>With the required subject field: PROFIT-PING-CONTACT-REQUEST</li>
+          <li>Any other subject field with be filtered to spam.</li>
+        </ol>
+      </>
+    )
   }
 ];

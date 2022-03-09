@@ -21,7 +21,6 @@ export const recaptchaReducer = (
       return { ...state, captchaId: null, confirmationResult: null };
     case recaptchaActionTypes.DEFAULT:
     case recaptchaActionTypes.SET_RECAPTCHA_ID_FAILED:
-    case recaptchaActionTypes.SET_RECAPTCHA_VERIFIER_FAILED:
     default:
       return { ...state };
   }

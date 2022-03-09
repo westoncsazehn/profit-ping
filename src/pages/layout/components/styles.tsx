@@ -1,5 +1,5 @@
 // 3rd party
-import { Button, styled, SxProps, Theme, Toolbar } from "@mui/material";
+import { Button, Link, styled, SxProps, Theme, Toolbar } from '@mui/material';
 
 export const getCardHeaderStyles = (
   isLoggedIn: boolean
@@ -64,8 +64,13 @@ export const StyledFooter = styled('div')(({ theme }) => ({
   bottom: 0,
   width: '100%',
   height: 'fit-content',
-  padding: 2,
+  padding: 2
 }));
 export const StyledSpacerDiv = styled('div')(() => ({
   height: '100px'
+}));
+export const StyledBrainfishLink = styled(Link)(() => ({
+  textDecoration: 'none',
+  flexDirection: 'column',
+  margin: 'auto'
 }));

@@ -1,5 +1,8 @@
 // 3rd party
 import { all, call, put, takeEvery, select } from 'redux-saga/effects';
+import { QueryDocumentSnapshot } from '@firebase/firestore';
+import { AlertColor } from '@mui/material';
+import { format } from 'date-fns';
 import {
   collection,
   getDocs,
@@ -9,18 +12,20 @@ import {
   doc,
   deleteDoc
 } from 'firebase/firestore';
-import { QueryDocumentSnapshot } from '@firebase/firestore';
-import { format } from 'date-fns';
-import { AlertColor } from '@mui/material';
 // local
-import { portfolioActionTypes } from './actions';
 import { COIN_DB, db, getCryptoHistory, getCryptoList } from '../../api';
-import { getFormattedUserCoinsList } from './modifiers';
-import { loadingActionTypes } from '../loading';
 import { CoinAction, FirestoreCoin, PortfolioCoin } from '../types';
+import { getFormattedUserCoinsList } from './modifiers';
+import { initAlert } from '../display-alert';
+import { setIsLoading } from '../loading';
 import { getCoins } from './selectors';
-import { displayAlertActionTypes } from '../display-alert';
-import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_KEY } from './reducer';
+import {
+  portfolioActionTypes,
+  removeCoinSuccess,
+  setDefaultPortfolioCoins,
+  setPortfolioCoins,
+  sortDefaultCryptoList
+} from './actions';
 
 export function* getCoinByID(
   id: string,
@@ -42,43 +47,23 @@ export function* getCoinByID(
   return (coinList && coinList[0]) || null;
 }
 
-// get user's coin portfolio, then grab coin unique identifiers > 'coin' prop
-export function* getCoinIDSFromPortfolio(uid: string): any {
-  if (!uid) return [];
-  const coinDbRef = collection(db, COIN_DB);
-  const coinsQuery = query(coinDbRef, where('user', '==', uid));
-  // get list from `coin` collection of user's coins from firebase/firestore
-  const userCryptoListResults = yield call(getDocs, coinsQuery);
-  if (!userCryptoListResults.docs?.length) return [];
-  const coinIDList: FirestoreCoin[] = [];
-  userCryptoListResults.forEach((doc: any) =>
-    coinIDList.push(doc?.data()?.coin)
-  );
-  return coinIDList;
-}
-
-const defaultResponse = {
-  type: portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS,
-  payload: []
-};
-
 function* getUsersCryptoListSaga({
   payload: uid
 }: {
   type: string;
   payload: string;
 }): any {
-  yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
+  yield put(setIsLoading(true));
   try {
     if (!uid) {
-      yield put(defaultResponse);
+      yield put(setDefaultPortfolioCoins());
     }
     const coinDbRef = collection(db, COIN_DB);
     const coinsQuery = query(coinDbRef, where('user', '==', uid));
     // get list from `coin` collection of user's coins from firebase/firestore
     const userCryptoListResults = yield call(getDocs, coinsQuery);
     if (!userCryptoListResults.docs?.length) {
-      yield put(defaultResponse);
+      yield put(setDefaultPortfolioCoins());
     }
     const userCryptoList: FirestoreCoin[] = [];
     // set current crypto data to an array we can actually use
@@ -109,23 +94,20 @@ function* getUsersCryptoListSaga({
       geckoCoinList,
       geckoCoinHistoryList
     );
-    yield put({
-      type: portfolioActionTypes.GET_USERS_CRYPTO_SUCCESS,
-      payload: userCoinPortfolio
-    });
-    yield put({
-      type: portfolioActionTypes.SORT_CRYPTO_LIST,
-      payload: { sortKey: DEFAULT_SORT_KEY, direction: DEFAULT_SORT_DIRECTION }
-    });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
+    yield put(setPortfolioCoins(userCoinPortfolio));
+    yield put(sortDefaultCryptoList());
+    yield put(setIsLoading());
     // TODO: add alert for error
     // @ts-ignore
-  } catch (e: any) {
-    yield put({
-      type: portfolioActionTypes.GET_USERS_CRYPTO_FAILED,
-      payload: e.toString()
-    });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
+  } catch (_: any) {
+    yield put(
+      initAlert({
+        open: true,
+        message: 'Error retrieving portfolio coins. Please try again later.',
+        severity: 'error' as AlertColor
+      })
+    );
+    yield put(setIsLoading());
   }
 }
 
@@ -149,34 +131,29 @@ function* deleteDocument(id: string, user: string): any {
 
 function* removeCoinSaga({ payload: userData }: { payload: CoinAction }): any {
   try {
-    yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
+    yield put(setIsLoading(true));
     const { id, user } = userData;
     yield deleteDocument(id, user);
     const coins: PortfolioCoin[] = yield select(getCoins);
     const filteredCoins = coins.filter((coin) => coin.id !== id);
-    yield put({
-      type: portfolioActionTypes.REMOVE_COIN_SUCCESS,
-      payload: filteredCoins
-    });
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
+    yield put(removeCoinSuccess(filteredCoins));
+    yield put(setIsLoading());
+    yield put(
+      initAlert({
         open: true,
         message: `Successfully removed coin from portfolio.`,
         severity: 'success' as AlertColor
-      }
-    });
-  } catch (e: any) {
-    yield put({ type: loadingActionTypes.SET_IS_LOADING });
-    yield put({
-      type: displayAlertActionTypes.INIT_ALERT,
-      payload: {
+      })
+    );
+  } catch (_: any) {
+    yield put(setIsLoading());
+    yield put(
+      initAlert({
         open: true,
-        message: e.toString(),
+        message: 'Error removing coin. Please try again later.',
         severity: 'error' as AlertColor
-      }
-    });
+      })
+    );
   }
 }
 
