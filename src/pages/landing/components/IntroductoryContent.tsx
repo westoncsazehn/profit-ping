@@ -1,9 +1,15 @@
 // 3rd party
 import React from 'react';
-import { Box, Button, Card, Container, Grid, Paper, Typography } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  Grid,
+  Paper,
+  Typography
+} from '@mui/material';
 // local
-import { SIGN_IN_URL } from '../../common';
 import { PROFIT_PING_CHART } from './values';
 import {
   StyledImage,
@@ -11,11 +17,14 @@ import {
   StyledIntroTextContainerAbs
 } from './styles';
 
-export const IntroductoryContent = () => {
-  const navigate = useNavigate();
+export const IntroductoryContent = ({
+  onGetStartedClick
+}: {
+  onGetStartedClick: any;
+}) => {
   return (
     <Container sx={{ p: 2 }}>
-      <Box component={Paper} sx={{p: 2}}>
+      <Box component={Paper} sx={{ p: 2 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={5}>
             <Card variant="outlined" sx={{ p: 2, height: '100%' }}>
@@ -38,7 +47,7 @@ export const IntroductoryContent = () => {
                     time back from chart watching.
                   </Typography>
                   <Button
-                    onClick={() => navigate(SIGN_IN_URL)}
+                    onClick={onGetStartedClick}
                     sx={{ float: 'right', marginTop: '25px' }}
                     variant="contained"
                     color="success">

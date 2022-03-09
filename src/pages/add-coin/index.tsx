@@ -14,7 +14,8 @@ import {
   updateCoin,
   Portfolio,
   PortfolioCoin,
-  navigateTo
+  navigateTo,
+  resetSelectedCoin
 } from '../../store';
 import { AddCoinForm } from './components';
 import { PORTFOLIO_URL } from '../common';
@@ -26,7 +27,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(updateCoin(coin, uid)),
   getPortfolioCoin: (id: string, uid: string) =>
     dispatch(getPortfolioCoin(id, uid)),
-  navigateTo: (path: string) => dispatch(navigateTo(path))
+  navigateTo: (path: string) => dispatch(navigateTo(path)),
+  resetSelectedCoin: () => dispatch(resetSelectedCoin())
 });
 const mapStateToProps = ({
   cryptoApi,
@@ -47,7 +49,8 @@ export const AddCoinPage = ({
   addCoin,
   updateCoin,
   getPortfolioCoin,
-  navigateTo
+  navigateTo,
+  resetSelectedCoin
 }: {
   cryptoList: BasePortfolioCoin[];
   selectedCoin: FirestoreCoin;
@@ -57,6 +60,7 @@ export const AddCoinPage = ({
   updateCoin: any;
   getPortfolioCoin: any;
   navigateTo: any;
+  resetSelectedCoin: any;
 }) => {
   const { id = '' } = useParams();
   const coinIDList: string[] = portfolio?.coins
@@ -88,7 +92,8 @@ export const AddCoinPage = ({
   };
   const onCancel = () => {
     navigateTo(PORTFOLIO_URL);
-  }
+    resetSelectedCoin();
+  };
 
   return (
     <>

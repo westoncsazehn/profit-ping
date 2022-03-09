@@ -10,7 +10,7 @@ import {
 } from 'firebase/firestore';
 import { AlertColor } from '@mui/material';
 // local
-import { addCoinActionTypes } from './actions';
+import { addCoinActionTypes, resetSelectedCoin } from "./actions";
 import { COIN_DB, db, getCryptoHistory, getCryptoList } from '../../api';
 import { loadingActionTypes } from '../loading';
 import { BasePortfolioCoin, FirestoreAddCoin, FirestoreCoin } from '../types';
@@ -31,7 +31,8 @@ function* checkIfInProfit(
   coin: string,
   historyPrice: number,
   quantity: number,
-  multiplier: number
+  multiplier: number,
+  name?: string
 ): Generator<boolean> {
   // @ts-ignore
   const currentPrice: number = yield getCurrentPriceByCoinID(coin);
@@ -41,7 +42,9 @@ function* checkIfInProfit(
   const qm: number = quantity * multiplier;
   const currentMultiplier: number = (currentPrice * qm) / (historyPrice * qm);
   if (currentMultiplier >= multiplier) {
-    return `${coin} is already ${currentMultiplier.toFixed(2)}x in profit.`;
+    return `${name || coin} is already ${currentMultiplier.toFixed(
+      2
+    )}x in profit.`;
   }
   return false;
 }
@@ -61,14 +64,16 @@ function* addCoinSaga({
     const {
       market_data: {
         current_price: { usd: initialPriceUSD }
-      }
+      },
+      name
     } = historyItem?.data;
     const initialPricePerCoin: number = Number(initialPriceUSD.toFixed(2));
     const inProfitMessage: boolean = yield checkIfInProfit(
       coin,
       initialPriceUSD,
       initialInvestment,
-      targetMultiplier
+      targetMultiplier,
+      name
     );
     if (inProfitMessage) {
       yield put({ type: loadingActionTypes.SET_IS_LOADING });
@@ -88,13 +93,14 @@ function* addCoinSaga({
         initialPricePerCoin,
         isMessageEnabled: true
       });
+      yield put(resetSelectedCoin());
       yield put(navigateTo(PORTFOLIO_URL));
       yield put({ type: loadingActionTypes.SET_IS_LOADING });
       yield put({
         type: displayAlertActionTypes.INIT_ALERT,
         payload: {
           open: true,
-          message: `Successfully added coin: ${coin} to portfolio.`,
+          message: `Successfully added ${name || coin} to portfolio.`,
           severity: 'success' as AlertColor
         }
       });
@@ -127,20 +133,22 @@ function* updateCoinSaga({
       initialPricePerCoin
     } = payloadCoin;
     const { id = '' } = yield getCoinByID(coin, uid, true);
-    if (!id) throw new Error('no coin id found in portfolio');
+    if (!id) throw new Error('Cannot find coin in portfolio.');
     const date: Date = new Date(initialDate);
     const stringDate: string = format(date, 'dd-MM-yyyy');
     const historyItem = yield call(getCryptoHistory, coin, stringDate);
     const {
       market_data: {
         current_price: { usd: initialPriceUSD }
-      }
+      },
+      name
     } = historyItem?.data;
     const inProfitMessage: boolean = yield checkIfInProfit(
       coin,
       initialPriceUSD,
       initialInvestment,
-      targetMultiplier
+      targetMultiplier,
+      name
     );
     if (inProfitMessage) {
       yield put({ type: loadingActionTypes.SET_IS_LOADING });
@@ -161,13 +169,14 @@ function* updateCoinSaga({
         initialPricePerCoin,
         isMessageEnabled: true
       });
+      yield put(resetSelectedCoin());
       yield put(navigateTo(PORTFOLIO_URL));
       yield put({ type: loadingActionTypes.SET_IS_LOADING });
       yield put({
         type: displayAlertActionTypes.INIT_ALERT,
         payload: {
           open: true,
-          message: `Successfully updated coin: ${coin} in portfolio.`,
+          message: `Successfully updated ${name || coin} in portfolio.`,
           severity: 'success' as AlertColor
         }
       });
@@ -198,7 +207,7 @@ function* getPortfolioCoinSaga({
     yield put({ type: loadingActionTypes.SET_IS_LOADING, payload: true });
     if (!id) {
       yield put({
-        type: addCoinActionTypes.SET_DEFAULT_SELECTED_COIN
+        type: addCoinActionTypes.RESET_SELECTED_COIN
       });
       yield put({ type: loadingActionTypes.SET_IS_LOADING });
     } else {

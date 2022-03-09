@@ -1,5 +1,6 @@
 // 3rd party
-import React, { lazy, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -11,7 +12,6 @@ import {
   Typography,
   useTheme
 } from '@mui/material';
-import { connect } from 'react-redux';
 // local
 import {
   AppState,
@@ -29,8 +29,7 @@ import {
   PORTFOLIO_URL,
   PROFIT_PING_LOGO_PATH_DARK_MODE,
   PROFIT_PING_LOGO_PATH_LIGHT_MODE,
-  SETTINGS_URL,
-  SIGN_IN_URL
+  SETTINGS_URL
 } from '../common';
 import { DisplayAlert } from '../components';
 import {
@@ -91,6 +90,7 @@ export const Layout = ({
   // on path change request from navigate saga
   useEffect(() => {
     navigate(`/${path}`);
+    window?.scrollTo(0, 0);
   }, [navigate, path]);
   // if there is alert data available, then trigger initAlert()
   useEffect(() => {
@@ -100,7 +100,7 @@ export const Layout = ({
       }, DISPLAY_ALERT_TIMEOUT);
     }
   }, [open]);
-  // on page change, get path, then set page title
+  // on page change, get pathname, then set page title
   useEffect(
     () => setPage(getPageTitle(pathname, isLoggedIn)),
     [isLoggedIn, pathname]
@@ -130,11 +130,9 @@ export const Layout = ({
         <Container maxWidth="xl" sx={{ p: 0 }}>
           <StyledToolBar sx={{ p: 0 }}>
             <Box sx={{ flexGrow: 1 }}>
-              <Button variant="text">
-                <StyledLogoButton onClick={() => navigateTo(homeLink)}>
-                  <StyledImageLogo alt="Profit Ping Logo" src={appBarLogoImg} />
-                </StyledLogoButton>
-              </Button>
+              <StyledLogoButton onClick={() => navigateTo(homeLink)}>
+                <StyledImageLogo alt="Profit Ping Logo" src={appBarLogoImg} />
+              </StyledLogoButton>
             </Box>
             <AccountMenu
               {...{

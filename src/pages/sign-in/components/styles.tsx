@@ -53,7 +53,8 @@ export const StyledVerifyTextField = styled(TextField)(({ theme }) => ({
   paddingBottom: '15px',
   '.MuiOutlinedInput-root': { width: '100%' },
   [theme.breakpoints.up('md')]: {
-    paddingBottom: 'unset'
+    paddingBottom: 'unset',
+    paddingRight: '50px'
   }
 }));
 export const StyledVerifyButton = styled(Button)(({ theme }) => ({
@@ -73,6 +74,5 @@ export const StyledPhoneFormControl = styled(FormControl)(({ theme }) => ({
   }
 }));
 export const StyledPhoneInputField = styled(TextField)(({ theme }) => ({
-  input: {
-  }
+  input: {}
 }));

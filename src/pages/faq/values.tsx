@@ -87,5 +87,11 @@ export const faqs: FAQPointType[] = [
       your cryptos' multiplier progress, display the crypto data within the
        Profit Ping app, and to build/send the message that your crypto
         multiplier has been hit.`
+  },
+  {
+    title: `What decides the coins in the Add Coin list?`,
+    text: `We display the top 100 coins by market cap in descending order based
+     on Coin Gecko's Api data. If you do not see your coin, then it may have
+      moved out of this top 100 range.`
   }
 ];

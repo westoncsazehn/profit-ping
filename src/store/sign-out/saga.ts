@@ -16,7 +16,7 @@ import { cryptoAPIActionTypes } from '../crypto-api';
 
 function* resetAppState(): any {
   yield put({ type: portfolioActionTypes.RESET_PORTFOLIO });
-  yield put({ type: addCoinActionTypes.SET_DEFAULT_SELECTED_COIN });
+  yield put({ type: addCoinActionTypes.RESET_SELECTED_COIN });
   yield put({ type: cryptoAPIActionTypes.RESET_CRYPTO_API });
 }
 

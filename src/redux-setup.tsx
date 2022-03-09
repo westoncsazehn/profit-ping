@@ -15,7 +15,8 @@ import {
 } from './store';
 import { persistReducer, persistStore } from 'redux-persist';
 import { all, fork } from 'redux-saga/effects';
-import logger from 'redux-logger'
+// for debugging redux > state/store
+// import logger from 'redux-logger'
 // local
 import portfolioSagas from './store/portfolio/saga';
 import addCoinSagas from './store/add-coin/saga';
@@ -74,7 +75,9 @@ function* rootSaga() {
 const sagaMiddleware = createSagaMiddleware();
 export const store = createStore(
   persistedReducer,
-  applyMiddleware(sagaMiddleware, logger)
+  // for debugging redux > state/store
+  // applyMiddleware(sagaMiddleware, logger)
+  applyMiddleware(sagaMiddleware)
 );
 // @ts-ignore
 export const persist = persistStore(store);

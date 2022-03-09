@@ -17,7 +17,8 @@ import {
   PortfolioTableCoin,
   getList,
   CryptoApiStateType,
-  navigateTo
+  navigateTo,
+  resetSelectedCoin
 } from '../../store';
 import { PortfolioTable, formatCoinsForPortfolioTable } from './components';
 
@@ -28,7 +29,8 @@ const mapDispatchToProps = (dispatch: any) => {
     removeCoin: (coinAction: CoinAction) => dispatch(removeCoin(coinAction)),
     sortCryptoList: (sortBy: SortByType) => dispatch(sortCryptoList(sortBy)),
     getList: () => dispatch(getList()),
-    navigateTo: (path: string) => dispatch(navigateTo(path))
+    navigateTo: (path: string) => dispatch(navigateTo(path)),
+    resetSelectedCoin: () => dispatch(resetSelectedCoin())
   };
 };
 const mapStateToProps = (state: AppState) => state;
@@ -40,7 +42,8 @@ const PortfolioPage = ({
   getUsersCryptoList,
   removeCoin,
   sortCryptoList,
-  getList
+  getList,
+  resetSelectedCoin
 }: {
   portfolio: Portfolio;
   cryptoApi: CryptoApiStateType;
@@ -50,12 +53,16 @@ const PortfolioPage = ({
   sortCryptoList: any;
   getList: any;
   navigateTo: any;
+  resetSelectedCoin: any;
 } & AppState) => {
   const { cryptoList } = cryptoApi;
   const { coins = [], sortBy } = portfolio;
   const [coinToRemove, setCoinToRemove] = useState<PortfolioCoin | undefined>();
   const [tableCoins, setTableCoins] = useState<PortfolioTableCoin[]>([]);
 
+  // reset selected coin on page init
+  // use case: add-coin page > menu nav click > portfolio
+  useEffect(() => resetSelectedCoin(), []);
   // get list of user's crypto with metadata
   useEffect(() => {
     if (uid) {

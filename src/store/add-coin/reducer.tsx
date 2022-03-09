@@ -21,8 +21,8 @@ export const addCoinReducer = (
   switch(type) {
     case addCoinActionTypes.SET_SELECTED_COIN:
     return { ...state, selectedCoin: { ...state.selectedCoin, ...payload } };
-    case addCoinActionTypes.SET_DEFAULT_SELECTED_COIN:
-    return initialAddCoinState;
+    case addCoinActionTypes.RESET_SELECTED_COIN:
+      return initialAddCoinState;
     default:
       return state;
   }

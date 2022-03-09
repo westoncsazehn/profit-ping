@@ -1,6 +1,6 @@
 // 3rd party
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { connect } from 'react-redux';
 // local
 import {
   ImageSlideShow,
@@ -9,16 +9,19 @@ import {
   SLIDESHOW_IMAGES,
   IntroductoryContent
 } from './components';
-import { InstructionsListType } from '../../store';
-import { FAQ_URL } from '../common';
+import { InstructionsListType, navigateTo } from '../../store';
+import { FAQ_URL, SIGN_IN_URL } from '../common';
 
+// time between slides in ImageSlideShow
 const IMAGE_TIMER_COUNT: number = 5000;
 
-const LandingPage = () => {
+const mapDispatchToProps = (dispatch: any) => ({
+  navigateTo: (path: string) => dispatch(navigateTo(path))
+});
+const LandingPage = ({ navigateTo }: { navigateTo: any }) => {
   const [instructions] = useState<InstructionsListType[]>(INSTRUCTIONS_LIST);
   const [slideshowImages] = useState<string[]>(SLIDESHOW_IMAGES);
   const [activeImage, setActiveImage] = useState<string>(slideshowImages[0]);
-  const navigate = useNavigate();
   // calculate next image to display
   const goToNextImage = () => {
     const activeImageIndex: number = slideshowImages.indexOf(activeImage);
@@ -40,12 +43,13 @@ const LandingPage = () => {
   // handlers
   const onFAQClick = () => {
     setActiveImage('');
-    navigate(FAQ_URL);
+    navigateTo(FAQ_URL);
   };
+  const onGetStartedClick = () => navigateTo(SIGN_IN_URL);
 
   return (
     <>
-      <IntroductoryContent />
+      <IntroductoryContent onGetStartedClick={onGetStartedClick}/>
       <InstructionListSection
         instructions={instructions}
         onFAQClick={onFAQClick}
@@ -56,4 +60,5 @@ const LandingPage = () => {
     </>
   );
 };
-export default LandingPage;
+export const LandingPageRx = connect(null, mapDispatchToProps)(LandingPage);
+export default LandingPageRx;
