@@ -1,21 +1,22 @@
 // 3rd party
-import { PERSIST_KEY } from './values';
-import sessionStorage from 'redux-persist/es/storage/session';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
+import sessionStorage from 'redux-persist/es/storage/session';
+import { persistReducer, persistStore } from 'redux-persist';
+import { all, fork } from 'redux-saga/effects';
+import { PERSIST_KEY } from './values';
+// for debugging redux > state/store
+// import logger from 'redux-logger';
 import {
   addCoinReducer,
   cryptoApiReducer,
   displayAlertReducer,
   loadingReducer,
   navigateReducer,
+  paypalReducer,
   portfolioReducer,
   recaptchaReducer,
   userReducer
 } from './store';
-import { persistReducer, persistStore } from 'redux-persist';
-import { all, fork } from 'redux-saga/effects';
-// for debugging redux > state/store
-// import logger from 'redux-logger';
 // local
 import displayAlertSagas from './store/display-alert/saga';
 import deleteUserSagas from './store/delete-user/saga';
@@ -26,6 +27,7 @@ import addCoinSagas from './store/add-coin/saga';
 import signOutSagas from './store/sign-out/saga';
 import createSagaMiddleware from 'redux-saga';
 import userSagas from './store/user/saga';
+import paypalSagas from './store/paypal/saga';
 
 // keeping this here for any possible future debugging
 // const SetTransform = createTransform(
@@ -51,7 +53,8 @@ const rootReducer = combineReducers({
   cryptoApi: cryptoApiReducer,
   addCoin: addCoinReducer,
   recaptcha: recaptchaReducer,
-  navigate: navigateReducer
+  navigate: navigateReducer,
+  paypal: paypalReducer
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 // combine all sagas
@@ -64,7 +67,8 @@ function* rootSaga() {
     fork(recaptchaSagas),
     fork(signOutSagas),
     fork(userSagas),
-    fork(displayAlertSagas)
+    fork(displayAlertSagas),
+    fork(paypalSagas)
   ]);
 }
 // init store with saga/reducers

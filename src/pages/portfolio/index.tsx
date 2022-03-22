@@ -1,9 +1,10 @@
 // 3rd party
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import Container from '@mui/material/Container';
+import { connect } from 'react-redux';
 // local
-import { DeleteItemConfirmModal, ADD_COIN_URL } from '../common';
+import { PortfolioTable, formatCoinsForPortfolioTable } from './components';
+import { DeleteItemConfirmModal, ADD_COIN_URL } from "../common";
 import {
   CoinAction,
   PortfolioCoin,
@@ -20,7 +21,6 @@ import {
   navigateTo,
   resetSelectedCoin
 } from '../../store';
-import { PortfolioTable, formatCoinsForPortfolioTable } from './components';
 
 // TODO: figure correct type for dispatch param here
 const mapDispatchToProps = (dispatch: any) => {
@@ -96,6 +96,7 @@ const PortfolioPage = ({
   const onEditCoin = (coin: PortfolioCoin) => {
     const { id = '' } = coin;
     if (id && uid) navigateTo(`${ADD_COIN_URL}/${id}`);
+    // if (id && uid) navigateTo(`${PLAN_URL}`);
   };
   const onSortBy = (sortBy: SortByType) => {
     if (sortBy?.sortKey && sortBy?.direction) {

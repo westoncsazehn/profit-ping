@@ -168,5 +168,4 @@ function* portfolioSagas() {
     takeEvery(portfolioActionTypes.REMOVE_COIN, removeCoinSaga)
   ]);
 }
-
 export default portfolioSagas;

@@ -1,6 +1,6 @@
 // 3rd party
-import React, { ReactNode } from "react";
 import { Link, styled, Typography } from '@mui/material';
+import React, { ReactNode } from "react";
 // local
 import { FAQPointType } from '../../store';
 

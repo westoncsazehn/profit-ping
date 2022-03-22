@@ -1,4 +1,5 @@
 // 3rd party
+import { AddCircle } from '@mui/icons-material';
 import React from 'react';
 import {
   CardHeader,
@@ -14,8 +15,8 @@ import {
   TableRow,
   TableSortLabel
 } from '@mui/material';
-import { AddCircle } from '@mui/icons-material';
 // local
+import { ADD_COIN_URL, MIN_BOX_PAGE } from '../../../common';
 import {
   HeaderItem,
   SortByType,
@@ -29,7 +30,6 @@ import {
   headerItems,
   rowKeys
 } from './util';
-import { ADD_COIN_URL, MIN_BOX_PAGE } from '../../../common';
 
 const StyledCaption = styled('caption')(() => ({ padding: '0' }));
 export const PortfolioTable = ({

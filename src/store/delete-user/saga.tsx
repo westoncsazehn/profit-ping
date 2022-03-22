@@ -37,7 +37,7 @@ function* deleteUserSaga({
       initAlert({
         open: true,
         message:
-          'Unable to removed user account at this time. Please see our FAQ page for help.',
+          'Unable to remove user account at this time. Please see our FAQ page for help.',
         severity: 'error' as AlertColor
       })
     );

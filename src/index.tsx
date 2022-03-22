@@ -1,17 +1,17 @@
 // 3rd party
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { PersistGate } from 'redux-persist/integration/react';
+import { CssBaseline, PaletteMode } from '@mui/material';
 import React, { useState, useMemo } from 'react';
-import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import ReactDOM from 'react-dom';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { CssBaseline, PaletteMode } from '@mui/material';
-import { PersistGate } from 'redux-persist/integration/react';
 // local
-import { AppPageRx } from './App';
 import { persist, store } from './redux-setup';
+import { AppPageRx } from './App';
 
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => {}

@@ -6,3 +6,4 @@ export * from './components';
 export * from './settings';
 export * from './landing';
 export * from './faq';
+export * from './plan';

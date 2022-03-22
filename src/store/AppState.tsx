@@ -1,13 +1,14 @@
 // local
 import {
-  AddCoinStateType,
+  RecaptchaStateType,
   CryptoApiStateType,
+  NavigateStateType,
+  AddCoinStateType,
   DisplayAlertType,
-  FBUser,
+  PaypalStateType,
   LoaderState,
   Portfolio,
-  RecaptchaStateType,
-  NavigateStateType
+  FBUser
 } from './types';
 
 export type AppState = {
@@ -19,4 +20,5 @@ export type AppState = {
   addCoin: AddCoinStateType;
   recaptcha: RecaptchaStateType;
   navigate: NavigateStateType;
+  paypal: PaypalStateType;
 };

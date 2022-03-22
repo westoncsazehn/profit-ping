@@ -14,3 +14,4 @@ export * from './NavigateStateType';
 export * from './AddPhoneNumberFormProps';
 export * from './InstructionsListType';
 export * from './FAQPointType';
+export * from './PaypalStateType';

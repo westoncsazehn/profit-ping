@@ -1,4 +1,5 @@
 // 3rd party
+import { PayPalButtons } from '@paypal/react-paypal-js';
 import React from 'react';
 import {
   Box,
@@ -53,6 +54,9 @@ export const IntroductoryContent = ({
                     color="success">
                     GET STARTED
                   </Button>
+                  <PayPalButtons
+                    style={{ layout: 'horizontal' }}
+                  />
                 </StyledIntroTextContainerAbs>
               </StyledIntroTextContainerRel>
             </Card>

@@ -1,5 +1,4 @@
 // 3rd party
-import { createContext } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import {
@@ -28,25 +27,25 @@ export const firebaseConfig = {
   messagingSenderId: REACT_APP_MESSAGING_SENDER_ID,
   appId: REACT_APP_APP_ID
 };
-
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
 export const db = getFirestore(app);
 export const messaging = getMessaging(app);
-// LOCAL FIRESTORE : TESTING
-connectFirestoreEmulator(db, 'localhost', 8080);
 const functions = getFunctions(app);
-connectFunctionsEmulator(functions, 'localhost', 5001);
-// @ts-ignore
-export const UserContext = createContext<FBUser>();
-
 // databases
 export const COIN_DB: string = 'coin';
 export const PHONE_NUMBER_DB: string = 'phone';
+export const PLANS_DB: string = 'plans';
+export const SUBSCRIBERS_DB: string = 'subscribers';
 
-// delete user cloud function
+// cloud function > delete user
 export const deleteUser = httpsCallable(functions, 'deleteUser');
+// cloud function > create product: should hardly ever be called
+export const createProduct = httpsCallable(functions, 'createProduct');
+// localhost > testing
+connectFirestoreEmulator(db, 'localhost', 8080);
+connectFunctionsEmulator(functions, 'localhost', 5001);
 // export const sendMessages = httpsCallable(
 //   functions,
 //   'messageProfitingCoinsToDevices'
