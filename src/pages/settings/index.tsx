@@ -1,22 +1,37 @@
 // 3rd party
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import { Alert, Box, Container, Button, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
 import { Delete } from '@mui/icons-material';
+import { connect } from 'react-redux';
 // local
 import { DeleteItemConfirmModal, MIN_BOX_PAGE, StyledPaper } from '../common';
-import { FBUser, deleteUser, AppState } from '../../store';
+import {
+  getSubscriptionDetails,
+  deleteUser,
+  AppState,
+  FBUser,
+  SubscriptionDetailsType
+} from '../../store';
+import { SubscriptionDetails } from './components';
 
-const mapStateToProps = ({ user }: AppState) => ({ user });
+const mapStateToProps = ({ user, subscription }: AppState) => ({
+  user,
+  subscription
+});
 const mapDispatchToProps = (dispatch: any) => ({
-  deleteUser: (uid: string) => dispatch(deleteUser(uid))
+  deleteUser: (uid: string) => dispatch(deleteUser(uid)),
+  getSubscriptionDetails: () => dispatch(getSubscriptionDetails())
 });
 const SettingsPage = ({
-  user: { uid },
-  deleteUser
+  user: { uid, isSubscribed },
+  subscription,
+  deleteUser,
+  getSubscriptionDetails
 }: {
   user: FBUser;
+  subscription: SubscriptionDetailsType;
   deleteUser: any;
+  getSubscriptionDetails: any;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // handlers
@@ -27,6 +42,8 @@ const SettingsPage = ({
   const onModalClose = () => {
     setIsModalOpen(false);
   };
+  // if user is subscribed, get subscription details
+  useEffect(() => getSubscriptionDetails(), [isSubscribed]);
   // page text
   const description = (
     <>
@@ -40,6 +57,9 @@ const SettingsPage = ({
     <>
       <Container sx={{ p: 0 }}>
         <Box component={StyledPaper} sx={{ ...MIN_BOX_PAGE, marginTop: 2 }}>
+          {subscription ? (
+            <SubscriptionDetails subscriptionDetails={subscription} />
+          ) : null}
           <Alert
             severity="error"
             sx={{

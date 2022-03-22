@@ -32,13 +32,16 @@ import {
 } from './util';
 
 const StyledCaption = styled('caption')(() => ({ padding: '0' }));
+
 export const PortfolioTable = ({
   coins = [],
   onRemoveCoin,
   onEditCoin,
   onSortBy,
   sortBy = { sortKey: DEFAULT_SORT_KEY, direction: DEFAULT_SORT_DIRECTION },
-  navigateTo
+  navigateTo,
+  isSubscribed,
+  onInitSignUp
 }: {
   coins: PortfolioTableCoin[];
   onRemoveCoin: any;
@@ -46,7 +49,10 @@ export const PortfolioTable = ({
   onSortBy: (sortBy: SortByType) => void;
   sortBy: SortByType;
   navigateTo: any;
+  isSubscribed?: boolean;
+  onInitSignUp: () => void;
 }) => {
+  const MAX_UNSUBSCRIBED_COINS: number = 2;
   const { sortKey, direction = 'desc' } = sortBy;
   // handlers
   const onSortHandler = (header: HeaderItem) => {
@@ -59,6 +65,11 @@ export const PortfolioTable = ({
       sortKey: headerKey,
       direction: newDirection
     });
+  };
+  const onAddCoinClick = () => {
+    !isSubscribed && coins?.length === MAX_UNSUBSCRIBED_COINS
+      ? onInitSignUp()
+      : navigateTo(ADD_COIN_URL);
   };
   // ui elements
   const headers = headerItems?.map((header: HeaderItem) => (
@@ -99,9 +110,7 @@ export const PortfolioTable = ({
           <CardHeader
             sx={{ p: 0 }}
             avatar={
-              <IconButton
-                color="default"
-                onClick={() => navigateTo(ADD_COIN_URL)}>
+              <IconButton color="default" onClick={onAddCoinClick}>
                 <AddCircle fontSize="medium" />
               </IconButton>
             }

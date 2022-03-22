@@ -1,8 +1,10 @@
 // 3rd party
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { connect } from 'react-redux';
 // local
+import { AddCoinForm } from './components';
+import { PORTFOLIO_URL } from '../common';
 import {
   addCoin,
   FBUser,
@@ -17,8 +19,6 @@ import {
   navigateTo,
   resetSelectedCoin
 } from '../../store';
-import { AddCoinForm } from './components';
-import { PORTFOLIO_URL } from '../common';
 
 const mapDispatchToProps = (dispatch: any) => ({
   addCoin: (coin: FirestoreAddCoin, uid: string) =>
@@ -44,7 +44,7 @@ const mapStateToProps = ({
 export const AddCoinPage = ({
   cryptoList,
   selectedCoin,
-  user: { uid },
+  user: { uid, isSubscribed },
   portfolio,
   addCoin,
   updateCoin,

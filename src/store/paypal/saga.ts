@@ -18,6 +18,7 @@ import { PORTFOLIO_URL } from '../../pages/common';
 import { initAlert } from '../display-alert';
 import { setIsLoading } from '../loading';
 import { navigateTo } from '../navigate';
+import { setList } from '../crypto-api';
 import { getUser } from '../user';
 import { FBUser } from '../types';
 
@@ -61,8 +62,9 @@ function* onPaypalApproveSaga({
       subscriptionID,
       phoneNumber
     });
+    yield put(setList([]));
     yield put(navigateTo(PORTFOLIO_URL));
-    yield put(setIsLoading(false));
+    yield put(setIsLoading());
     yield put(
       initAlert({
         open: true,
@@ -73,7 +75,7 @@ function* onPaypalApproveSaga({
   } catch (e: any) {
     yield put(setIsLoading(true));
     yield put(navigateTo(PORTFOLIO_URL));
-    yield put(setIsLoading(false));
+    yield put(setIsLoading());
     yield put(
       initAlert({
         open: true,
@@ -86,7 +88,7 @@ function* onPaypalApproveSaga({
 function* onPaypalCancelSaga(): any {
   yield put(setIsLoading(true));
   yield put(navigateTo(PORTFOLIO_URL));
-  yield put(setIsLoading(false));
+  yield put(setIsLoading());
   yield put(
     initAlert({
       open: true,
@@ -98,7 +100,7 @@ function* onPaypalCancelSaga(): any {
 function* onPaypalErrorSaga(error: Record<string, unknown>): any {
   yield put(setIsLoading(true));
   yield put(navigateTo(PORTFOLIO_URL));
-  yield put(setIsLoading(false));
+  yield put(setIsLoading());
   yield put(
     initAlert({
       open: true,

@@ -5,6 +5,7 @@ import { AlertColor } from '@mui/material';
 import { GREP_CATCHA_STORAGE_KEY } from '../../values';
 import { SIGN_IN_URL } from '../../pages/common';
 import { resetSelectedCoin } from '../add-coin';
+import { resetDetails } from '../subscription';
 import { resetCryptoApi } from '../crypto-api';
 import { resetPortfolio } from '../portfolio';
 import { resetReCaptcha } from '../recaptcha';
@@ -12,14 +13,19 @@ import { initAlert } from '../display-alert';
 import { signOutActions } from './actions';
 import { setIsLoading } from '../loading';
 import { navigateTo } from '../navigate';
+import { resetPaypal } from '../paypal';
 import { signOut } from 'firebase/auth';
+import { resetUser } from "../user";
 import { auth } from '../../api';
 
-function* resetAppState(): any {
+export function* resetAppState(): any {
   yield put(resetPortfolio());
   yield put(resetSelectedCoin());
   yield put(resetCryptoApi());
   yield put(resetReCaptcha());
+  yield put(resetDetails());
+  yield put(resetPaypal());
+  yield put(resetUser());
 }
 
 function* signOutSaga(): any {

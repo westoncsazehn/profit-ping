@@ -1,4 +1,5 @@
 // 3rd party
+import { Close, Edit } from '@mui/icons-material';
 import React, { ReactNode } from 'react';
 import {
   Box,
@@ -8,7 +9,6 @@ import {
   Typography,
   Avatar
 } from '@mui/material';
-import { Close, Edit } from '@mui/icons-material';
 // local
 import {
   CoinActionsType,

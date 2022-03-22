@@ -61,12 +61,6 @@ const PlanPage = ({
   return (
     <Container>
       <Box component={StyledPaper} sx={MIN_BOX_PAGE}>
-        <Stack direction="row">
-          <Typography component="div" variant="h4">
-            Profit Ping Plus
-          </Typography>
-        </Stack>
-        <br />
         <Typography variant="h6" component="div">
           Plus Includes:
         </Typography>

@@ -22,7 +22,7 @@ export const getPortfolioCoin = (id: string, uid: string) => ({
 });
 export const setSelectedCoin = (coin: Partial<FirestoreCoin>) => ({
   type: addCoinActionTypes.SET_SELECTED_COIN,
-  payload: { coin }
+  payload: coin
 });
 export const resetSelectedCoin = () => ({
   type: addCoinActionTypes.RESET_SELECTED_COIN

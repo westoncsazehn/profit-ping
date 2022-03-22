@@ -1,12 +1,13 @@
 // 3rd party
-import { signOut } from '@firebase/auth';
-import { AlertColor } from '@mui/material';
 import { all, call, put, takeEvery } from 'redux-saga/effects';
+import { AlertColor } from '@mui/material';
+import { signOut } from '@firebase/auth';
 // local
 import { deleteUserActionTypes } from './actions';
 import { BASE_URL } from '../../pages/common';
 import { auth, deleteUser } from '../../api';
 import { initAlert } from '../display-alert';
+import { resetAppState } from '../sign-out';
 import { setIsLoading } from '../loading';
 import { navigateTo } from '../navigate';
 
@@ -20,8 +21,8 @@ function* deleteUserSaga({
     yield put(setIsLoading(true));
     // call cloud function endpoint to remove user's data by uid
     yield call(deleteUser, { uid });
-    sessionStorage.removeItem('user');
     yield call(signOut, auth);
+    yield resetAppState();
     yield put(navigateTo(BASE_URL));
     yield put(setIsLoading());
     yield put(

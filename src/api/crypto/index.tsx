@@ -10,12 +10,13 @@ const gecko = axios.create({
 });
 
 export const getCryptoList = (
-  coins?: string
+  coins?: string,
+  limit?: number
 ): Promise<AxiosResponse<BasePortfolioCoin[]>> => {
   const params: URLSearchParams = new URLSearchParams({
     vs_currency: 'usd',
     order: 'market_cap_desc',
-    per_page: '100',
+    per_page: limit ? String(limit) : '100',
     page: '1',
     sparkline: 'false'
   });

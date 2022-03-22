@@ -4,7 +4,12 @@ import Container from '@mui/material/Container';
 import { connect } from 'react-redux';
 // local
 import { PortfolioTable, formatCoinsForPortfolioTable } from './components';
-import { DeleteItemConfirmModal, ADD_COIN_URL } from "../common";
+import {
+  DeleteItemConfirmModal,
+  ADD_COIN_URL,
+  SubscribeModal,
+  PLAN_URL
+} from '../common';
 import {
   CoinAction,
   PortfolioCoin,
@@ -37,7 +42,7 @@ const mapStateToProps = (state: AppState) => state;
 const PortfolioPage = ({
   portfolio,
   cryptoApi,
-  user: { uid },
+  user: { uid, isSubscribed },
   navigateTo,
   getUsersCryptoList,
   removeCoin,
@@ -59,6 +64,7 @@ const PortfolioPage = ({
   const { coins = [], sortBy } = portfolio;
   const [coinToRemove, setCoinToRemove] = useState<PortfolioCoin | undefined>();
   const [tableCoins, setTableCoins] = useState<PortfolioTableCoin[]>([]);
+  const [isSubscribing, setIsSubscribing] = useState<boolean>(false);
 
   // reset selected coin on page init
   // use case: add-coin page > menu nav click > portfolio
@@ -76,9 +82,7 @@ const PortfolioPage = ({
   // get list of coins for add coin form
   // called here to limit number of calls to 1
   useEffect(() => {
-    if (!cryptoList?.length) {
-      getList();
-    }
+    getList();
   }, []);
 
   // handlers
@@ -96,12 +100,15 @@ const PortfolioPage = ({
   const onEditCoin = (coin: PortfolioCoin) => {
     const { id = '' } = coin;
     if (id && uid) navigateTo(`${ADD_COIN_URL}/${id}`);
-    // if (id && uid) navigateTo(`${PLAN_URL}`);
   };
   const onSortBy = (sortBy: SortByType) => {
     if (sortBy?.sortKey && sortBy?.direction) {
       sortCryptoList(sortBy);
     }
+  };
+  const onSubmitSubscribeModal = () => {
+    setIsSubscribing(false);
+    navigateTo(PLAN_URL);
   };
 
   return (
@@ -113,6 +120,8 @@ const PortfolioPage = ({
         onSortBy={onSortBy}
         sortBy={sortBy}
         navigateTo={navigateTo}
+        isSubscribed={isSubscribed}
+        onInitSignUp={() => setIsSubscribing(true)}
       />
       <DeleteItemConfirmModal
         open={Boolean(coinToRemove)}
@@ -122,6 +131,14 @@ const PortfolioPage = ({
         description={`Are you sure you wish to remove ${
           coinToRemove?.name || 'this coin'
         }?`}
+      />
+      <SubscribeModal
+        open={isSubscribing}
+        closeModal={() => setIsSubscribing(false)}
+        submit={onSubmitSubscribeModal}
+        title="Subscribe to Profit Ping Plus"
+        description={`Looks like you've met the free-tier limit. Unlock
+         full-access to Profit Ping features by subscribing today.`}
       />
     </Container>
   );

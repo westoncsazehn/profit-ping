@@ -1,6 +1,6 @@
 // 3rd party
-import React from 'react';
 import { Formik } from 'formik';
+import React from 'react';
 import {
   Box,
   Container,
@@ -17,14 +17,14 @@ import {
   Typography
 } from '@mui/material';
 // local
+import { MIN_BOX_PAGE, StyledPaper, StyledTooltip } from '../../common';
+import { DatePicker } from './DatePicker';
 import {
   FirestoreAddCoin,
   BasePortfolioCoin,
   FirestoreCoin,
   AddCoinSchema
 } from '../../../store';
-import { DatePicker } from './DatePicker';
-import { MIN_BOX_PAGE, StyledPaper, StyledTooltip } from '../../common';
 import {
   StyledAlert,
   StyledFormButtons,

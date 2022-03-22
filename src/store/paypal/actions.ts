@@ -8,7 +8,8 @@ export const paypalActionTypes = {
   ON_PAYPAL_APPROVE: 'ON_PAYPAL_APPROVE',
   ON_PAYPAL_SUBSCRIPTION_CREATE: 'ON_PAYPAL_SUBSCRIPTION_CREATE',
   ON_PAYPAL_CANCEL: 'ON_PAYPAL_CANCEL',
-  ON_PAYPAL_ERROR: 'ON_PAYPAL_ERROR'
+  ON_PAYPAL_ERROR: 'ON_PAYPAL_ERROR',
+  RESET_PAYPAL: 'RESET_PAYPAL'
 };
 
 export const getPaypalConfig = () => ({
@@ -35,4 +36,8 @@ export const onPaypalCancel = () => ({
 export const onPaypalError = (payload: Record<string, unknown>) => ({
   type: paypalActionTypes.ON_PAYPAL_ERROR,
   payload
+});
+
+export const resetPaypal = () => ({
+  type: paypalActionTypes.RESET_PAYPAL
 });

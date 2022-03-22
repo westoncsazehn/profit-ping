@@ -1,5 +1,6 @@
 export * from './display-alert';
 export * from './phone-number';
+export * from './subscription';
 export * from './delete-user';
 export * from './crypto-api';
 export * from './portfolio';

@@ -14,7 +14,8 @@ import {
   NavigateStateType,
   PaypalStateType,
   getPaypalConfig,
-  setUser
+  setUser,
+  setSubscribeState
 } from './store';
 import {
   ADD_COIN_URL,
@@ -36,7 +37,8 @@ const mapStateToProps = ({
 } => ({ loader, navigate, paypal });
 const mapDispatchToProps = (dispatch: any) => ({
   setUser: (user: FBUser) => dispatch(setUser(user)),
-  getPaypalConfig: () => dispatch(getPaypalConfig())
+  getPaypalConfig: () => dispatch(getPaypalConfig()),
+  setSubscribeState: () => dispatch(setSubscribeState())
 });
 const PortfolioPage = lazy(() => import('./pages/portfolio/index'));
 const AddCoinPage = lazy(() => import('./pages/add-coin/index'));
@@ -58,13 +60,15 @@ const App = ({
     isDeferred
   },
   setUser,
-  getPaypalConfig
+  getPaypalConfig,
+  setSubscribeState
 }: {
   loader: LoaderState;
   navigate: NavigateStateType;
   paypal: PaypalStateType;
   setUser: any;
   getPaypalConfig: any;
+  setSubscribeState: any;
 }) => {
   const isLoading: boolean = Boolean(loader?.isLoading);
   const paypalOptions = {
@@ -77,11 +81,14 @@ const App = ({
     createSubscription
   };
 
+  // update current user on each page load
   useEffect(() => {
     return onAuthStateChanged(auth, (fbUser) =>
       setUser({ uid: fbUser?.uid, phoneNumber: fbUser?.phoneNumber })
     );
   }, [path]);
+  // check if current user is a subscriber on each page load
+  useEffect(() => setSubscribeState(), [path]);
   // PayPal > get plan id and client id, then update config in store
   useEffect(() => getPaypalConfig(), []);
 

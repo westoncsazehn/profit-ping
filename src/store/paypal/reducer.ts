@@ -28,6 +28,13 @@ export const paypalReducer = (
       };
     case paypalActionTypes.SET_IS_DEFERRED:
       return { ...state, isDeferred: Boolean(payload?.isDeferred) };
+    case paypalActionTypes.RESET_PAYPAL:
+      return {
+        ...state,
+        ...initialPaypalConfigState,
+        'client-id': '',
+        planID: ''
+      };
     default:
       return { ...state };
   }

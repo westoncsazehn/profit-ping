@@ -4,7 +4,8 @@ import { FBUser } from '../types';
 
 const initialUserState: FBUser = {
   phoneNumber: '',
-  uid: ''
+  uid: '',
+  isSubscribed: false
 };
 
 export const userReducer = (
@@ -14,6 +15,10 @@ export const userReducer = (
   switch (type) {
     case userActionTypes.SET_USER_SUCCESS:
       return { ...state, ...payload };
+    case userActionTypes.SET_SUBSCRIBE_STATE_SUCCESS:
+      return { ...state, isSubscribed: payload };
+    case userActionTypes.RESET_USER:
+      return { ...state, ...initialUserState };
     default:
       return { ...state };
   }

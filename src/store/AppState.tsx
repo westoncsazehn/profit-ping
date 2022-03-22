@@ -1,5 +1,6 @@
 // local
 import {
+  SubscriptionDetailsType,
   RecaptchaStateType,
   CryptoApiStateType,
   NavigateStateType,
@@ -12,13 +13,14 @@ import {
 } from './types';
 
 export type AppState = {
-  portfolio: Portfolio;
-  user: FBUser;
-  loader: LoaderState;
+  subscription: SubscriptionDetailsType;
   displayAlert: DisplayAlertType;
   cryptoApi: CryptoApiStateType;
-  addCoin: AddCoinStateType;
   recaptcha: RecaptchaStateType;
   navigate: NavigateStateType;
+  addCoin: AddCoinStateType;
   paypal: PaypalStateType;
+  portfolio: Portfolio;
+  loader: LoaderState;
+  user: FBUser;
 };
