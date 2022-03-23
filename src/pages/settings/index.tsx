@@ -57,7 +57,7 @@ const SettingsPage = ({
     <>
       <Container sx={{ p: 0 }}>
         <Box component={StyledPaper} sx={{ ...MIN_BOX_PAGE, marginTop: 2 }}>
-          {subscription ? (
+          {isSubscribed && subscription ? (
             <SubscriptionDetails subscriptionDetails={subscription} />
           ) : null}
           <Alert

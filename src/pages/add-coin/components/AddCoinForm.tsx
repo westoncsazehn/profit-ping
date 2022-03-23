@@ -199,7 +199,7 @@ export const AddCoinForm = ({
                           value={values.targetMultiplier}
                           name="targetMultiplier"
                           onChange={handleChange}
-                          step={0.25}
+                          step={0.5}
                           min={1.5}
                           max={10}
                           marks

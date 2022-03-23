@@ -1,12 +1,8 @@
 // 3rd party
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import {
-  connectFunctionsEmulator,
-  getFunctions,
-  httpsCallable
-} from 'firebase/functions';
-import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getFirestore } from 'firebase/firestore';
 import { getMessaging } from 'firebase/messaging';
 
 const {
@@ -41,13 +37,12 @@ export const SUBSCRIBERS_DB: string = 'subscribers';
 
 // cloud function > delete user
 export const deleteUser = httpsCallable(functions, 'deleteUser');
+
+// localhost > testing only
 // cloud function > create product: should hardly ever be called
-export const createProduct = httpsCallable(functions, 'createProduct');
-// localhost > testing
-connectFirestoreEmulator(db, 'localhost', 8080);
-connectFunctionsEmulator(functions, 'localhost', 5001);
+// connectFirestoreEmulator(db, 'localhost', 8080);
+// connectFunctionsEmulator(functions, 'localhost', 5001);
 // export const sendMessages = httpsCallable(
 //   functions,
 //   'messageProfitingCoinsToDevices'
 // );
-export const getUser = auth?.currentUser;

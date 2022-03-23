@@ -1,11 +1,13 @@
 // 3rd party
 import { Link, styled, Typography } from '@mui/material';
-import React, { ReactNode } from "react";
+import React, { ReactNode } from 'react';
 // local
 import { FAQPointType } from '../../store';
 
 const StyledLink = styled(Link)(() => ({ marginLeft: '5px' }));
-const PROFIT_PING_CONTACT_EMAIL: ReactNode = <>admin&nbsp;@&nbsp;brainfish.io</>;
+const PROFIT_PING_CONTACT_EMAIL: ReactNode = (
+  <>admin&nbsp;@&nbsp;brainfish.io</>
+);
 
 export const faqs: FAQPointType[] = [
   {
@@ -39,7 +41,21 @@ export const faqs: FAQPointType[] = [
   },
   {
     title: `What's that sun/moon icon?`,
-    text: 'It is a feature to set dark/light mode for this site in your browser.'
+    text: `It is a feature to set dark/light mode for this site in your
+     browser.`
+  },
+  {
+    title: `Why can I select only from 5 coins on the Add Coin page?`,
+    text: `If you see only 5 coins in the select box, then this means you are
+     using the free-tier plan. If you subscribe to Profit Ping Plus, then you
+      will be able to select from 100 of the top coins, listed by market cap.`
+  },
+  {
+    title: `Why can I only add 2 coins to my portfolio?`,
+    text: `If you are only able to add 2 coins to your portfolio, then this
+     means you are using the free-tier plan. If you subscribe to Profit Ping
+      Plus, then you will be able to add as many coins as you wish to your
+      portfolio.`
   },
   {
     title: 'What do you do with my phone number?',
@@ -107,5 +123,14 @@ export const faqs: FAQPointType[] = [
         </ol>
       </>
     )
+  },
+  {
+    title: 'How much does the Profit Ping Plus plan cost?',
+    text: `$4.99 per month.`
+  },
+  {
+    title: 'How do I cancel my plan?',
+    text: `Navigate to our Settings page. Click on Delete Account. This will
+     unsubscribe you from our service and remove all data for your account.`
   }
 ];

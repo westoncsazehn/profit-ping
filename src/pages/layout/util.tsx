@@ -27,7 +27,7 @@ export const getPageTitle = (
       currenPath = 'PORTFOLIO';
       break;
     case PLAN_URL:
-      currenPath = 'Subscribe to Profit Ping Plus';
+      currenPath = 'SUBSCRIBE';
       break;
     case FAQ_URL:
       currenPath = 'FAQ';
