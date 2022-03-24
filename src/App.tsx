@@ -8,6 +8,16 @@ import { connect } from 'react-redux';
 import { LayoutRx, Loader } from './pages';
 import { auth } from './api';
 import {
+  ADD_COIN_URL,
+  FAQ_URL,
+  PLAN_URL,
+  PORTFOLIO_URL,
+  PRIVACY_POLICY_URL,
+  SETTINGS_URL,
+  SIGN_IN_URL,
+  TERMS_AND_CONDITIONS_URL
+} from './pages/common';
+import {
   AppState,
   FBUser,
   LoaderState,
@@ -17,14 +27,6 @@ import {
   setUser,
   setSubscribeState
 } from './store';
-import {
-  ADD_COIN_URL,
-  FAQ_URL,
-  PLAN_URL,
-  PORTFOLIO_URL,
-  SETTINGS_URL,
-  SIGN_IN_URL
-} from './pages/common';
 
 const mapStateToProps = ({
   loader,
@@ -47,6 +49,10 @@ const SignInPage = lazy(() => import('./pages/sign-in/index'));
 const LandingPage = lazy(() => import('./pages/landing/index'));
 const FAQPage = lazy(() => import('./pages/faq/index'));
 const PlanPage = lazy(() => import('./pages/plan/index'));
+const PrivacyPolicyPage = lazy(() => import('./pages/privacy-policy/index'));
+const TermsAndConditionsPage = lazy(
+  () => import('./pages/terms-and-conditions/index')
+);
 const App = ({
   loader,
   navigate: { path },
@@ -161,6 +167,22 @@ const App = ({
                 element={
                   <React.Suspense fallback={<Loader isLoading />}>
                     <FAQPage />
+                  </React.Suspense>
+                }
+              />
+              <Route
+                path={`/${PRIVACY_POLICY_URL}`}
+                element={
+                  <React.Suspense fallback={<Loader isLoading />}>
+                    <PrivacyPolicyPage />
+                  </React.Suspense>
+                }
+              />
+              <Route
+                path={`/${TERMS_AND_CONDITIONS_URL}`}
+                element={
+                  <React.Suspense fallback={<Loader isLoading />}>
+                    <TermsAndConditionsPage />
                   </React.Suspense>
                 }
               />

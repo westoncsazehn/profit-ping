@@ -40,9 +40,11 @@ import {
   BASE_URL,
   FAQ_URL,
   PORTFOLIO_URL,
+  PRIVACY_POLICY_URL,
   PROFIT_PING_LOGO_PATH_DARK_MODE,
   PROFIT_PING_LOGO_PATH_LIGHT_MODE,
-  SETTINGS_URL
+  SETTINGS_URL,
+  TERMS_AND_CONDITIONS_URL
 } from '../common';
 
 const BRAINFISH_LINK: string = 'https://brainfish.io';
@@ -124,6 +126,9 @@ export const Layout = ({
     navigateTo(SETTINGS_URL);
   };
   const onFAQClick = () => navigateTo(FAQ_URL);
+  const onBrainfishClick = () => window.open(BRAINFISH_LINK, '_blank');
+  const onPrivacyPolicyClick = () => navigateTo(PRIVACY_POLICY_URL);
+  const onTermsAndConditionsClick = () => navigateTo(TERMS_AND_CONDITIONS_URL);
 
   return (
     <>
@@ -171,12 +176,11 @@ export const Layout = ({
             direction="row"
             sx={{ margin: '0 auto', width: 'fit-content' }}>
             <Button onClick={onFAQClick}>FAQ</Button>
-            <StyledBrainfishLink
-              href={BRAINFISH_LINK}
-              target="_blank"
-              rel="noreferrer">
-              Brainfish LLC
-            </StyledBrainfishLink>
+            <Button onClick={onPrivacyPolicyClick}>Privacy Policy</Button>
+            <Button onClick={onTermsAndConditionsClick}>
+              Terms and Conditions
+            </Button>
+            <Button onClick={onBrainfishClick}>BRAINFISH LLC</Button>
           </Stack>
         </Container>
       </StyledFooter>

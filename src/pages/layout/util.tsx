@@ -4,8 +4,8 @@ import {
   SETTINGS_URL,
   PORTFOLIO_URL,
   PLAN_URL,
-  FAQ_URL
-} from '../common';
+  FAQ_URL, PRIVACY_POLICY_URL
+} from "../common";
 
 export const getPageTitle = (
   pathname: string = '',
@@ -31,6 +31,9 @@ export const getPageTitle = (
       break;
     case FAQ_URL:
       currenPath = 'FAQ';
+      break;
+    case PRIVACY_POLICY_URL:
+      currenPath = 'PRIVACY POLICY';
       break;
     default:
       currenPath = isLoggedIn ? 'PORTFOLIO' : '';

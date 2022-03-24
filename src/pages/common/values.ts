@@ -1,8 +1,10 @@
 // guest paths
-export const BASE_URL: string = '';
 export const SIGN_IN_URL: string = 'sign-in';
 export const FAQ_URL: string = 'faq';
+export const BASE_URL: string = '';
 // sign-in paths
+export const TERMS_AND_CONDITIONS_URL: string = 'terms-and-conditions';
+export const PRIVACY_POLICY_URL: string = 'privacy-policy';
 export const PORTFOLIO_URL: string = 'portfolio';
 export const ADD_COIN_URL: string = 'add-coin';
 export const SETTINGS_URL: string = 'settings';
